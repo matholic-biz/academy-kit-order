@@ -271,8 +271,10 @@
     <div id="status"></div>
     <div id="previewWrap"><iframe id="previewFrame"></iframe></div>
     <a class="btn plain" id="btnDownload" style="display:none;width:100%;text-align:center;text-decoration:none;margin-top:10px;">PDF 다운로드</a>
+    <button class="btn primary" id="btnSendEmail" style="width:100%;margin-top:10px;display:none;">인쇄업체로 이메일 발송하기</button>
+    <div id="emailStatus" style="font-size:12.5px;color:var(--muted);margin-top:8px;white-space:pre-wrap;"></div>
 
-    <div class="warnbox">
+    <div class="warnbox" id="emailWarnbox">
       메일 자동 발송은 아직 연결되지 않았습니다. PDF를 다운로드한 뒤, 인쇄업체 웹하드 또는 이메일에 직접 첨부해서 보내주세요.
     </div>
 
@@ -618,11 +620,79 @@ document.getElementById('f_logo').addEventListener('change', (e)=>{
   reader.readAsDataURL(file);
 });
 
+// ===================== 이메일 자동 발송 설정 (구글 앱스 스크립트) =====================
+// 1) script.google.com 에서 새 프로젝트 생성 -> google-apps-script/Code.gs 내용을 붙여넣기
+// 2) 코드 안의 PRINT_VENDOR_EMAIL, SHARED_SECRET 값을 실제 값으로 수정
+// 3) 배포 -> 새 배포 -> 웹 앱 -> 실행 계정: 나(Me) / 액세스 권한: 모든 사용자
+// 4) 배포된 웹 앱 URL을 아래 GAS_WEBHOOK_URL에 붙여넣기 (SHARED_SECRET도 Code.gs와 동일하게 맞추기)
+const GAS_WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbxuEgd8kJZHrxcywRpAweJlSmrEz9zXFJnou2DM88Yj8AvfvF5bLdxlosvpVCVqoRwE/exec';
+const GAS_SHARED_SECRET = 'academy-kit-2026';
+
+let lastPdfBase64 = null;
+let lastPdfFileName = null;
+
+function updateEmailUi(){
+  const configured = !!GAS_WEBHOOK_URL;
+  const hasPdf = !!lastPdfBase64;
+  document.getElementById('btnSendEmail').style.display = (configured && hasPdf) ? 'block' : 'none';
+  document.getElementById('emailWarnbox').style.display = configured ? 'none' : 'block';
+}
+
+async function sendToVendor(){
+  const btn = document.getElementById('btnSendEmail');
+  const statusEl = document.getElementById('emailStatus');
+  if(!lastPdfBase64){ statusEl.textContent = '먼저 PDF를 생성해주세요.'; return; }
+  if(!GAS_WEBHOOK_URL){ statusEl.textContent = '이메일 발송이 아직 설정되지 않았습니다. 관리자에게 문의해주세요.'; return; }
+
+  btn.disabled = true;
+  statusEl.textContent = '이메일을 발송하는 중... (파일 용량에 따라 시간이 걸릴 수 있어요)';
+  try{
+    const payload = {
+      secret: GAS_SHARED_SECRET,
+      fileName: lastPdfFileName,
+      pdfBase64: lastPdfBase64,
+      academyName: document.getElementById('f_name').value.trim(),
+      manager: document.getElementById('f_manager').value.trim(),
+      phone: document.getElementById('f_phone').value.trim(),
+      email: document.getElementById('f_email').value.trim(),
+      qty: document.getElementById('f_qty').value.trim(),
+      address: document.getElementById('f_addr').value.trim(),
+    };
+    const res = await fetch(GAS_WEBHOOK_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' }, // GAS 프리플라이트(CORS) 회피용
+      body: JSON.stringify(payload),
+    });
+    const data = await res.json().catch(()=>({status:'unknown'}));
+    if(data.status === 'ok'){
+      statusEl.textContent = '인쇄업체로 이메일이 발송되었습니다. 신청해주셔서 감사합니다.';
+    } else {
+      statusEl.textContent = '발송 중 문제가 발생했습니다: ' + (data.message || '알 수 없는 오류') + ' (다운로드한 PDF를 직접 첨부해서 보내주세요.)';
+    }
+  }catch(err){
+    console.error(err);
+    statusEl.textContent = '발송에 실패했습니다: ' + err.message + ' (다운로드한 PDF를 직접 첨부해서 보내주세요.)';
+  }finally{
+    btn.disabled = false;
+  }
+}
+document.getElementById('btnSendEmail').onclick = sendToVendor;
+updateEmailUi();
+
 // ===================== PDF 조립 =====================
 function setStatus(msg, isErr){
   const s = document.getElementById('status');
   s.textContent = msg;
   s.className = isErr ? 'err' : '';
+}
+
+function arrayBufferToBase64(bytes){
+  let binary = '';
+  const chunk = 0x8000;
+  for(let i=0; i<bytes.length; i+=chunk){
+    binary += String.fromCharCode.apply(null, bytes.subarray(i, i+chunk));
+  }
+  return btoa(binary);
 }
 
 async function buildPdf(){
@@ -699,8 +769,14 @@ async function buildPdf(){
     const dl = document.getElementById('btnDownload');
     dl.href = url;
     const academyName = document.getElementById('f_name').value.trim() || '학원맞춤키트';
-    dl.download = `${academyName}_학원맞춤키트.pdf`;
+    const fileName = `${academyName}_학원맞춤키트.pdf`;
+    dl.download = fileName;
     dl.style.display = 'block';
+
+    lastPdfBase64 = arrayBufferToBase64(bytes);
+    lastPdfFileName = fileName;
+    document.getElementById('emailStatus').textContent = '';
+    updateEmailUi();
 
     setStatus(`완료되었습니다. 총 ${selected.length}페이지 (${(bytes.length/1024/1024).toFixed(1)}MB)`);
   }catch(err){
