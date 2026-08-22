@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>학원맞춤키트 신청</title>
+<style>
+  :root{
+    --deepTeal:#028090; --seafoam:#00A896; --mint:#02C39A;
+    --lightMint:#D6F5ED; --paleMint:#EAF7F4; --ink:#10282B;
+    --body:#45585B; --muted:#7C8C8E; --white:#FFFFFF; --warn:#C9432B; --warnBg:#FBEAE7;
+    --line:#EAEFEE;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:"Pretendard","Malgun Gothic","Apple SD Gothic Neo",system-ui,sans-serif;color:var(--ink);background:#fff;line-height:1.55;}
+  .topbar{border-bottom:1px solid var(--line);padding:18px 24px;display:flex;align-items:center;gap:12px;}
+  .topbar .brand{font-weight:800;font-size:15px;letter-spacing:.02em;}
+  .topbar .x{color:var(--muted);font-weight:400;}
+  .topbar .partner{font-weight:800;font-size:15px;color:var(--seafoam);}
+
+  .wrap{max-width:640px;margin:0 auto;padding:56px 20px 120px;}
+
+  .pill{display:inline-block;margin:0 auto 18px;font-size:12.5px;font-weight:700;color:var(--seafoam);
+    background:var(--paleMint);padding:6px 14px;border-radius:999px;}
+  .center{text-align:center;}
+  h1.hero{font-size:28px;line-height:1.35;margin:0 0 14px;font-weight:800;}
+  p.sub{color:var(--body);font-size:14.5px;margin:0 0 40px;}
+
+  .steps{display:flex;align-items:center;justify-content:center;gap:0;margin-bottom:44px;}
+  .step{display:flex;flex-direction:column;align-items:center;gap:8px;width:110px;}
+  .step .circle{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+    font-weight:700;font-size:14px;border:2px solid var(--line);color:var(--muted);background:#fff;transition:.2s;}
+  .step.active .circle{background:var(--seafoam);border-color:var(--seafoam);color:#fff;}
+  .step.done .circle{background:var(--paleMint);border-color:var(--seafoam);color:var(--seafoam);}
+  .step .label{font-size:12.5px;color:var(--muted);font-weight:600;}
+  .step.active .label{color:var(--ink);}
+  .step-line{flex:1;height:2px;background:var(--line);margin:0 -4px 26px;max-width:80px;}
+
+  .panel{display:none;}
+  .panel.active{display:block;}
+  .panel h2{font-size:19px;margin:0 0 6px;}
+  .panel > p.desc{color:var(--body);font-size:13.5px;margin:0 0 22px;}
+
+  .picker-card{background:#F7FAF9;border:1px solid var(--line);border-radius:14px;padding:48px 24px;
+    text-align:center;cursor:pointer;transition:.15s;}
+  .picker-card:hover{background:var(--paleMint);border-color:var(--lightMint);}
+  .picker-icon{width:44px;height:44px;border-radius:10px;background:#fff;border:1px solid var(--line);
+    display:flex;align-items:center;justify-content:center;margin:0 auto 14px;font-size:20px;}
+  .picker-title{font-weight:700;font-size:15px;margin-bottom:4px;}
+  .picker-sub{font-size:12.5px;color:var(--muted);}
+
+  .selection-summary{display:flex;align-items:center;justify-content:space-between;background:var(--paleMint);
+    border-radius:12px;padding:14px 18px;margin-top:14px;}
+  .selection-summary .count{font-weight:800;color:var(--deepTeal);}
+  .selection-summary a{font-size:12.5px;color:var(--seafoam);font-weight:700;cursor:pointer;text-decoration:underline;}
+
+  .field-list{display:flex;flex-direction:column;gap:16px;}
+  .field label{display:block;font-size:12.5px;color:var(--muted);font-weight:600;margin-bottom:6px;}
+  .field input,.field textarea{width:100%;border:1px solid var(--line);border-radius:10px;padding:11px 13px;
+    font-size:14px;font-family:inherit;background:#fff;color:var(--ink);}
+  .field input:focus,.field textarea:focus{outline:2px solid var(--mint);outline-offset:1px;}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  .logo-preview{width:100%;height:80px;border:1px dashed var(--line);border-radius:10px;display:flex;
+    align-items:center;justify-content:center;font-size:11px;color:var(--muted);overflow:hidden;background:#fafefe;margin-top:8px;}
+  .logo-preview img{max-width:100%;max-height:100%;}
+
+  .nav{display:flex;justify-content:space-between;margin-top:36px;}
+  .btn{border:none;border-radius:10px;padding:12px 22px;font-size:14px;font-weight:700;cursor:pointer;}
+  .btn.primary{background:var(--seafoam);color:#fff;}
+  .btn.primary:hover{background:var(--mint);}
+  .btn.plain{background:#fff;color:var(--body);border:1px solid var(--line);}
+  .btn.plain:hover{background:#F7FAF9;}
+  .btn:disabled{opacity:.45;cursor:not-allowed;}
+
+  #status{font-size:12.5px;color:var(--muted);margin-top:14px;white-space:pre-wrap;}
+  #status.err{color:var(--warn);}
+  #previewWrap{margin-top:16px;display:none;}
+  #previewWrap.show{display:block;}
+  #previewWrap iframe{width:100%;height:480px;border:1px solid var(--line);border-radius:12px;}
+  .warnbox{background:var(--warnBg);color:var(--warn);border-radius:10px;padding:12px 16px;font-size:12.5px;margin-top:16px;}
+  .note{font-size:12px;color:var(--muted);margin-top:10px;}
+
+  /* modal gallery */
+  .modal-overlay{position:fixed;inset:0;background:rgba(16,40,43,.55);display:none;align-items:center;
+    justify-content:center;z-index:50;padding:24px;}
+  .modal-overlay.show{display:flex;}
+  .modal{background:#fff;border-radius:16px;max-width:900px;width:100%;max-height:86vh;overflow:auto;padding:26px 28px;}
+  .modal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;}
+  .modal-head h3{font-size:17px;margin:0;}
+  .modal-close{border:none;background:none;font-size:20px;color:var(--muted);cursor:pointer;}
+  .chapter{border:1px solid var(--line);border-radius:12px;margin-bottom:12px;overflow:hidden;}
+  .chapter-head{display:flex;align-items:center;justify-content:space-between;background:#F7FAF9;padding:10px 16px;
+    cursor:pointer;user-select:none;gap:10px;}
+  .chapter-head .title{font-weight:700;font-size:13.5px;display:flex;align-items:center;gap:8px;}
+  .chapter-head .meta{font-size:11.5px;color:var(--body);display:flex;align-items:center;gap:10px;}
+  .lockbadge{font-size:10px;color:var(--seafoam);font-weight:700;border:1px solid var(--seafoam);border-radius:5px;padding:1px 6px;}
+  .chapter-body{padding:14px 16px;display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:10px;}
+  .page-card{border:1px solid var(--line);border-radius:8px;padding:5px;text-align:center;font-size:10.5px;
+    color:var(--body);position:relative;}
+  .page-card img{width:100%;border-radius:4px;border:1px solid #eee;margin-bottom:4px;}
+  .page-card label{display:flex;align-items:flex-start;gap:4px;cursor:pointer;}
+  .page-card input{margin-top:2px;accent-color:var(--seafoam);flex:none;}
+  .page-card.locked{opacity:.85;}
+  .page-card .pnum{position:absolute;top:4px;left:4px;background:rgba(16,40,43,.7);color:#fff;font-size:9px;padding:1px 5px;border-radius:4px;}
+  .toggle-all{font-size:11px;color:var(--seafoam);cursor:pointer;text-decoration:underline;}
+
+  /* 디자인 테마 모달 : 1) 컨셉 3안 선택 -> 2) 컨셉 내 디자인 2종 선택 */
+  .modal-back{border:none;background:none;color:var(--seafoam);font-weight:700;font-size:12.5px;
+    cursor:pointer;padding:0 0 12px;display:none;align-items:center;gap:4px;}
+  .modal-back.show{display:inline-flex;}
+
+  .concept-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;}
+  .concept-card{border:1px solid var(--line);border-radius:14px;padding:20px;cursor:pointer;
+    transition:.15s;background:#fff;}
+  .concept-card:hover{border-color:var(--seafoam);box-shadow:0 6px 18px rgba(2,128,144,.10);transform:translateY(-2px);}
+  .concept-card.selected{border-color:var(--seafoam);background:var(--paleMint);}
+  .concept-kw{display:inline-block;font-size:10.5px;font-weight:700;color:#fff;background:var(--ink);
+    border-radius:999px;padding:4px 12px;margin-bottom:12px;}
+  .concept-name{font-weight:800;font-size:17px;line-height:1.3;margin-bottom:8px;}
+  .concept-sub{font-size:12px;color:var(--body);margin-bottom:14px;min-height:48px;}
+  .concept-mini-row{display:flex;gap:6px;}
+  .concept-mini{flex:1;height:36px;border-radius:6px;}
+
+  .design-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:22px;}
+  .design-card{cursor:pointer;text-align:left;}
+  .design-card-wrap{overflow:visible;}
+  .design-card-inner{position:relative;border-radius:12px;height:170px;overflow:hidden;
+    border:3px solid transparent;transition:transform .25s ease, box-shadow .25s ease, border-color .15s;
+    transform-origin:center;}
+  .design-card:hover .design-card-inner{transform:scale(1.08);box-shadow:0 16px 34px rgba(16,40,43,.25);z-index:2;position:relative;}
+  .design-card.selected .design-card-inner{border-color:var(--seafoam);}
+  .design-badge{position:absolute;font-size:9px;font-weight:700;color:#fff;background:rgba(255,255,255,.22);
+    border:1px solid rgba(255,255,255,.55);border-radius:5px;padding:2px 7px;backdrop-filter:blur(2px);}
+  .design-badge.logo{top:8px;right:8px;}
+  .design-badge.text{bottom:8px;left:8px;}
+  .design-check{position:absolute;top:8px;left:8px;width:20px;height:20px;border-radius:50%;background:var(--seafoam);
+    color:#fff;font-size:12px;display:none;align-items:center;justify-content:center;font-weight:800;}
+  .design-card.selected .design-check{display:flex;}
+  .design-name{font-weight:700;font-size:13.5px;margin:10px 0 2px;}
+  .design-sub{font-size:11.5px;color:var(--muted);}
+
+  .headline-block{margin:18px 0 22px;padding:14px 16px;background:#F7FAF9;border-radius:12px;}
+  .headline-block .htitle{font-size:12px;font-weight:700;color:var(--body);margin-bottom:10px;}
+  .headline-chip{display:block;width:100%;text-align:left;border:1px solid var(--line);background:#fff;
+    border-radius:10px;padding:10px 14px;margin-bottom:8px;cursor:pointer;transition:.15s;}
+  .headline-chip:hover{border-color:var(--seafoam);}
+  .headline-chip.selected{border-color:var(--seafoam);background:var(--paleMint);}
+  .headline-chip .ht{font-weight:700;font-size:13px;}
+  .headline-chip .hs{font-size:11.5px;color:var(--muted);margin-top:2px;}
+
+  .theme-summary{display:flex;align-items:center;gap:10px;background:var(--paleMint);border-radius:12px;
+    padding:12px 16px;margin-top:14px;}
+  .theme-swatch{width:28px;height:28px;border-radius:8px;flex:none;}
+
+  @media (max-width:600px){.row2{grid-template-columns:1fr;}.step{width:80px;}.step-line{max-width:40px;}}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <span class="brand">MATHOLIC</span>
+  <span class="x">×</span>
+  <span class="partner">학원맞춤키트</span>
+</div>
+
+<div class="wrap">
+  <div class="center">
+    <span class="pill">MATHOLIC 가맹학원 전용</span>
+    <h1 class="hero">우리 학원 이름이 새겨진<br>학원맞춤키트를 제작해드립니다</h1>
+    <p class="sub">원하시는 구성을 고르시고, 받아보실 정보를 입력해주세요.</p>
+  </div>
+
+  <div class="steps">
+    <div class="step active" data-step="1"><div class="circle">1</div><div class="label">디자인</div></div>
+    <div class="step-line"></div>
+    <div class="step" data-step="2"><div class="circle">2</div><div class="label">구성 선택</div></div>
+    <div class="step-line"></div>
+    <div class="step" data-step="3"><div class="circle">3</div><div class="label">학원 정보</div></div>
+    <div class="step-line"></div>
+    <div class="step" data-step="4"><div class="circle">4</div><div class="label">생성 · 발송</div></div>
+  </div>
+
+  <!-- STEP 1: 디자인 테마 -->
+  <section class="panel active" data-panel="1">
+    <h2>표지 디자인을 골라주세요</h2>
+    <p class="desc">마음에 드는 디자인을 누르시면 선택됩니다. 로고와 문구는 다음 단계에서 직접 입력하실 수 있어요.</p>
+
+    <div class="picker-card" id="openThemeGallery">
+      <div class="picker-icon">🎨</div>
+      <div class="picker-title">표지 디자인 고르기</div>
+      <div class="picker-sub">눌러서 디자인을 살펴보세요</div>
+    </div>
+
+    <div class="theme-summary" id="themeSummary" style="display:none;">
+      <div class="theme-swatch" id="themeSummarySwatch"></div>
+      <div style="flex:1;"><strong id="themeSummaryName"></strong><div class="picker-sub" id="themeSummarySub"></div></div>
+      <a id="reopenThemeGallery" style="font-size:12.5px;color:var(--seafoam);font-weight:700;cursor:pointer;text-decoration:underline;">다시 고르기</a>
+    </div>
+    <p class="note">※ 지금은 색상 테마 예시입니다. 실제 인쇄 디자인 시안이 준비되면 그 이미지로 교체해드릴게요.</p>
+
+    <div class="nav">
+      <span></span>
+      <button class="btn primary" data-next="2">다음</button>
+    </div>
+  </section>
+
+  <!-- STEP 2: 구성 페이지 -->
+  <section class="panel" data-panel="2">
+    <h2>구성 페이지를 골라주세요</h2>
+    <p class="desc">챕터별로 필요한 페이지만 선택할 수 있어요. 표지·마무리 페이지는 공통 필수 구성이라 고정되어 있어요.</p>
+
+    <div class="picker-card" id="openGallery">
+      <div class="picker-icon">🖼</div>
+      <div class="picker-title">구성 페이지 고르기</div>
+      <div class="picker-sub">눌러서 전체 페이지를 살펴보세요</div>
+    </div>
+
+    <div class="selection-summary">
+      <div><span class="count" id="totalPages">0</span>페이지가 선택되어 있어요</div>
+      <a id="reopenGallery">다시 고르기</a>
+    </div>
+
+    <div class="nav">
+      <button class="btn plain" data-prev="1">이전</button>
+      <button class="btn primary" data-next="3">다음</button>
+    </div>
+  </section>
+
+  <!-- STEP 3: 학원 정보 -->
+  <section class="panel" data-panel="3">
+    <h2>받으실 정보를 입력해주세요</h2>
+    <p class="desc">표지에 들어갈 문구와 로고, 그리고 발송지 정보입니다.</p>
+
+    <div class="field-list">
+      <div class="row2">
+        <div class="field"><label>학원명</label><input id="f_name" placeholder="예: OO수학학원"></div>
+        <div class="field"><label>담당자</label><input id="f_manager" placeholder="담당자 성함"></div>
+      </div>
+      <div class="row2">
+        <div class="field"><label>연락처</label><input id="f_phone" placeholder="010-0000-0000"></div>
+        <div class="field"><label>이메일</label><input id="f_email" placeholder="example@matholic.net"></div>
+      </div>
+      <div class="row2">
+        <div class="field"><label>희망 부수</label><input id="f_qty" placeholder="예: 100부"></div>
+        <div class="field"><label>배송 주소</label><input id="f_addr" placeholder="인쇄물을 받을 주소"></div>
+      </div>
+      <div class="row2">
+        <div class="field"><label>표지 문구 (1p 큰 제목)</label><input id="f_cover" placeholder="예: THE FOCUS" data-autofilled="1"></div>
+        <div class="field"><label>학원명 문구 (3p)</label><input id="f_slogan" placeholder="예: OO수학학원"></div>
+      </div>
+      <div class="field">
+        <label>로고 이미지 (3p에 삽입, PNG 권장)</label>
+        <input type="file" id="f_logo" accept="image/png,image/jpeg">
+        <div class="logo-preview" id="logoPreview">로고 미리보기</div>
+      </div>
+    </div>
+    <p class="note">※ 문구·로고 배치 좌표는 예시값입니다. 생성된 PDF에서 위치가 다르면 알려주시면 조정해드립니다.</p>
+
+    <div class="nav">
+      <button class="btn plain" data-prev="2">이전</button>
+      <button class="btn primary" data-next="4">다음</button>
+    </div>
+  </section>
+
+  <!-- STEP 4 -->
+  <section class="panel" data-panel="4">
+    <h2>PDF를 생성하고 발송해주세요</h2>
+    <p class="desc">선택한 페이지를 실제 순서대로 이어붙이고, 표지 문구·로고를 합성합니다. 브라우저에서 직접 처리되며 서버에는 업로드되지 않습니다.</p>
+
+    <button class="btn primary" id="btnBuild" style="width:100%;">PDF 생성하기</button>
+    <div id="status"></div>
+    <div id="previewWrap"><iframe id="previewFrame"></iframe></div>
+    <a class="btn plain" id="btnDownload" style="display:none;width:100%;text-align:center;text-decoration:none;margin-top:10px;">PDF 다운로드</a>
+
+    <div class="warnbox">
+      메일 자동 발송은 아직 연결되지 않았습니다. PDF를 다운로드한 뒤, 인쇄업체 웹하드 또는 이메일에 직접 첨부해서 보내주세요.
+    </div>
+
+    <div class="nav">
+      <button class="btn plain" data-prev="3">이전</button>
+      <span></span>
+    </div>
+  </section>
+</div>
+
+<!-- 디자인 테마 모달 -->
+<div class="modal-overlay" id="themeModalOverlay">
+  <div class="modal">
+    <div class="modal-head">
+      <h3 id="themeModalTitle">표지 컨셉 고르기</h3>
+      <button class="modal-close" id="themeModalClose">×</button>
+    </div>
+    <button class="modal-back" id="themeBackBtn">← 컨셉 목록으로</button>
+    <p class="note" id="themeModalDesc" style="margin-top:0;">먼저 마음에 드는 컨셉을 골라주세요. 컨셉마다 2가지 디자인이 준비되어 있어요.</p>
+    <div id="themeModalBody"></div>
+  </div>
+</div>
+
+<!-- 구성 페이지 모달 -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <div class="modal-head">
+      <h3>구성 페이지 선택</h3>
+      <button class="modal-close" id="modalClose">×</button>
+    </div>
+    <p class="note" style="margin-top:0;">🔒 필수 챕터는 고정되어 있어요. 그 외 챕터는 페이지 단위로 자유롭게 선택하세요.</p>
+    <div id="chapters"></div>
+    <div class="nav">
+      <span></span>
+      <button class="btn primary" id="modalDone">선택 완료</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@pdf-lib/fontkit@1.1.1/dist/fontkit.umd.min.js"></script>
+<script>
+// ===================== 스텝 내비게이션 =====================
+function goStep(n){
+  document.querySelectorAll('.panel').forEach(p=> p.classList.toggle('active', p.dataset.panel===String(n)));
+  document.querySelectorAll('.step').forEach(s=>{
+    const sn = +s.dataset.step;
+    s.classList.toggle('active', sn===n);
+    s.classList.toggle('done', sn<n);
+  });
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+document.querySelectorAll('[data-next]').forEach(b=> b.onclick = ()=> goStep(+b.dataset.next));
+document.querySelectorAll('[data-prev]').forEach(b=> b.onclick = ()=> goStep(+b.dataset.prev));
+
+// ===================== 페이지 매니페스트 (마스터 PDF 64p 기준) =====================
+const CHAPTERS = [
+  { key:'cover', label:'표지', locked:true, defaultOn:true, pages:[
+    {n:1,title:'표지 (앞면)'},{n:2,title:'표지 내지'},{n:3,title:'학원 로고·슬로건'}
+  ]},
+  { key:'prologue', label:'프롤로그 / 인트로', locked:false, defaultOn:true, pages:[
+    {n:4,title:'인사말 1'},{n:5,title:'인사말 2'},{n:6,title:'타이틀 이미지'},{n:7,title:'좋은 학원 고르는 법'},
+    {n:8,title:'JOURNEY'},{n:9,title:'INSIGHT'},{n:10,title:'ATTITUDE'},{n:11,title:'STRATEGY'},
+    {n:12,title:'ANALYSIS'},{n:13,title:'CURRICULUM'},{n:14,title:'VISION'}
+  ]},
+  { key:'diag', label:'진단', locked:false, defaultOn:true, pages:[
+    {n:15,title:'진단 간지'},{n:16,title:'교재채점 1'},{n:17,title:'교재채점 2'},{n:18,title:'진단평가 1'},
+    {n:19,title:'진단평가 2'},{n:20,title:'기출분석 1'},{n:21,title:'기출분석 2'}
+  ]},
+  { key:'analysis', label:'분석', locked:false, defaultOn:true, pages:[
+    {n:22,title:'분석 간지'},{n:23,title:'10문제 예측'},{n:24,title:'학습이력 데이터화'},
+    {n:25,title:'진짜 약점 찾기'},{n:26,title:'과정 전체 예측'}
+  ]},
+  { key:'rx', label:'처방', locked:false, defaultOn:true, pages:[
+    {n:27,title:'처방 간지'},{n:28,title:'개념 채우기'},{n:29,title:'클리닉 진행'},{n:30,title:'오답관리'},
+    {n:31,title:'약점관리 3단계'},{n:32,title:'AI 힌트 지원'},{n:33,title:'서술형 대비'},
+    {n:34,title:'동영상·질문하기'},{n:35,title:'색관리 완료'}
+  ]},
+  { key:'exam', label:'시험대비', locked:false, defaultOn:true, pages:[
+    {n:36,title:'시험대비 간지'},{n:37,title:'목표기반 인트로 1'},{n:38,title:'목표기반 인트로 2'},
+    {n:39,title:'목표기반 프로세스'},{n:40,title:'시험대비 콘텐츠 종류'},{n:41,title:'교과서·평가자료'},
+    {n:42,title:'만점 시험대비'},{n:43,title:'시험대비 클리닉'},{n:44,title:'쪽집게교재'},
+    {n:45,title:'시험대비 유형서'},{n:46,title:'학교시험 만점공략'},{n:47,title:'학교별 시험대비 총정리'}
+  ]},
+  { key:'share', label:'나눔', locked:false, defaultOn:true, pages:[
+    {n:48,title:'나눔 간지'},{n:49,title:'학생화면 분석'},{n:50,title:'학원 리포트'},
+    {n:51,title:'학습 성취 요약'},{n:52,title:'매일 리포트'},{n:53,title:'담임 코멘트'}
+  ]},
+  { key:'toma', label:'전국평가 (수학경시대회 · TOMA)', locked:false, defaultOn:false, pages:[
+    {n:54,title:'전국평가 간지'},{n:55,title:'실력 점검'},{n:56,title:'연습과정'},{n:57,title:'전국평가 보고서'}
+  ]},
+  { key:'appendix', label:'별책부록', locked:false, defaultOn:true, pages:[
+    {n:58,title:'별책부록 간지'},{n:59,title:'색깔로 보는 유형분석'},{n:60,title:'상담 전 체크리스트'},{n:61,title:'학습 키워드'}
+  ]},
+  { key:'closing', label:'마무리', locked:true, defaultOn:true, pages:[
+    {n:62,title:'여백'},{n:63,title:'크레딧'},{n:64,title:'뒷표지'}
+  ]},
+];
+
+const state = {};
+CHAPTERS.forEach(ch => ch.pages.forEach(p => state[p.n] = ch.defaultOn));
+
+function thumbSrc(n){ return `assets/thumbs/pg-${String(n).padStart(2,'0')}.jpg`; }
+
+// ===================== 표지 디자인 : 컨셉 3안 -> 컨셉별 디자인 2종 =====================
+// bg는 미리보기용 CSS 그라디언트, accent는 실제 PDF 합성 시 사용할 색상(0~1 RGB)입니다.
+// 실제 인쇄 디자인 시안 이미지가 나오면 bg를 background-image로, accent를 해당 시안의 대표색으로 교체하면 됩니다.
+const CONCEPTS = [
+  {
+    id:'frame', keyword:'Focus', name:'THE FRAME',
+    sub:'학습의 복잡함은 줄이고, 성장의 핵심에 시선을 모으는 브랜드 정체성을 강조합니다.',
+    headlines:[
+      { title:'THE FOCUS', sub:'성장에 집중하는 단 하나의 틀' },
+      { title:'FOCUS ON ESSENCE', sub:'아이의 가능성에 시선을 모으다' },
+      { title:'THE FRAME OF TRUST', sub:'흔들리지 않는 학습의 기준' },
+    ],
+    designs:[
+      { id:'frame-1', name:'프레임 다이애거널', bg:'linear-gradient(135deg,#0B3B2E 0%,#1F6E4A 45%,#A9E8C9 100%)', accent:[0.122,0.435,0.29] },
+      { id:'frame-2', name:'프레임 화이트 그리드', bg:'linear-gradient(160deg,#F4FBF8 0%,#BFE9D6 55%,#1F6E4A 100%)', accent:[0.122,0.435,0.29] },
+    ]
+  },
+  {
+    id:'compass', keyword:'Insight', name:'COMPASS',
+    sub:'데이터 기반의 정밀한 통찰로 성장의 올바른 길을 제시하는 가치를 전합니다.',
+    headlines:[
+      { title:'INSIGHT & DIRECTION', sub:'데이터로 읽고, 방향으로 이끌다' },
+      { title:'THE INSIGHT', sub:'깊이 있게 보고, 바르게 이끄는 교육' },
+      { title:'COMPASS OF GROWTH', sub:'아이의 내일을 밝히는 성장의 나침반' },
+    ],
+    designs:[
+      { id:'compass-1', name:'컴퍼스 스트라이프', bg:'repeating-linear-gradient(100deg,#0B3B2E 0 14px,#2E8F63 14px 28px,#CFF3E1 28px 42px)', accent:[0.043,0.235,0.18] },
+      { id:'compass-2', name:'컴퍼스 라디얼', bg:'radial-gradient(circle at 30% 30%,#E9FBF2 0%,#6FCB9F 45%,#0B3B2E 100%)', accent:[0.043,0.235,0.18] },
+    ]
+  },
+  {
+    id:'essence', keyword:'Solution', name:'THE ESSENCE',
+    sub:'군더더기 없이 본질에 집중하며, 확실한 교육적 해답을 제시하는 정직함을 담았습니다.',
+    headlines:[
+      { title:'THE ESSENCE', sub:'수학의 본질, 완벽한 해답' },
+      { title:'THE DEFINITIVE SOLUTION', sub:'데이터가 증명하는 학습의 본질' },
+      { title:'ESSENCE & SOLUTION', sub:'본질에 깊이를, 성장에 해답을' },
+    ],
+    designs:[
+      { id:'essence-1', name:'에센스 솔리드 그린', bg:'linear-gradient(160deg,#1F6E4A 0%,#2E8F63 100%)', accent:[0.122,0.433,0.294] },
+      { id:'essence-2', name:'에센스 딥 그린', bg:'linear-gradient(135deg,#0B3B2E 0%,#1F6E4A 100%)', accent:[0.043,0.231,0.18] },
+    ]
+  },
+];
+
+let themeState = { view:'concept', activeConceptId:null, selectedConceptId:'frame', selectedDesignId:'frame-1', selectedHeadlineIdx:0 };
+
+function findConcept(id){ return CONCEPTS.find(c=>c.id===id); }
+function findDesign(concept, id){ return concept.designs.find(d=>d.id===id); }
+
+function renderThemeModalBody(){
+  const backBtn = document.getElementById('themeBackBtn');
+  const title = document.getElementById('themeModalTitle');
+  const desc = document.getElementById('themeModalDesc');
+  const body = document.getElementById('themeModalBody');
+
+  if(themeState.view === 'concept'){
+    backBtn.classList.remove('show');
+    title.textContent = '표지 컨셉 고르기';
+    desc.textContent = '먼저 마음에 드는 컨셉을 골라주세요. 컨셉마다 2가지 디자인이 준비되어 있어요.';
+    body.innerHTML = `<div class="concept-grid">${CONCEPTS.map(c=>`
+      <div class="concept-card ${c.id===themeState.selectedConceptId?'selected':''}" data-id="${c.id}">
+        <span class="concept-kw">${c.keyword}</span>
+        <div class="concept-name">${c.name}</div>
+        <div class="concept-sub">${c.sub}</div>
+        <div class="concept-mini-row">
+          ${c.designs.map(d=>`<div class="concept-mini" style="background:${d.bg};"></div>`).join('')}
+        </div>
+      </div>
+    `).join('')}</div>`;
+    body.querySelectorAll('.concept-card').forEach(el=>{
+      el.onclick = ()=>{
+        themeState.activeConceptId = el.dataset.id;
+        themeState.view = 'design';
+        renderThemeModalBody();
+      };
+    });
+  } else {
+    const concept = findConcept(themeState.activeConceptId);
+    backBtn.classList.add('show');
+    title.textContent = `${concept.name} 디자인 고르기`;
+    desc.textContent = '마음에 드는 디자인을 누르시면 선택됩니다. (마우스를 올리면 크게 볼 수 있어요)';
+
+    const headlinesHtml = `
+      <div class="headline-block">
+        <div class="htitle">표지 문구 추천 (선택하면 다음 단계 입력칸에 자동으로 채워져요, 이후 자유롭게 수정 가능)</div>
+        ${concept.headlines.map((h,i)=>`
+          <div class="headline-chip ${concept.id===themeState.selectedConceptId && i===themeState.selectedHeadlineIdx ? 'selected':''}" data-idx="${i}">
+            <div class="ht">${h.title}</div>
+            <div class="hs">${h.sub}</div>
+          </div>
+        `).join('')}
+      </div>`;
+
+    const designsHtml = `<div class="design-grid">${concept.designs.map(d=>`
+      <div class="design-card ${d.id===themeState.selectedDesignId?'selected':''}" data-id="${d.id}">
+        <div class="design-card-wrap">
+          <div class="design-card-inner" style="background:${d.bg};">
+            <span class="design-check">✓</span>
+            <span class="design-badge logo">로고 영역</span>
+            <span class="design-badge text">문구 영역</span>
+          </div>
+        </div>
+        <div class="design-name">${d.name}</div>
+        <div class="design-sub">로고 + 문구</div>
+      </div>
+    `).join('')}</div>`;
+
+    body.innerHTML = headlinesHtml + designsHtml;
+
+    body.querySelectorAll('.headline-chip').forEach(el=>{
+      el.onclick = ()=>{
+        themeState.selectedConceptId = concept.id;
+        themeState.selectedHeadlineIdx = +el.dataset.idx;
+        renderThemeModalBody();
+      };
+    });
+    body.querySelectorAll('.design-card').forEach(el=>{
+      el.onclick = ()=>{
+        themeState.selectedConceptId = concept.id;
+        themeState.selectedDesignId = el.dataset.id;
+        updateThemeSummary();
+        closeThemeModal();
+      };
+    });
+  }
+}
+
+function updateThemeSummary(){
+  const concept = findConcept(themeState.selectedConceptId);
+  const design = concept && findDesign(concept, themeState.selectedDesignId);
+  if(!concept || !design) return;
+  document.getElementById('themeSummary').style.display = 'flex';
+  document.getElementById('themeSummarySwatch').style.background = design.bg;
+  document.getElementById('themeSummaryName').textContent = `${concept.name} · ${design.name}`;
+  document.getElementById('themeSummarySub').textContent = concept.keyword;
+
+  // 표지 문구 추천 자동 채우기 (사용자가 기본값을 아직 안 바꿨을 때만)
+  const coverInput = document.getElementById('f_cover');
+  const headline = concept.headlines[themeState.selectedHeadlineIdx];
+  if(coverInput && headline && (coverInput.value.trim()==='' || coverInput.dataset.autofilled==='1')){
+    coverInput.value = headline.title;
+    coverInput.dataset.autofilled = '1';
+  }
+}
+
+document.getElementById('f_cover').addEventListener('input', (e)=>{ e.target.dataset.autofilled = '0'; });
+
+const themeOverlay = document.getElementById('themeModalOverlay');
+function openThemeModal(){
+  themeState.activeConceptId = themeState.selectedConceptId;
+  themeState.view = 'concept';
+  renderThemeModalBody();
+  themeOverlay.classList.add('show');
+}
+function closeThemeModal(){ themeOverlay.classList.remove('show'); }
+document.getElementById('openThemeGallery').onclick = openThemeModal;
+document.getElementById('reopenThemeGallery').onclick = openThemeModal;
+document.getElementById('themeModalClose').onclick = closeThemeModal;
+document.getElementById('themeBackBtn').onclick = ()=>{ themeState.view = 'concept'; renderThemeModalBody(); };
+themeOverlay.addEventListener('click', (e)=>{ if(e.target===themeOverlay) closeThemeModal(); });
+updateThemeSummary();
+
+function renderChapters(){
+  const el = document.getElementById('chapters');
+  el.innerHTML = CHAPTERS.map(ch=>{
+    const checkedCount = ch.pages.filter(p=>state[p.n]).length;
+    return `
+    <div class="chapter">
+      <div class="chapter-head" data-key="${ch.key}">
+        <div class="title">${ch.label} ${ch.locked?'<span class="lockbadge">필수</span>':''}</div>
+        <div class="meta">
+          ${!ch.locked ? `<span class="toggle-all" data-all="${ch.key}">전체선택/해제</span>` : ''}
+          <span>${checkedCount}/${ch.pages.length}p</span>
+        </div>
+      </div>
+      <div class="chapter-body">
+        ${ch.pages.map(p=>`
+          <div class="page-card ${ch.locked?'locked':''}">
+            <span class="pnum">${p.n}p</span>
+            <img src="${thumbSrc(p.n)}" alt="page ${p.n}" loading="lazy">
+            <label>
+              <input type="checkbox" data-n="${p.n}" ${state[p.n]?'checked':''} ${ch.locked?'disabled':''}>
+              <span>${p.title}</span>
+            </label>
+          </div>
+        `).join('')}
+      </div>
+    </div>`;
+  }).join('');
+
+  el.querySelectorAll('input[type=checkbox]').forEach(cb=>{
+    cb.onchange = ()=>{ state[+cb.dataset.n] = cb.checked; renderChapters(); updateSummary(); };
+  });
+  el.querySelectorAll('.chapter-head').forEach(h=>{
+    h.onclick = (e)=>{
+      if(e.target.classList.contains('toggle-all')) return;
+      const body = h.nextElementSibling;
+      body.style.display = body.style.display==='none' ? '' : 'none';
+    };
+  });
+  el.querySelectorAll('.toggle-all').forEach(t=>{
+    t.onclick = (e)=>{
+      e.stopPropagation();
+      const ch = CHAPTERS.find(c=>c.key===t.dataset.all);
+      const allOn = ch.pages.every(p=>state[p.n]);
+      ch.pages.forEach(p=> state[p.n] = !allOn);
+      renderChapters();
+      updateSummary();
+    };
+  });
+}
+
+function updateSummary(){
+  const total = Object.values(state).filter(Boolean).length;
+  document.getElementById('totalPages').textContent = total;
+}
+
+// ===================== 모달 갤러리 =====================
+const overlay = document.getElementById('modalOverlay');
+function openModal(){ overlay.classList.add('show'); renderChapters(); }
+function closeModal(){ overlay.classList.remove('show'); }
+document.getElementById('openGallery').onclick = openModal;
+document.getElementById('reopenGallery').onclick = openModal;
+document.getElementById('modalClose').onclick = closeModal;
+document.getElementById('modalDone').onclick = ()=>{ closeModal(); updateSummary(); };
+overlay.addEventListener('click', (e)=>{ if(e.target===overlay) closeModal(); });
+
+// ===================== 로고 미리보기 =====================
+let logoDataUrl = null;
+document.getElementById('f_logo').addEventListener('change', (e)=>{
+  const file = e.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = ()=>{
+    logoDataUrl = reader.result;
+    document.getElementById('logoPreview').innerHTML = `<img src="${logoDataUrl}">`;
+  };
+  reader.readAsDataURL(file);
+});
+
+// ===================== PDF 조립 =====================
+function setStatus(msg, isErr){
+  const s = document.getElementById('status');
+  s.textContent = msg;
+  s.className = isErr ? 'err' : '';
+}
+
+async function buildPdf(){
+  const btn = document.getElementById('btnBuild');
+  btn.disabled = true;
+  try{
+    setStatus('마스터 PDF를 불러오는 중...');
+    const { PDFDocument, rgb } = PDFLib;
+    const masterBytes = await fetch('assets/master.pdf').then(r=>{
+      if(!r.ok) throw new Error('assets/master.pdf 를 찾을 수 없습니다. index.html과 같은 위치에 assets 폴더가 있는지 확인해주세요.');
+      return r.arrayBuffer();
+    });
+    const master = await PDFDocument.load(masterBytes);
+    const out = await PDFDocument.create();
+    out.registerFontkit(fontkit);
+
+    const selected = [];
+    CHAPTERS.forEach(ch => ch.pages.forEach(p => { if(state[p.n]) selected.push(p.n); }));
+    selected.sort((a,b)=>a-b);
+    if(selected.length===0) throw new Error('선택된 페이지가 없습니다.');
+
+    setStatus(`선택한 ${selected.length}페이지를 이어붙이는 중...`);
+    const indices = selected.map(n=>n-1);
+    const copied = await out.copyPages(master, indices);
+    copied.forEach(p=>out.addPage(p));
+
+    setStatus('한글 폰트를 불러오는 중...');
+    const fontBytes = await fetch('https://cdn.jsdelivr.net/fontsource/fonts/noto-sans-kr@latest/korean-700-normal.ttf').then(r=>r.arrayBuffer());
+    const font = await out.embedFont(fontBytes, { subset:true });
+
+    const selConcept = findConcept(themeState.selectedConceptId) || CONCEPTS[0];
+    const selDesign = findDesign(selConcept, themeState.selectedDesignId) || selConcept.designs[0];
+    const accent = rgb(selDesign.accent[0], selDesign.accent[1], selDesign.accent[2]);
+
+    const coverText = document.getElementById('f_cover').value.trim();
+    if(coverText && selected.includes(1)){
+      const pageIdx = selected.indexOf(1);
+      const page = out.getPage(pageIdx);
+      const { width, height } = page.getSize();
+      page.drawRectangle({ x:0, y:height-220, width, height:140, color: accent });
+      const size = 34;
+      page.drawText(coverText, { x:40, y:height-160, size, font, color: rgb(1,1,1) });
+    }
+
+    const sloganText = document.getElementById('f_slogan').value.trim();
+    if(selected.includes(3)){
+      const pageIdx = selected.indexOf(3);
+      const page = out.getPage(pageIdx);
+      const { width, height } = page.getSize();
+      if(sloganText){
+        const size = 20;
+        const tw = font.widthOfTextAtSize(sloganText, size);
+        page.drawText(sloganText, { x:(width-tw)/2 - 40, y:height*0.42, size, font, color: accent });
+      }
+      if(logoDataUrl){
+        setStatus('로고 이미지를 합성하는 중...');
+        const resp = await fetch(logoDataUrl);
+        const logoBytes = await resp.arrayBuffer();
+        const isPng = logoDataUrl.startsWith('data:image/png');
+        const img = isPng ? await out.embedPng(logoBytes) : await out.embedJpg(logoBytes);
+        const dims = img.scaleToFit(160,90);
+        page.drawImage(img, { x:(width-dims.width)/2, y:height*0.28, width:dims.width, height:dims.height });
+      }
+    }
+
+    setStatus('PDF를 마무리하는 중...');
+    const bytes = await out.save();
+    const blob = new Blob([bytes], { type:'application/pdf' });
+    const url = URL.createObjectURL(blob);
+
+    document.getElementById('previewFrame').src = url;
+    document.getElementById('previewWrap').classList.add('show');
+
+    const dl = document.getElementById('btnDownload');
+    dl.href = url;
+    const academyName = document.getElementById('f_name').value.trim() || '학원맞춤키트';
+    dl.download = `${academyName}_학원맞춤키트.pdf`;
+    dl.style.display = 'block';
+
+    setStatus(`완료되었습니다. 총 ${selected.length}페이지 (${(bytes.length/1024/1024).toFixed(1)}MB)`);
+  }catch(err){
+    console.error(err);
+    setStatus('오류가 발생했습니다: ' + err.message, true);
+  }finally{
+    btn.disabled = false;
+  }
+}
+document.getElementById('btnBuild').onclick = buildPdf;
+
+updateSummary();
+</script>
+</body>
+</html>
