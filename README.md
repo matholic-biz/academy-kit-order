@@ -9,8 +9,9 @@ academy-kit-order/
 │  ├─ master.pdf         ← 실제 64p 마스터 브로슈어 (선택한 페이지를 여기서 잘라 이어붙입니다)
 │  ├─ thumbs/pg-01.jpg ~ pg-64.jpg  ← 선택 화면용 페이지 미리보기 이미지
 │  ├─ guide-video.mp4    ← 상단 "사용 가이드 보기" 버튼에서 재생되는 안내 영상
-│  ├─ covers/            ← 표지 디자인 실제 이미지 (frame-1, compass-1~3, essence-1~2)
-│  └─ signboard/          ← 현판 디자인 이미지 (sign-luxury-gold.png)
+│  ├─ covers/            ← 표지 디자인 실제 이미지 (frame-1~3, compass-1~3, essence-1~3)
+│  ├─ signboard/          ← 현판 디자인 이미지 (sign-luxury-gold.png)
+│  └─ fonts/              ← 표지·학원명 문구용 SUIT 폰트 (Regular/Light/Medium/SemiBold)
 ├─ google-apps-script/
 │  └─ Code.gs            ← 이메일 자동 발송 + 신청내역 시트 기록용 구글 앱스 스크립트
 └─ README.md
@@ -25,11 +26,15 @@ academy-kit-order/
 - 서버 업로드 없이 전부 브라우저(JS)에서 처리됩니다 (pdf-lib 사용)
 
 ## 표지 디자인 안내
-- THE FRAME: 대각선 분할 디자인 1종 (frame-1)
+- THE FRAME: 대각선 분할 디자인 3종 (frame-1~3)
 - COMPASS: 막대 패턴 디자인 3종 (compass-1~3)
-- THE ESSENCE: 방사형 글로우 · 단색 디자인 2종 (essence-1~2)
+- THE ESSENCE: 방사형 글로우 · 단색 디자인 3종 (essence-1~3)
 
-디자인을 선택하면 PDF 생성 시 표지(1p) 전체에 실제 이미지가 배경으로 합성되고, 그 위에 입력하신 표지 문구가 얹힙니다.
+디자인을 선택하면 PDF 생성 시 표지(1p) 전체에 실제 이미지가 배경으로 합성되고, 그 위에 입력하신 표지 문구가 디자인별로 정해진 위치·크기·폰트·자간으로 얹힙니다. (`index.html`의 `CONCEPTS` 배열 안 각 디자인의 `title` 값에서 위치/크기 조정 가능)
+
+3p(학원명 문구)와 로고도 같은 방식으로 `PAGE3_SLOGAN_SPEC` / `PAGE3_LOGO_SPEC` 값에 따라 배치됩니다.
+
+표지 문구는 SUIT 폰트(Regular/Light/Medium/SemiBold)를 사용하며, `assets/fonts/` 폴더에 해당 폰트 파일들이 있어야 PDF 생성이 정상 동작합니다.
 
 ## 사용 가이드 영상 넣기
 `academy-guide-hyperframes` 프로젝트에서 내보낸(Export) mp4 파일을 그대로 이 폴더의 `assets/guide-video.mp4`라는 이름으로 넣어주시면 됩니다. (파일명이 정확히 `guide-video.mp4`여야 합니다.)

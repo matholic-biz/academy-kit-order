@@ -527,9 +527,12 @@ const CONCEPTS = [
       { title:'THE FRAME OF TRUST', sub:'흔들리지 않는 학습의 기준' },
     ],
     designs:[
-      { id:'frame-1', name:'프레임 다이애거널 01', img:'assets/covers/frame-1.png', accent:[0.122,0.435,0.29] },
-      { id:'frame-2', name:'프레임 다이애거널 02', img:'assets/covers/frame-2.png', accent:[0.122,0.435,0.29] },
-      { id:'frame-3', name:'프레임 다이애거널 03', img:'assets/covers/frame-3.png', accent:[0.122,0.435,0.29] },
+      { id:'frame-1', name:'프레임 다이애거널 01', img:'assets/covers/frame-1.png', accent:[0.122,0.435,0.29],
+        title:{ w:930, h:300, x:72.5, y:77, font:'Regular', size:140, ls:-5, align:'center' } },
+      { id:'frame-2', name:'프레임 다이애거널 02', img:'assets/covers/frame-2.png', accent:[0.122,0.435,0.29],
+        title:{ w:930, h:300, x:72.5, y:77, font:'Regular', size:140, ls:-5, align:'center' } },
+      { id:'frame-3', name:'프레임 다이애거널 03', img:'assets/covers/frame-3.png', accent:[0.122,0.435,0.29],
+        title:{ w:540, h:56, x:382, y:984, font:'Regular', size:45, ls:-2, align:'left' } },
     ]
   },
   {
@@ -541,9 +544,12 @@ const CONCEPTS = [
       { title:'COMPASS OF GROWTH', sub:'아이의 내일을 밝히는 성장의 나침반' },
     ],
     designs:[
-      { id:'compass-1', name:'컴퍼스 바 01', img:'assets/covers/compass-1.png', accent:[0.043,0.235,0.18] },
-      { id:'compass-2', name:'컴퍼스 바 02', img:'assets/covers/compass-2.png', accent:[0.043,0.235,0.18] },
-      { id:'compass-3', name:'컴퍼스 바 03', img:'assets/covers/compass-3.png', accent:[0.043,0.235,0.18] },
+      { id:'compass-1', name:'컴퍼스 바 01', img:'assets/covers/compass-1.png', accent:[0.043,0.235,0.18],
+        title:{ w:930, h:300, x:72.5, y:77, font:'Light', size:140, ls:-5, align:'center' } },
+      { id:'compass-2', name:'컴퍼스 바 02', img:'assets/covers/compass-2.png', accent:[0.043,0.235,0.18],
+        title:{ w:930, h:300, x:72.5, y:110, font:'Medium', size:60, ls:-5, align:'center' } },
+      { id:'compass-3', name:'컴퍼스 바 03', img:'assets/covers/compass-3.png', accent:[0.043,0.235,0.18],
+        title:{ w:700, h:56, x:95, y:97, font:'SemiBold', size:45, ls:-5, align:'left' } },
     ]
   },
   {
@@ -555,12 +561,86 @@ const CONCEPTS = [
       { title:'ESSENCE & SOLUTION', sub:'본질에 깊이를, 성장에 해답을' },
     ],
     designs:[
-      { id:'essence-1', name:'에센스 글로우 01', img:'assets/covers/essence-1.png', accent:[0.122,0.433,0.294] },
-      { id:'essence-2', name:'에센스 글로우 02', img:'assets/covers/essence-2.png', accent:[0.043,0.231,0.18] },
-      { id:'essence-3', name:'에센스 글로우 03', img:'assets/covers/essence-3.png', accent:[0.043,0.231,0.18] },
+      { id:'essence-1', name:'에센스 글로우 01', img:'assets/covers/essence-1.png', accent:[0.122,0.433,0.294],
+        title:{ w:930, h:300, x:72.5, y:77, font:'Light', size:140, ls:-5, align:'center' } },
+      { id:'essence-2', name:'에센스 글로우 02', img:'assets/covers/essence-2.png', accent:[0.043,0.231,0.18],
+        title:{ w:930, h:300, x:72.5, y:77, font:'Light', size:140, ls:-5, align:'center' } },
+      { id:'essence-3', name:'에센스 글로우 03', img:'assets/covers/essence-3.png', accent:[0.043,0.231,0.18],
+        title:{ w:885, h:56, x:95, y:97, font:'SemiBold', size:45, ls:-5, align:'left' } },
     ]
   },
 ];
+
+// 3p(학원명 슬로건) 및 로고 배치 스펙 - 디자인 컨셉과 무관하게 공통 적용됩니다.
+// x, y, w, h는 1075x1519px 기준 디자인 좌표(y는 페이지 상단 기준), color는 0~1 RGB입니다.
+const PAGE3_SLOGAN_SPEC = { w:734, h:274, x:170.5, y:100, font:'Light', size:120, ls:-6, align:'center', color:[0.176,0.588,0.427] };
+const PAGE3_LOGO_SPEC = { w:308, h:94, marginBottom:100 };
+
+const FONT_FILES = {
+  Regular: 'assets/fonts/SUIT-Regular.ttf',
+  Light: 'assets/fonts/SUIT-Light.ttf',
+  Medium: 'assets/fonts/SUIT-Medium.ttf',
+  SemiBold: 'assets/fonts/SUIT-SemiBold.ttf',
+};
+
+// ===================== 표지/슬로건 텍스트 박스 렌더링 (자간·줄바꿈·정렬 직접 계산) =====================
+function measureTextWidth(text, font, sizePt, letterSpacingPt){
+  const chars = Array.from(text);
+  let total = 0;
+  chars.forEach((ch,i)=>{
+    total += font.widthOfTextAtSize(ch, sizePt);
+    if(i < chars.length-1) total += letterSpacingPt;
+  });
+  return total;
+}
+function splitIntoLines(text, font, sizePt, letterSpacingPt, maxWidthPt){
+  const words = text.split(' ').filter(w=>w.length>0);
+  const lines = [];
+  let current = '';
+  words.forEach(word=>{
+    const candidate = current ? current + ' ' + word : word;
+    const w = measureTextWidth(candidate, font, sizePt, letterSpacingPt);
+    if(w > maxWidthPt && current){
+      lines.push(current);
+      current = word;
+    } else {
+      current = candidate;
+    }
+  });
+  if(current) lines.push(current);
+  return lines.length ? lines : [text];
+}
+function drawLineWithSpacing(page, text, x, y, sizePt, font, color, letterSpacingPt){
+  let cursor = x;
+  Array.from(text).forEach(ch=>{
+    page.drawText(ch, { x:cursor, y, size:sizePt, font, color });
+    cursor += font.widthOfTextAtSize(ch, sizePt) + letterSpacingPt;
+  });
+}
+// spec의 w/h/x/y/size는 1075px 기준 디자인 px 값, scale은 (실제 페이지 폭 pt / 1075)
+function drawTextBox(page, text, spec, font, color, scale){
+  const sizePt = spec.size * scale;
+  const lsPt = sizePt * (spec.ls/100);
+  const boxWPt = spec.w * scale;
+  const boxXPt = spec.x * scale;
+  const boxTopPt = spec.y * scale;
+  const boxHPt = spec.h * scale;
+  const lineHeightPt = sizePt * 1.22;
+
+  const lines = splitIntoLines(text, font, sizePt, lsPt, boxWPt);
+  const totalTextHeight = lines.length * lineHeightPt;
+  const startTopPt = boxTopPt + Math.max(0, (boxHPt - totalTextHeight) / 2);
+  const pageHeight = page.getSize().height;
+
+  lines.forEach((line, i)=>{
+    const lineWidth = measureTextWidth(line, font, sizePt, lsPt);
+    const lineX = spec.align === 'center' ? boxXPt + (boxWPt - lineWidth) / 2 : boxXPt;
+    const lineTopPt = startTopPt + i * lineHeightPt;
+    const baselineFromTop = lineTopPt + sizePt * 0.82;
+    const pdfY = pageHeight - baselineFromTop;
+    drawLineWithSpacing(page, line, lineX, pdfY, sizePt, font, color, lsPt);
+  });
+}
 
 let themeState = { view:'concept', activeConceptId:null, selectedConceptId:'frame', selectedDesignId:'frame-1', selectedHeadlineIdx:0 };
 
@@ -903,6 +983,19 @@ async function buildPdf(){
     const fontBytes = await fetch('https://cdn.jsdelivr.net/fontsource/fonts/noto-sans-kr@latest/korean-700-normal.ttf').then(r=>r.arrayBuffer());
     const font = await out.embedFont(fontBytes, { subset:true });
 
+    const fontCache = {};
+    async function getSuitFont(weight){
+      if(fontCache[weight]) return fontCache[weight];
+      const path = FONT_FILES[weight];
+      const bytes = await fetch(path).then(r=>{
+        if(!r.ok) throw new Error(`${path} 폰트를 찾을 수 없습니다.`);
+        return r.arrayBuffer();
+      });
+      const embedded = await out.embedFont(bytes, { subset:true });
+      fontCache[weight] = embedded;
+      return embedded;
+    }
+
     const selConcept = findConcept(themeState.selectedConceptId) || CONCEPTS[0];
     const selDesign = findDesign(selConcept, themeState.selectedDesignId) || selConcept.designs[0];
     const accent = rgb(selDesign.accent[0], selDesign.accent[1], selDesign.accent[2]);
@@ -911,6 +1004,7 @@ async function buildPdf(){
       const pageIdx = selected.indexOf(1);
       const page = out.getPage(pageIdx);
       const { width, height } = page.getSize();
+      const scale = width / 1075;
 
       // 실제 표지 디자인 이미지를 페이지 전체에 채워 넣기
       if(selDesign.img){
@@ -921,10 +1015,10 @@ async function buildPdf(){
       }
 
       const coverText = document.getElementById('f_cover').value.trim();
-      if(coverText){
-        page.drawRectangle({ x:0, y:height-220, width, height:140, color: accent, opacity:0.88 });
-        const size = 34;
-        page.drawText(coverText, { x:40, y:height-160, size, font, color: rgb(1,1,1) });
+      if(coverText && selDesign.title){
+        setStatus('표지 문구를 배치하는 중...');
+        const titleFont = await getSuitFont(selDesign.title.font);
+        drawTextBox(page, coverText, selDesign.title, titleFont, rgb(0,0,0), scale);
       }
     }
 
@@ -933,10 +1027,12 @@ async function buildPdf(){
       const pageIdx = selected.indexOf(3);
       const page = out.getPage(pageIdx);
       const { width, height } = page.getSize();
+      const scale = width / 1075;
       if(sloganText){
-        const size = 20;
-        const tw = font.widthOfTextAtSize(sloganText, size);
-        page.drawText(sloganText, { x:(width-tw)/2 - 40, y:height*0.42, size, font, color: accent });
+        setStatus('학원명 문구를 배치하는 중...');
+        const sloganFont = await getSuitFont(PAGE3_SLOGAN_SPEC.font);
+        const sloganColor = rgb(PAGE3_SLOGAN_SPEC.color[0], PAGE3_SLOGAN_SPEC.color[1], PAGE3_SLOGAN_SPEC.color[2]);
+        drawTextBox(page, sloganText, PAGE3_SLOGAN_SPEC, sloganFont, sloganColor, scale);
       }
       if(logoDataUrl){
         setStatus('로고 이미지를 합성하는 중...');
@@ -944,8 +1040,12 @@ async function buildPdf(){
         const logoBytes = await resp.arrayBuffer();
         const isPng = logoDataUrl.startsWith('data:image/png');
         const img = isPng ? await out.embedPng(logoBytes) : await out.embedJpg(logoBytes);
-        const dims = img.scaleToFit(160,90);
-        page.drawImage(img, { x:(width-dims.width)/2, y:height*0.28, width:dims.width, height:dims.height });
+        const boxWPt = PAGE3_LOGO_SPEC.w * scale;
+        const boxHPt = PAGE3_LOGO_SPEC.h * scale;
+        const dims = img.scaleToFit(boxWPt, boxHPt);
+        const x = (width - dims.width) / 2;
+        const y = PAGE3_LOGO_SPEC.marginBottom * scale;
+        page.drawImage(img, { x, y, width:dims.width, height:dims.height });
       }
     }
 
