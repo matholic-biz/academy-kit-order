@@ -106,15 +106,17 @@
   .modal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;}
   .modal-head h3{font-size:17px;margin:0;}
   .modal-close{border:none;background:none;font-size:20px;color:var(--muted);cursor:pointer;}
-  .chapter{border:1px solid var(--line);border-radius:12px;margin-bottom:12px;overflow:hidden;}
+  .chapter{border:1px solid var(--line);border-radius:12px;margin-bottom:12px;}
   .chapter-head{display:flex;align-items:center;justify-content:space-between;background:#F7FAF9;padding:10px 16px;
-    cursor:pointer;user-select:none;gap:10px;}
+    cursor:pointer;user-select:none;gap:10px;border-radius:12px 12px 0 0;}
   .chapter-head .title{font-weight:700;font-size:13.5px;display:flex;align-items:center;gap:8px;}
   .chapter-head .meta{font-size:11.5px;color:var(--body);display:flex;align-items:center;gap:10px;}
   .lockbadge{font-size:10px;color:var(--seafoam);font-weight:700;border:1px solid var(--seafoam);border-radius:5px;padding:1px 6px;}
-  .chapter-body{padding:14px 16px;display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:10px;}
+  .chapter-body{padding:14px 16px;display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:10px;border-radius:0 0 12px 12px;}
   .page-card{border:1px solid var(--line);border-radius:8px;padding:5px;text-align:center;font-size:10.5px;
-    color:var(--body);position:relative;}
+    color:var(--body);position:relative;background:#fff;cursor:zoom-in;
+    transition:transform .18s ease, box-shadow .18s ease;}
+  .page-card:hover{transform:scale(1.9);z-index:6;box-shadow:0 14px 30px rgba(16,40,43,.32);border-color:var(--seafoam);}
   .page-card img{width:100%;border-radius:4px;border:1px solid #eee;margin-bottom:4px;}
   .page-card label{display:flex;align-items:flex-start;gap:4px;cursor:pointer;}
   .page-card input{margin-top:2px;accent-color:var(--seafoam);flex:none;}
@@ -192,12 +194,12 @@
 <div class="topbar">
   <span class="brand">MATHOLIC</span>
   <span class="x">×</span>
-  <span class="partner">학원맞춤키트</span>
+  <span class="partner">우리학원브랜드북</span>
   <button class="guide-btn" id="openGuideVideo">▶ 사용 가이드 보기</button>
 </div>
 
 <div class="cat-tabs">
-  <button class="cat-tab active" data-cat="kit">학원맞춤키트</button>
+  <button class="cat-tab active" data-cat="kit">우리학원브랜드북</button>
   <button class="cat-tab" data-cat="sign">현판 주문</button>
   <button class="cat-tab" data-cat="welcome">웰컴키트 주문</button>
 </div>
@@ -206,7 +208,7 @@
 <div class="wrap">
   <div class="center">
     <span class="pill">MATHOLIC 가맹학원 전용</span>
-    <h1 class="hero">우리 학원 이름이 새겨진<br>학원맞춤키트를 제작해드립니다</h1>
+    <h1 class="hero">우리 학원의 색깔이 담긴<br>우리학원 브랜드북을 제작해드립니다.</h1>
     <p class="sub">원하시는 구성을 고르시고, 받아보실 정보를 입력해주세요.</p>
   </div>
 
@@ -350,7 +352,7 @@
       <div class="field"><label>연락처</label><input id="sign_phone" placeholder="010-0000-0000"></div>
       <div class="field"><label>이메일</label><input id="sign_email" placeholder="example@matholic.net"></div>
     </div>
-    <div class="field"><label>설치 · 배송 주소</label><input id="sign_addr" placeholder="현판을 설치할 주소"></div>
+    <div class="field"><label>설치 · 배송 주소</label><input id="sign_addr" placeholder="현판을 받을 주소"></div>
   </div>
 
   <button class="btn primary" id="btnSubmitSign" style="width:100%;margin-top:24px;">현판 신청하기</button>
@@ -363,21 +365,15 @@
 <div class="wrap">
   <div class="center">
     <span class="pill">MATHOLIC 가맹학원 전용</span>
-    <h1 class="hero">신규 원생을 위한<br>웰컴키트를 제작해드립니다</h1>
-    <p class="sub">학원명·문구와 수량을 입력해주시면 제작을 도와드립니다.</p>
+    <h1 class="hero">프리미엄 개설에 대한<br>웰컴키트를 드립니다</h1>
   </div>
 
   <div class="sign-preview">
     <img src="assets/welcome/welcome-kit.png" alt="웰컴키트 구성 (박스, MATHOLIC 디퓨저, 매쓰홀릭 학습키트 3종)">
   </div>
-  <p class="note center" style="text-align:center;">웰컴 박스 + MATHOLIC 디퓨저 + 매쓰홀릭 학습키트 3종</p>
+  <p class="note center" style="text-align:center;">웰컴박스+디퓨져+수학개념카드</p>
 
   <div class="field-list">
-    <div class="field"><label>웰컴키트에 새길 문구 (학원명)</label><input id="wel_text" placeholder="예: OO수학학원"></div>
-    <div class="row2">
-      <div class="field"><label>수량</label><input id="wel_qty" placeholder="예: 10개"></div>
-      <div class="field"><label>담당자</label><input id="wel_manager" placeholder="담당자 성함"></div>
-    </div>
     <div class="row2">
       <div class="field"><label>연락처</label><input id="wel_phone" placeholder="010-0000-0000"></div>
       <div class="field"><label>이메일</label><input id="wel_email" placeholder="example@matholic.net"></div>
@@ -902,14 +898,16 @@ document.getElementById('btnSendEmail').onclick = sendToVendor;
 updateEmailUi();
 
 // ===================== 현판 / 웰컴키트 : PDF 없이 바로 신청 =====================
-async function submitSimpleOrder(orderType, fieldIds, btn, statusEl){
+async function submitSimpleOrder(orderType, fieldIds, btn, statusEl, requiredField){
   if(!GAS_WEBHOOK_URL){
     statusEl.textContent = '신청 접수가 아직 설정되지 않았습니다. 관리자에게 문의해주세요.';
     return;
   }
   const values = {};
   for(const key in fieldIds){ values[key] = document.getElementById(fieldIds[key]).value.trim(); }
-  if(!values.text){ statusEl.textContent = '문구(학원명)를 입력해주세요.'; return; }
+  const reqKey = requiredField || 'text';
+  const reqLabel = { text:'문구(학원명)', phone:'연락처' }[reqKey] || reqKey;
+  if(!values[reqKey]){ statusEl.textContent = `${reqLabel}를 입력해주세요.`; return; }
 
   btn.disabled = true;
   statusEl.textContent = '신청을 접수하는 중...';
@@ -939,8 +937,8 @@ document.getElementById('btnSubmitSign').onclick = ()=> submitSimpleOrder('sign'
 }, document.getElementById('btnSubmitSign'), document.getElementById('signStatus'));
 
 document.getElementById('btnSubmitWelcome').onclick = ()=> submitSimpleOrder('welcome', {
-  text:'wel_text', qty:'wel_qty', manager:'wel_manager', phone:'wel_phone', email:'wel_email', address:'wel_addr',
-}, document.getElementById('btnSubmitWelcome'), document.getElementById('welcomeStatus'));
+  phone:'wel_phone', email:'wel_email', address:'wel_addr',
+}, document.getElementById('btnSubmitWelcome'), document.getElementById('welcomeStatus'), 'phone');
 
 // ===================== PDF 조립 =====================
 function setStatus(msg, isErr){
