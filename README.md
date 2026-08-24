@@ -11,6 +11,7 @@ academy-kit-order/
 │  ├─ guide-video.mp4    ← 상단 "사용 가이드 보기" 버튼에서 재생되는 안내 영상
 │  ├─ covers/            ← 표지 디자인 실제 이미지 (frame-1~3, compass-1~3, essence-1~3)
 │  ├─ signboard/          ← 현판 디자인 이미지 (sign-luxury-gold.png)
+│  ├─ welcome/            ← 웰컴키트 구성 이미지 (welcome-kit.png)
 │  └─ fonts/              ← 표지·학원명 문구용 SUIT 폰트 (Regular/Light/Medium/SemiBold)
 ├─ google-apps-script/
 │  └─ Code.gs            ← 이메일 자동 발송 + 신청내역 시트 기록용 구글 앱스 스크립트
@@ -73,10 +74,10 @@ academy-kit-order/
 ## 아직 안 되는 것 (다음 단계)
 1. **고등부시험대비 · 수능올케어 · 모바일보고서 페이지** — 이번 마스터 PDF(64p)에는 포함되어 있지 않아
    선택 목록에 없습니다. 해당 페이지를 디자인해서 `assets/master.pdf`에 추가하면 목록에 넣을 수 있습니다.
-2. **표지/로고 합성 좌표** — 지금은 1p(표지 문구), 3p(학원명+로고) 위치에 임의로 좌표를 잡아뒀습니다.
-   실제 디자인 좌표와 다르면 미세 조정이 필요합니다. "PDF 생성하기"로 나온 결과를 보고 위치를 알려주시면
-   `index.html` 안의 `drawText`/`drawImage` 좌표 값만 조정하면 됩니다.
-3. **웰컴키트 디자인 이미지** — 아직 실제 구성 이미지가 없어 안내 문구만 표시됩니다. 디자인이 나오면 넣어드릴게요.
+2. **표지/로고 합성 좌표** — 디자인별 텍스트 박스 위치·크기·폰트·자간은 `CONCEPTS` 배열의 `title` 값과
+   `PAGE3_SLOGAN_SPEC`/`PAGE3_LOGO_SPEC` 값으로 관리됩니다. "PDF 생성하기"로 나온 결과를 보고 위치가
+   어긋나면 캡처해서 알려주시면 좌표를 다시 조정해드립니다.
+3. **웰컴키트 디자인 이미지** — 반영 완료 (`assets/welcome/welcome-kit.png`).
 
 ## 깃허브 페이지로 배포하는 방법
 1. 이 폴더(`academy-kit-order`) 전체를 원하시는 깃허브 저장소에 그대로 커밋 & 푸시합니다.
