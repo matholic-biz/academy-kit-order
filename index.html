@@ -192,9 +192,11 @@
 <body>
 
 <div class="topbar">
-  <span class="brand">MATHOLIC</span>
-  <span class="x">×</span>
-  <span class="partner">학원맞춤키트</span>
+  <span id="goHomeBtn" style="display:flex;align-items:center;gap:12px;cursor:pointer;">
+    <span class="brand">MATHOLIC</span>
+    <span class="x">×</span>
+    <span class="partner">학원맞춤키트</span>
+  </span>
   <button class="guide-btn" id="openGuideVideo">▶ 사용 가이드 보기</button>
 </div>
 
@@ -314,6 +316,7 @@
     <div id="previewWrap"><iframe id="previewFrame"></iframe></div>
     <button class="btn primary" id="btnSendEmail" style="width:100%;margin-top:10px;display:none;">인쇄업체로 이메일 발송하기</button>
     <div id="emailStatus" style="font-size:12.5px;color:var(--muted);margin-top:8px;white-space:pre-wrap;"></div>
+    <button class="btn plain" id="btnRestartKit" style="width:100%;margin-top:10px;display:none;">처음으로</button>
 
     <div class="warnbox" id="emailWarnbox">
       메일 자동 발송이 아직 연결되지 않았습니다. 관리자에게 문의해주세요.
@@ -356,6 +359,7 @@
 
   <button class="btn primary" id="btnSubmitSign" style="width:100%;margin-top:24px;">현판 신청하기</button>
   <div id="signStatus" style="font-size:12.5px;color:var(--muted);margin-top:10px;white-space:pre-wrap;"></div>
+  <button class="btn plain" id="btnRestartSign" style="width:100%;margin-top:10px;display:none;">처음으로</button>
 </div>
 </div>
 
@@ -382,6 +386,7 @@
 
   <button class="btn primary" id="btnSubmitWelcome" style="width:100%;margin-top:24px;">웰컴키트 신청하기</button>
   <div id="welcomeStatus" style="font-size:12.5px;color:var(--muted);margin-top:10px;white-space:pre-wrap;"></div>
+  <button class="btn plain" id="btnRestartWelcome" style="width:100%;margin-top:10px;display:none;">처음으로</button>
 </div>
 </div>
 
@@ -454,6 +459,12 @@ function goCat(cat){
   window.scrollTo({top:0, behavior:'smooth'});
 }
 document.querySelectorAll('.cat-tab').forEach(t=> t.onclick = ()=> goCat(t.dataset.cat));
+
+// ===================== 홈으로 이동 / 처음으로 (신청 완료 후 초기화) =====================
+document.getElementById('goHomeBtn').onclick = ()=> location.reload();
+document.getElementById('btnRestartKit').onclick = ()=> location.reload();
+document.getElementById('btnRestartSign').onclick = ()=> location.reload();
+document.getElementById('btnRestartWelcome').onclick = ()=> location.reload();
 
 // ===================== 사용 가이드 영상 모달 =====================
 const guideOverlay = document.getElementById('guideModalOverlay');
@@ -883,8 +894,9 @@ async function sendToVendor(){
     const data = await res.json().catch(()=>({status:'unknown'}));
     if(data.status === 'ok'){
       statusEl.textContent = '인쇄업체로 이메일이 발송되었습니다. 신청해주셔서 감사합니다.';
+      document.getElementById('btnRestartKit').style.display = 'block';
     } else {
-      statusEl.textContent = '발송 중 문제가 발생했습니다: ' + (data.message || '알 수 없는 오류') + ' (다운로드한 PDF를 직접 첨부해서 보내주세요.)';
+      statusEl.textContent = '발송 중 문제가 발생했습니다: ' + (data.message || '알 수 없는 오류') + ' 잠시 후 다시 시도해주세요.';
     }
   }catch(err){
     console.error(err);
@@ -920,6 +932,8 @@ async function submitSimpleOrder(orderType, fieldIds, btn, statusEl, requiredFie
     const data = await res.json().catch(()=>({status:'unknown'}));
     if(data.status === 'ok'){
       statusEl.textContent = '신청이 접수되었습니다. 담당자가 확인 후 연락드릴게요.';
+      const restartId = orderType === 'sign' ? 'btnRestartSign' : 'btnRestartWelcome';
+      document.getElementById(restartId).style.display = 'block';
     } else {
       statusEl.textContent = '접수 중 문제가 발생했습니다: ' + (data.message || '알 수 없는 오류');
     }
