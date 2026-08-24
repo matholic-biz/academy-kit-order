@@ -17,6 +17,10 @@
   .topbar .brand{font-weight:800;font-size:15px;letter-spacing:.02em;}
   .topbar .x{color:var(--muted);font-weight:400;}
   .topbar .partner{font-weight:800;font-size:15px;color:var(--seafoam);}
+  .guide-btn{margin-left:auto;background:var(--paleMint);color:var(--deepTeal);border:1px solid var(--lightMint);
+    border-radius:999px;padding:8px 16px;font-size:12.5px;font-weight:700;cursor:pointer;
+    display:flex;align-items:center;gap:6px;white-space:nowrap;}
+  .guide-btn:hover{background:var(--lightMint);}
 
   .wrap{max-width:640px;margin:0 auto;padding:56px 20px 120px;}
 
@@ -152,164 +156,187 @@
     padding:12px 16px;margin-top:14px;}
   .theme-swatch{width:28px;height:28px;border-radius:8px;flex:none;}
 
+  /* 사용 가이드 영상 모달 */
+  .video-modal .modal{max-width:960px;padding:20px 22px 26px;}
+  .video-frame{position:relative;width:100%;aspect-ratio:16/9;background:#000;border-radius:12px;overflow:hidden;margin-top:10px;}
+  .video-frame video{width:100%;height:100%;display:block;}
+
   @media (max-width:600px){.row2{grid-template-columns:1fr;}.step{width:80px;}.step-line{max-width:40px;}}
 </style>
 </head>
 <body>
 
-<div class="topbar">
-  <span class="brand">MATHOLIC</span>
-  <span class="x">×</span>
-  <span class="partner">학원맞춤키트</span>
+<div data-hf-id="hf-mndw" class="topbar">
+  <span data-hf-id="hf-dtel" class="brand">MATHOLIC</span>
+  <span data-hf-id="hf-d1fs" class="x">×</span>
+  <span data-hf-id="hf-bm4m" class="partner">학원맞춤키트</span>
+  <button data-hf-id="hf-vxh2" class="guide-btn" id="openGuideVideo">▶ 사용 가이드 보기</button>
 </div>
 
-<div class="wrap">
-  <div class="center">
-    <span class="pill">MATHOLIC 가맹학원 전용</span>
-    <h1 class="hero">우리 학원 이름이 새겨진<br>학원맞춤키트를 제작해드립니다</h1>
-    <p class="sub">원하시는 구성을 고르시고, 받아보실 정보를 입력해주세요.</p>
+<div data-hf-id="hf-wnm4" class="wrap">
+  <div data-hf-id="hf-0oij" class="center">
+    <span data-hf-id="hf-hyqc" class="pill">MATHOLIC 가맹학원 전용</span>
+    <h1 data-hf-id="hf-b1ku" class="hero">우리 학원 이름이 새겨진<br data-hf-id="hf-x5px">학원맞춤키트를 제작해드립니다</h1>
+    <p data-hf-id="hf-kzo2" class="sub">원하시는 구성을 고르시고, 받아보실 정보를 입력해주세요.</p>
   </div>
 
-  <div class="steps">
-    <div class="step active" data-step="1"><div class="circle">1</div><div class="label">디자인</div></div>
-    <div class="step-line"></div>
-    <div class="step" data-step="2"><div class="circle">2</div><div class="label">구성 선택</div></div>
-    <div class="step-line"></div>
-    <div class="step" data-step="3"><div class="circle">3</div><div class="label">학원 정보</div></div>
-    <div class="step-line"></div>
-    <div class="step" data-step="4"><div class="circle">4</div><div class="label">생성 · 발송</div></div>
+  <div data-hf-id="hf-70xd" class="steps">
+    <div data-hf-id="hf-yypt" class="step active" data-step="1"><div data-hf-id="hf-fwf3" class="circle">1</div><div data-hf-id="hf-ixbu" class="label">디자인</div></div>
+    <div data-hf-id="hf-n0vx" class="step-line"></div>
+    <div data-hf-id="hf-ihvk" class="step" data-step="2"><div data-hf-id="hf-fi42" class="circle">2</div><div data-hf-id="hf-ccq4" class="label">구성 선택</div></div>
+    <div data-hf-id="hf-tlch" class="step-line"></div>
+    <div data-hf-id="hf-lh55" class="step" data-step="3"><div data-hf-id="hf-f3t1" class="circle">3</div><div data-hf-id="hf-jhc0" class="label">학원 정보</div></div>
+    <div data-hf-id="hf-us9k" class="step-line"></div>
+    <div data-hf-id="hf-alni" class="step" data-step="4"><div data-hf-id="hf-hvy8" class="circle">4</div><div data-hf-id="hf-vlbo" class="label">생성 · 발송</div></div>
   </div>
 
   <!-- STEP 1: 디자인 테마 -->
-  <section class="panel active" data-panel="1">
-    <h2>표지 디자인을 골라주세요</h2>
-    <p class="desc">마음에 드는 디자인을 누르시면 선택됩니다. 로고와 문구는 다음 단계에서 직접 입력하실 수 있어요.</p>
+  <section data-hf-id="hf-00wp" class="panel active" data-panel="1">
+    <h2 data-hf-id="hf-24p9">표지 디자인을 골라주세요</h2>
+    <p data-hf-id="hf-rdta" class="desc">마음에 드는 디자인을 누르시면 선택됩니다. 로고와 문구는 다음 단계에서 직접 입력하실 수 있어요.</p>
 
-    <div class="picker-card" id="openThemeGallery">
-      <div class="picker-icon">🎨</div>
-      <div class="picker-title">표지 디자인 고르기</div>
-      <div class="picker-sub">눌러서 디자인을 살펴보세요</div>
+    <div data-hf-id="hf-3i1k" class="picker-card" id="openThemeGallery">
+      <div data-hf-id="hf-awhw" class="picker-icon">🎨</div>
+      <div data-hf-id="hf-gkx3" class="picker-title">표지 디자인 고르기</div>
+      <div data-hf-id="hf-ekrv" class="picker-sub">눌러서 디자인을 살펴보세요</div>
     </div>
 
-    <div class="theme-summary" id="themeSummary" style="display:none;">
-      <div class="theme-swatch" id="themeSummarySwatch"></div>
-      <div style="flex:1;"><strong id="themeSummaryName"></strong><div class="picker-sub" id="themeSummarySub"></div></div>
-      <a id="reopenThemeGallery" style="font-size:12.5px;color:var(--seafoam);font-weight:700;cursor:pointer;text-decoration:underline;">다시 고르기</a>
+    <div data-hf-id="hf-kh0m" class="theme-summary" id="themeSummary" style="display:none;">
+      <div data-hf-id="hf-3gtr" class="theme-swatch" id="themeSummarySwatch"></div>
+      <div data-hf-id="hf-4qfq" style="flex:1;"><strong data-hf-id="hf-8uff" id="themeSummaryName"></strong><div data-hf-id="hf-9jcq" class="picker-sub" id="themeSummarySub"></div></div>
+      <a data-hf-id="hf-6uyq" id="reopenThemeGallery" style="font-size:12.5px;color:var(--seafoam);font-weight:700;cursor:pointer;text-decoration:underline;">다시 고르기</a>
     </div>
-    <p class="note">※ 지금은 색상 테마 예시입니다. 실제 인쇄 디자인 시안이 준비되면 그 이미지로 교체해드릴게요.</p>
+    <p data-hf-id="hf-cjuh" class="note">※ 지금은 색상 테마 예시입니다. 실제 인쇄 디자인 시안이 준비되면 그 이미지로 교체해드릴게요.</p>
 
-    <div class="nav">
-      <span></span>
-      <button class="btn primary" data-next="2">다음</button>
+    <div data-hf-id="hf-e5hr" class="nav">
+      <span data-hf-id="hf-uckh"></span>
+      <button data-hf-id="hf-2zcq" class="btn primary" data-next="2">다음</button>
     </div>
   </section>
 
   <!-- STEP 2: 구성 페이지 -->
-  <section class="panel" data-panel="2">
-    <h2>구성 페이지를 골라주세요</h2>
-    <p class="desc">챕터별로 필요한 페이지만 선택할 수 있어요. 표지·마무리 페이지는 공통 필수 구성이라 고정되어 있어요.</p>
+  <section data-hf-id="hf-hygk" class="panel" data-panel="2">
+    <h2 data-hf-id="hf-okl8">구성 페이지를 골라주세요</h2>
+    <p data-hf-id="hf-pm05" class="desc">챕터별로 필요한 페이지만 선택할 수 있어요. 표지·마무리 페이지는 공통 필수 구성이라 고정되어 있어요.</p>
 
-    <div class="picker-card" id="openGallery">
-      <div class="picker-icon">🖼</div>
-      <div class="picker-title">구성 페이지 고르기</div>
-      <div class="picker-sub">눌러서 전체 페이지를 살펴보세요</div>
+    <div data-hf-id="hf-k5mj" class="picker-card" id="openGallery">
+      <div data-hf-id="hf-4ovl" class="picker-icon">🖼</div>
+      <div data-hf-id="hf-1164" class="picker-title">구성 페이지 고르기</div>
+      <div data-hf-id="hf-p5m9" class="picker-sub">눌러서 전체 페이지를 살펴보세요</div>
     </div>
 
-    <div class="selection-summary">
-      <div><span class="count" id="totalPages">0</span>페이지가 선택되어 있어요</div>
-      <a id="reopenGallery">다시 고르기</a>
+    <div data-hf-id="hf-0991" class="selection-summary">
+      <div data-hf-id="hf-45x3"><span data-hf-id="hf-wt4e" class="count" id="totalPages">0</span>페이지가 선택되어 있어요</div>
+      <a data-hf-id="hf-hgtc" id="reopenGallery">다시 고르기</a>
     </div>
 
-    <div class="nav">
-      <button class="btn plain" data-prev="1">이전</button>
-      <button class="btn primary" data-next="3">다음</button>
+    <div data-hf-id="hf-8fhr" class="nav">
+      <button data-hf-id="hf-qbvr" class="btn plain" data-prev="1">이전</button>
+      <button data-hf-id="hf-74hn" class="btn primary" data-next="3">다음</button>
     </div>
   </section>
 
   <!-- STEP 3: 학원 정보 -->
-  <section class="panel" data-panel="3">
-    <h2>받으실 정보를 입력해주세요</h2>
-    <p class="desc">표지에 들어갈 문구와 로고, 그리고 발송지 정보입니다.</p>
+  <section data-hf-id="hf-iq4d" class="panel" data-panel="3">
+    <h2 data-hf-id="hf-bgq7">받으실 정보를 입력해주세요</h2>
+    <p data-hf-id="hf-jusl" class="desc">표지에 들어갈 문구와 로고, 그리고 발송지 정보입니다.</p>
 
-    <div class="field-list">
-      <div class="row2">
-        <div class="field"><label>학원명</label><input id="f_name" placeholder="예: OO수학학원"></div>
-        <div class="field"><label>담당자</label><input id="f_manager" placeholder="담당자 성함"></div>
+    <div data-hf-id="hf-wuw9" class="field-list">
+      <div data-hf-id="hf-5t86" class="row2">
+        <div data-hf-id="hf-0ztw" class="field"><label data-hf-id="hf-3fc3">학원명</label><input data-hf-id="hf-y6xq" id="f_name" placeholder="예: OO수학학원"></div>
+        <div data-hf-id="hf-bxgc" class="field"><label data-hf-id="hf-tos2">담당자</label><input data-hf-id="hf-i2jk" id="f_manager" placeholder="담당자 성함"></div>
       </div>
-      <div class="row2">
-        <div class="field"><label>연락처</label><input id="f_phone" placeholder="010-0000-0000"></div>
-        <div class="field"><label>이메일</label><input id="f_email" placeholder="example@matholic.net"></div>
+      <div data-hf-id="hf-v7h6" class="row2">
+        <div data-hf-id="hf-aqj9" class="field"><label data-hf-id="hf-bqc2">연락처</label><input data-hf-id="hf-jtzq" id="f_phone" placeholder="010-0000-0000"></div>
+        <div data-hf-id="hf-b4ua" class="field"><label data-hf-id="hf-6f0j">이메일</label><input data-hf-id="hf-j94r" id="f_email" placeholder="example@matholic.net"></div>
       </div>
-      <div class="row2">
-        <div class="field"><label>희망 부수</label><input id="f_qty" placeholder="예: 100부"></div>
-        <div class="field"><label>배송 주소</label><input id="f_addr" placeholder="인쇄물을 받을 주소"></div>
+      <div data-hf-id="hf-vls7" class="row2">
+        <div data-hf-id="hf-d4df" class="field"><label data-hf-id="hf-6bue">희망 부수</label><input data-hf-id="hf-0pby" id="f_qty" placeholder="예: 100부"></div>
+        <div data-hf-id="hf-diog" class="field"><label data-hf-id="hf-96py">배송 주소</label><input data-hf-id="hf-txtb" id="f_addr" placeholder="인쇄물을 받을 주소"></div>
       </div>
-      <div class="row2">
-        <div class="field"><label>표지 문구 (1p 큰 제목)</label><input id="f_cover" placeholder="예: THE FOCUS" data-autofilled="1"></div>
-        <div class="field"><label>학원명 문구 (3p)</label><input id="f_slogan" placeholder="예: OO수학학원"></div>
+      <div data-hf-id="hf-w038" class="row2">
+        <div data-hf-id="hf-cbrd" class="field"><label data-hf-id="hf-k06g">표지 문구 (1p 큰 제목)</label><input data-hf-id="hf-elvv" id="f_cover" placeholder="예: THE FOCUS" data-autofilled="1"></div>
+        <div data-hf-id="hf-cq2e" class="field"><label data-hf-id="hf-ig9h">학원명 문구 (3p)</label><input data-hf-id="hf-kft9" id="f_slogan" placeholder="예: OO수학학원"></div>
       </div>
-      <div class="field">
-        <label>로고 이미지 (3p에 삽입, PNG 권장)</label>
-        <input type="file" id="f_logo" accept="image/png,image/jpeg">
-        <div class="logo-preview" id="logoPreview">로고 미리보기</div>
+      <div data-hf-id="hf-8cp3" class="field">
+        <label data-hf-id="hf-bcch">로고 이미지 (3p에 삽입, PNG 권장)</label>
+        <input data-hf-id="hf-571n" type="file" id="f_logo" accept="image/png,image/jpeg">
+        <div data-hf-id="hf-p8b5" class="logo-preview" id="logoPreview">로고 미리보기</div>
       </div>
     </div>
-    <p class="note">※ 문구·로고 배치 좌표는 예시값입니다. 생성된 PDF에서 위치가 다르면 알려주시면 조정해드립니다.</p>
+    <p data-hf-id="hf-y27y" class="note">※ 문구·로고 배치 좌표는 예시값입니다. 생성된 PDF에서 위치가 다르면 알려주시면 조정해드립니다.</p>
 
-    <div class="nav">
-      <button class="btn plain" data-prev="2">이전</button>
-      <button class="btn primary" data-next="4">다음</button>
+    <div data-hf-id="hf-816q" class="nav">
+      <button data-hf-id="hf-plpg" class="btn plain" data-prev="2">이전</button>
+      <button data-hf-id="hf-ybuk" class="btn primary" data-next="4">다음</button>
     </div>
   </section>
 
   <!-- STEP 4 -->
-  <section class="panel" data-panel="4">
-    <h2>PDF를 생성하고 발송해주세요</h2>
-    <p class="desc">선택한 페이지를 실제 순서대로 이어붙이고, 표지 문구·로고를 합성합니다. 브라우저에서 직접 처리되며 서버에는 업로드되지 않습니다.</p>
+  <section data-hf-id="hf-za8a" class="panel" data-panel="4">
+    <h2 data-hf-id="hf-sma8">PDF를 생성하고 발송해주세요</h2>
+    <p data-hf-id="hf-50gs" class="desc">선택한 페이지를 실제 순서대로 이어붙이고, 표지 문구·로고를 합성합니다. 브라우저에서 직접 처리되며 서버에는 업로드되지 않습니다.</p>
 
-    <button class="btn primary" id="btnBuild" style="width:100%;">PDF 생성하기</button>
-    <div id="status"></div>
-    <div id="previewWrap"><iframe id="previewFrame"></iframe></div>
-    <a class="btn plain" id="btnDownload" style="display:none;width:100%;text-align:center;text-decoration:none;margin-top:10px;">PDF 다운로드</a>
-    <button class="btn primary" id="btnSendEmail" style="width:100%;margin-top:10px;display:none;">인쇄업체로 이메일 발송하기</button>
-    <div id="emailStatus" style="font-size:12.5px;color:var(--muted);margin-top:8px;white-space:pre-wrap;"></div>
+    <button data-hf-id="hf-j7f0" class="btn primary" id="btnBuild" style="width:100%;">PDF 생성하기</button>
+    <div data-hf-id="hf-odm3" id="status"></div>
+    <div data-hf-id="hf-8baj" id="previewWrap"><iframe data-hf-id="hf-1jbh" id="previewFrame"></iframe></div>
+    <a data-hf-id="hf-qx6o" class="btn plain" id="btnDownload" style="display:none;width:100%;text-align:center;text-decoration:none;margin-top:10px;">PDF 다운로드</a>
+    <button data-hf-id="hf-r6b5" class="btn primary" id="btnSendEmail" style="width:100%;margin-top:10px;display:none;">인쇄업체로 이메일 발송하기</button>
+    <div data-hf-id="hf-0rys" id="emailStatus" style="font-size:12.5px;color:var(--muted);margin-top:8px;white-space:pre-wrap;"></div>
 
-    <div class="warnbox" id="emailWarnbox">
+    <div data-hf-id="hf-wfyq" class="warnbox" id="emailWarnbox">
       메일 자동 발송은 아직 연결되지 않았습니다. PDF를 다운로드한 뒤, 인쇄업체 웹하드 또는 이메일에 직접 첨부해서 보내주세요.
     </div>
 
-    <div class="nav">
-      <button class="btn plain" data-prev="3">이전</button>
-      <span></span>
+    <div data-hf-id="hf-7mvp" class="nav">
+      <button data-hf-id="hf-fjjp" class="btn plain" data-prev="3">이전</button>
+      <span data-hf-id="hf-l73p"></span>
     </div>
   </section>
 </div>
 
 <!-- 디자인 테마 모달 -->
-<div class="modal-overlay" id="themeModalOverlay">
-  <div class="modal">
-    <div class="modal-head">
-      <h3 id="themeModalTitle">표지 컨셉 고르기</h3>
-      <button class="modal-close" id="themeModalClose">×</button>
+<div data-hf-id="hf-uibs" class="modal-overlay" id="themeModalOverlay">
+  <div data-hf-id="hf-keer" class="modal">
+    <div data-hf-id="hf-bu2y" class="modal-head">
+      <h3 data-hf-id="hf-5o5q" id="themeModalTitle">표지 컨셉 고르기</h3>
+      <button data-hf-id="hf-nnpe" class="modal-close" id="themeModalClose">×</button>
     </div>
-    <button class="modal-back" id="themeBackBtn">← 컨셉 목록으로</button>
-    <p class="note" id="themeModalDesc" style="margin-top:0;">먼저 마음에 드는 컨셉을 골라주세요. 컨셉마다 2가지 디자인이 준비되어 있어요.</p>
-    <div id="themeModalBody"></div>
+    <button data-hf-id="hf-sdxf" class="modal-back" id="themeBackBtn">← 컨셉 목록으로</button>
+    <p data-hf-id="hf-s5pl" class="note" id="themeModalDesc" style="margin-top:0;">먼저 마음에 드는 컨셉을 골라주세요. 컨셉마다 2가지 디자인이 준비되어 있어요.</p>
+    <div data-hf-id="hf-toer" id="themeModalBody"></div>
   </div>
 </div>
 
 <!-- 구성 페이지 모달 -->
-<div class="modal-overlay" id="modalOverlay">
-  <div class="modal">
-    <div class="modal-head">
-      <h3>구성 페이지 선택</h3>
-      <button class="modal-close" id="modalClose">×</button>
+<div data-hf-id="hf-kos7" class="modal-overlay" id="modalOverlay">
+  <div data-hf-id="hf-cn6b" class="modal">
+    <div data-hf-id="hf-db66" class="modal-head">
+      <h3 data-hf-id="hf-cx4m">구성 페이지 선택</h3>
+      <button data-hf-id="hf-44ph" class="modal-close" id="modalClose">×</button>
     </div>
-    <p class="note" style="margin-top:0;">🔒 필수 챕터는 고정되어 있어요. 그 외 챕터는 페이지 단위로 자유롭게 선택하세요.</p>
-    <div id="chapters"></div>
-    <div class="nav">
-      <span></span>
-      <button class="btn primary" id="modalDone">선택 완료</button>
+    <p data-hf-id="hf-lasq" class="note" style="margin-top:0;">🔒 필수 챕터는 고정되어 있어요. 그 외 챕터는 페이지 단위로 자유롭게 선택하세요.</p>
+    <div data-hf-id="hf-70kb" id="chapters"></div>
+    <div data-hf-id="hf-af0w" class="nav">
+      <span data-hf-id="hf-me0s"></span>
+      <button data-hf-id="hf-pu0j" class="btn primary" id="modalDone">선택 완료</button>
+    </div>
+  </div>
+</div>
+
+<!-- 사용 가이드 영상 모달 -->
+<div data-hf-id="hf-hn7g" class="modal-overlay video-modal" id="guideModalOverlay">
+  <div data-hf-id="hf-c8va" class="modal">
+    <div data-hf-id="hf-dph7" class="modal-head">
+      <h3 data-hf-id="hf-3wbm">학원맞춤키트 신청 가이드</h3>
+      <button data-hf-id="hf-03cn" class="modal-close" id="guideModalClose">×</button>
+    </div>
+    <p data-hf-id="hf-116v" class="note" style="margin-top:0;">신청 방법을 짧은 영상으로 안내해드립니다.</p>
+    <div data-hf-id="hf-iq3d" class="video-frame">
+      <video data-hf-id="hf-vvpp" id="guideVideoEl" controls playsinline preload="metadata">
+        <source data-hf-id="hf-js1b" src="assets/guide-video.mp4" type="video/mp4">
+        브라우저가 동영상 재생을 지원하지 않습니다. <a data-hf-id="hf-a130" href="assets/guide-video.mp4">영상 다운로드</a>
+      </video>
     </div>
   </div>
 </div>
@@ -329,6 +356,15 @@ function goStep(n){
 }
 document.querySelectorAll('[data-next]').forEach(b=> b.onclick = ()=> goStep(+b.dataset.next));
 document.querySelectorAll('[data-prev]').forEach(b=> b.onclick = ()=> goStep(+b.dataset.prev));
+
+// ===================== 사용 가이드 영상 모달 =====================
+const guideOverlay = document.getElementById('guideModalOverlay');
+const guideVideoEl = document.getElementById('guideVideoEl');
+function openGuideModal(){ guideOverlay.classList.add('show'); }
+function closeGuideModal(){ guideOverlay.classList.remove('show'); guideVideoEl.pause(); }
+document.getElementById('openGuideVideo').onclick = openGuideModal;
+document.getElementById('guideModalClose').onclick = closeGuideModal;
+guideOverlay.addEventListener('click', (e)=>{ if(e.target===guideOverlay) closeGuideModal(); });
 
 // ===================== 페이지 매니페스트 (마스터 PDF 64p 기준) =====================
 const CHAPTERS = [
