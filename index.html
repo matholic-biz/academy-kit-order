@@ -22,6 +22,20 @@
     display:flex;align-items:center;gap:6px;white-space:nowrap;}
   .guide-btn:hover{background:var(--lightMint);}
 
+  /* 상품 카테고리 탭 */
+  .cat-tabs{display:flex;justify-content:center;gap:8px;padding:20px 20px 0;flex-wrap:wrap;}
+  .cat-tab{border:1px solid var(--line);background:#fff;color:var(--body);border-radius:999px;
+    padding:9px 20px;font-size:13px;font-weight:700;cursor:pointer;}
+  .cat-tab:hover{border-color:var(--seafoam);}
+  .cat-tab.active{background:var(--seafoam);border-color:var(--seafoam);color:#fff;}
+  .cat-panel{display:none;}
+  .cat-panel.active{display:block;}
+
+  .sign-preview{max-width:340px;margin:0 auto;border-radius:14px;overflow:hidden;border:1px solid var(--line);}
+  .sign-preview img{width:100%;display:block;}
+  .simple-note{background:var(--paleMint);color:var(--deepTeal);border-radius:10px;padding:12px 16px;
+    font-size:12.5px;text-align:center;margin:0 auto 20px;max-width:400px;}
+
   .wrap{max-width:640px;margin:0 auto;padding:56px 20px 120px;}
 
   .pill{display:inline-block;margin:0 auto 18px;font-size:12.5px;font-weight:700;color:var(--seafoam);
@@ -123,15 +137,24 @@
   .concept-name{font-weight:800;font-size:17px;line-height:1.3;margin-bottom:8px;}
   .concept-sub{font-size:12px;color:var(--body);margin-bottom:14px;min-height:48px;}
   .concept-mini-row{display:flex;gap:6px;}
-  .concept-mini{flex:1;height:36px;border-radius:6px;}
+  .concept-mini{flex:1;height:36px;border-radius:6px;background-size:cover;background-position:center;}
 
-  .design-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:22px;}
+  .design-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:34px;}
   .design-card{cursor:pointer;text-align:left;}
-  .design-card-wrap{overflow:visible;}
-  .design-card-inner{position:relative;border-radius:12px;height:170px;overflow:hidden;
-    border:3px solid transparent;transition:transform .25s ease, box-shadow .25s ease, border-color .15s;
-    transform-origin:center;}
-  .design-card:hover .design-card-inner{transform:scale(1.08);box-shadow:0 16px 34px rgba(16,40,43,.25);z-index:2;position:relative;}
+  .design-card-wrap{overflow:visible;perspective:1000px;padding:6px 26px 22px 6px;}
+  .design-card-inner{position:relative;border-radius:3px 8px 8px 3px;aspect-ratio:1075/1519;height:auto;overflow:hidden;
+    border:3px solid transparent;background-size:cover;background-position:center;
+    transform:perspective(1000px) rotateY(-20deg);
+    transform-style:preserve-3d;
+    box-shadow:16px 18px 28px rgba(16,40,43,.28), inset -10px 0 16px rgba(0,0,0,.18);
+    transition:transform .3s ease, box-shadow .3s ease, border-color .15s;}
+  .design-card-inner::after{
+    content:'';position:absolute;top:1.5%;right:-7px;bottom:1.5%;width:9px;
+    background:repeating-linear-gradient(to bottom,#fff 0 2px,#dfe6e4 2px 3px);
+    transform:rotateY(90deg) translateZ(4.5px);transform-origin:right center;
+    box-shadow:2px 0 5px rgba(0,0,0,.25);}
+  .design-card:hover .design-card-inner{transform:perspective(1000px) rotateY(-8deg) scale(1.05);
+    box-shadow:22px 24px 38px rgba(16,40,43,.34), inset -10px 0 16px rgba(0,0,0,.18);z-index:2;}
   .design-card.selected .design-card-inner{border-color:var(--seafoam);}
   .design-badge{position:absolute;font-size:9px;font-weight:700;color:#fff;background:rgba(255,255,255,.22);
     border:1px solid rgba(255,255,255,.55);border-radius:5px;padding:2px 7px;backdrop-filter:blur(2px);}
@@ -154,7 +177,7 @@
 
   .theme-summary{display:flex;align-items:center;gap:10px;background:var(--paleMint);border-radius:12px;
     padding:12px 16px;margin-top:14px;}
-  .theme-swatch{width:28px;height:28px;border-radius:8px;flex:none;}
+  .theme-swatch{width:28px;height:28px;border-radius:8px;flex:none;background-size:cover;background-position:center;}
 
   /* 사용 가이드 영상 모달 */
   .video-modal .modal{max-width:960px;padding:20px 22px 26px;}
@@ -166,176 +189,245 @@
 </head>
 <body>
 
-<div data-hf-id="hf-mndw" class="topbar">
-  <span data-hf-id="hf-dtel" class="brand">MATHOLIC</span>
-  <span data-hf-id="hf-d1fs" class="x">×</span>
-  <span data-hf-id="hf-bm4m" class="partner">학원맞춤키트</span>
-  <button data-hf-id="hf-vxh2" class="guide-btn" id="openGuideVideo">▶ 사용 가이드 보기</button>
+<div class="topbar">
+  <span class="brand">MATHOLIC</span>
+  <span class="x">×</span>
+  <span class="partner">학원맞춤키트</span>
+  <button class="guide-btn" id="openGuideVideo">▶ 사용 가이드 보기</button>
 </div>
 
-<div data-hf-id="hf-wnm4" class="wrap">
-  <div data-hf-id="hf-0oij" class="center">
-    <span data-hf-id="hf-hyqc" class="pill">MATHOLIC 가맹학원 전용</span>
-    <h1 data-hf-id="hf-b1ku" class="hero">우리 학원 이름이 새겨진<br data-hf-id="hf-x5px">학원맞춤키트를 제작해드립니다</h1>
-    <p data-hf-id="hf-kzo2" class="sub">원하시는 구성을 고르시고, 받아보실 정보를 입력해주세요.</p>
+<div class="cat-tabs">
+  <button class="cat-tab active" data-cat="kit">학원맞춤키트</button>
+  <button class="cat-tab" data-cat="sign">현판 주문</button>
+  <button class="cat-tab" data-cat="welcome">웰컴키트 주문</button>
+</div>
+
+<div class="cat-panel active" data-cat="kit">
+<div class="wrap">
+  <div class="center">
+    <span class="pill">MATHOLIC 가맹학원 전용</span>
+    <h1 class="hero">우리 학원 이름이 새겨진<br>학원맞춤키트를 제작해드립니다</h1>
+    <p class="sub">원하시는 구성을 고르시고, 받아보실 정보를 입력해주세요.</p>
   </div>
 
-  <div data-hf-id="hf-70xd" class="steps">
-    <div data-hf-id="hf-yypt" class="step active" data-step="1"><div data-hf-id="hf-fwf3" class="circle">1</div><div data-hf-id="hf-ixbu" class="label">디자인</div></div>
-    <div data-hf-id="hf-n0vx" class="step-line"></div>
-    <div data-hf-id="hf-ihvk" class="step" data-step="2"><div data-hf-id="hf-fi42" class="circle">2</div><div data-hf-id="hf-ccq4" class="label">구성 선택</div></div>
-    <div data-hf-id="hf-tlch" class="step-line"></div>
-    <div data-hf-id="hf-lh55" class="step" data-step="3"><div data-hf-id="hf-f3t1" class="circle">3</div><div data-hf-id="hf-jhc0" class="label">학원 정보</div></div>
-    <div data-hf-id="hf-us9k" class="step-line"></div>
-    <div data-hf-id="hf-alni" class="step" data-step="4"><div data-hf-id="hf-hvy8" class="circle">4</div><div data-hf-id="hf-vlbo" class="label">생성 · 발송</div></div>
+  <div class="steps">
+    <div class="step active" data-step="1"><div class="circle">1</div><div class="label">디자인</div></div>
+    <div class="step-line"></div>
+    <div class="step" data-step="2"><div class="circle">2</div><div class="label">구성 선택</div></div>
+    <div class="step-line"></div>
+    <div class="step" data-step="3"><div class="circle">3</div><div class="label">학원 정보</div></div>
+    <div class="step-line"></div>
+    <div class="step" data-step="4"><div class="circle">4</div><div class="label">생성 · 발송</div></div>
   </div>
 
   <!-- STEP 1: 디자인 테마 -->
-  <section data-hf-id="hf-00wp" class="panel active" data-panel="1">
-    <h2 data-hf-id="hf-24p9">표지 디자인을 골라주세요</h2>
-    <p data-hf-id="hf-rdta" class="desc">마음에 드는 디자인을 누르시면 선택됩니다. 로고와 문구는 다음 단계에서 직접 입력하실 수 있어요.</p>
+  <section class="panel active" data-panel="1">
+    <h2>표지 디자인을 골라주세요</h2>
+    <p class="desc">마음에 드는 디자인을 누르시면 선택됩니다. 로고와 문구는 다음 단계에서 직접 입력하실 수 있어요.</p>
 
-    <div data-hf-id="hf-3i1k" class="picker-card" id="openThemeGallery">
-      <div data-hf-id="hf-awhw" class="picker-icon">🎨</div>
-      <div data-hf-id="hf-gkx3" class="picker-title">표지 디자인 고르기</div>
-      <div data-hf-id="hf-ekrv" class="picker-sub">눌러서 디자인을 살펴보세요</div>
+    <div class="picker-card" id="openThemeGallery">
+      <div class="picker-icon">🎨</div>
+      <div class="picker-title">표지 디자인 고르기</div>
+      <div class="picker-sub">눌러서 디자인을 살펴보세요</div>
     </div>
 
-    <div data-hf-id="hf-kh0m" class="theme-summary" id="themeSummary" style="display:none;">
-      <div data-hf-id="hf-3gtr" class="theme-swatch" id="themeSummarySwatch"></div>
-      <div data-hf-id="hf-4qfq" style="flex:1;"><strong data-hf-id="hf-8uff" id="themeSummaryName"></strong><div data-hf-id="hf-9jcq" class="picker-sub" id="themeSummarySub"></div></div>
-      <a data-hf-id="hf-6uyq" id="reopenThemeGallery" style="font-size:12.5px;color:var(--seafoam);font-weight:700;cursor:pointer;text-decoration:underline;">다시 고르기</a>
+    <div class="theme-summary" id="themeSummary" style="display:none;">
+      <div class="theme-swatch" id="themeSummarySwatch"></div>
+      <div style="flex:1;"><strong id="themeSummaryName"></strong><div class="picker-sub" id="themeSummarySub"></div></div>
+      <a id="reopenThemeGallery" style="font-size:12.5px;color:var(--seafoam);font-weight:700;cursor:pointer;text-decoration:underline;">다시 고르기</a>
     </div>
-    <p data-hf-id="hf-cjuh" class="note">※ 지금은 색상 테마 예시입니다. 실제 인쇄 디자인 시안이 준비되면 그 이미지로 교체해드릴게요.</p>
+    <p class="note">※ 실제 인쇄 표지 시안 이미지입니다. 문구 위치는 예시이며, 다르게 보이면 알려주시면 조정해드립니다.</p>
 
-    <div data-hf-id="hf-e5hr" class="nav">
-      <span data-hf-id="hf-uckh"></span>
-      <button data-hf-id="hf-2zcq" class="btn primary" data-next="2">다음</button>
+    <div class="nav">
+      <span></span>
+      <button class="btn primary" data-next="2">다음</button>
     </div>
   </section>
 
   <!-- STEP 2: 구성 페이지 -->
-  <section data-hf-id="hf-hygk" class="panel" data-panel="2">
-    <h2 data-hf-id="hf-okl8">구성 페이지를 골라주세요</h2>
-    <p data-hf-id="hf-pm05" class="desc">챕터별로 필요한 페이지만 선택할 수 있어요. 표지·마무리 페이지는 공통 필수 구성이라 고정되어 있어요.</p>
+  <section class="panel" data-panel="2">
+    <h2>구성 페이지를 골라주세요</h2>
+    <p class="desc">챕터별로 필요한 페이지만 선택할 수 있어요. 표지·마무리 페이지는 공통 필수 구성이라 고정되어 있어요.</p>
 
-    <div data-hf-id="hf-k5mj" class="picker-card" id="openGallery">
-      <div data-hf-id="hf-4ovl" class="picker-icon">🖼</div>
-      <div data-hf-id="hf-1164" class="picker-title">구성 페이지 고르기</div>
-      <div data-hf-id="hf-p5m9" class="picker-sub">눌러서 전체 페이지를 살펴보세요</div>
+    <div class="picker-card" id="openGallery">
+      <div class="picker-icon">🖼</div>
+      <div class="picker-title">구성 페이지 고르기</div>
+      <div class="picker-sub">눌러서 전체 페이지를 살펴보세요</div>
     </div>
 
-    <div data-hf-id="hf-0991" class="selection-summary">
-      <div data-hf-id="hf-45x3"><span data-hf-id="hf-wt4e" class="count" id="totalPages">0</span>페이지가 선택되어 있어요</div>
-      <a data-hf-id="hf-hgtc" id="reopenGallery">다시 고르기</a>
+    <div class="selection-summary">
+      <div><span class="count" id="totalPages">0</span>페이지가 선택되어 있어요</div>
+      <a id="reopenGallery">다시 고르기</a>
     </div>
 
-    <div data-hf-id="hf-8fhr" class="nav">
-      <button data-hf-id="hf-qbvr" class="btn plain" data-prev="1">이전</button>
-      <button data-hf-id="hf-74hn" class="btn primary" data-next="3">다음</button>
+    <div class="nav">
+      <button class="btn plain" data-prev="1">이전</button>
+      <button class="btn primary" data-next="3">다음</button>
     </div>
   </section>
 
   <!-- STEP 3: 학원 정보 -->
-  <section data-hf-id="hf-iq4d" class="panel" data-panel="3">
-    <h2 data-hf-id="hf-bgq7">받으실 정보를 입력해주세요</h2>
-    <p data-hf-id="hf-jusl" class="desc">표지에 들어갈 문구와 로고, 그리고 발송지 정보입니다.</p>
+  <section class="panel" data-panel="3">
+    <h2>받으실 정보를 입력해주세요</h2>
+    <p class="desc">표지에 들어갈 문구와 로고, 그리고 발송지 정보입니다.</p>
 
-    <div data-hf-id="hf-wuw9" class="field-list">
-      <div data-hf-id="hf-5t86" class="row2">
-        <div data-hf-id="hf-0ztw" class="field"><label data-hf-id="hf-3fc3">학원명</label><input data-hf-id="hf-y6xq" id="f_name" placeholder="예: OO수학학원"></div>
-        <div data-hf-id="hf-bxgc" class="field"><label data-hf-id="hf-tos2">담당자</label><input data-hf-id="hf-i2jk" id="f_manager" placeholder="담당자 성함"></div>
+    <div class="field-list">
+      <div class="row2">
+        <div class="field"><label>학원명</label><input id="f_name" placeholder="예: OO수학학원"></div>
+        <div class="field"><label>담당자</label><input id="f_manager" placeholder="담당자 성함"></div>
       </div>
-      <div data-hf-id="hf-v7h6" class="row2">
-        <div data-hf-id="hf-aqj9" class="field"><label data-hf-id="hf-bqc2">연락처</label><input data-hf-id="hf-jtzq" id="f_phone" placeholder="010-0000-0000"></div>
-        <div data-hf-id="hf-b4ua" class="field"><label data-hf-id="hf-6f0j">이메일</label><input data-hf-id="hf-j94r" id="f_email" placeholder="example@matholic.net"></div>
+      <div class="row2">
+        <div class="field"><label>연락처</label><input id="f_phone" placeholder="010-0000-0000"></div>
+        <div class="field"><label>이메일</label><input id="f_email" placeholder="example@matholic.net"></div>
       </div>
-      <div data-hf-id="hf-vls7" class="row2">
-        <div data-hf-id="hf-d4df" class="field"><label data-hf-id="hf-6bue">희망 부수</label><input data-hf-id="hf-0pby" id="f_qty" placeholder="예: 100부"></div>
-        <div data-hf-id="hf-diog" class="field"><label data-hf-id="hf-96py">배송 주소</label><input data-hf-id="hf-txtb" id="f_addr" placeholder="인쇄물을 받을 주소"></div>
+      <div class="row2">
+        <div class="field"><label>희망 부수</label><input id="f_qty" placeholder="예: 100부"></div>
+        <div class="field"><label>배송 주소</label><input id="f_addr" placeholder="인쇄물을 받을 주소"></div>
       </div>
-      <div data-hf-id="hf-w038" class="row2">
-        <div data-hf-id="hf-cbrd" class="field"><label data-hf-id="hf-k06g">표지 문구 (1p 큰 제목)</label><input data-hf-id="hf-elvv" id="f_cover" placeholder="예: THE FOCUS" data-autofilled="1"></div>
-        <div data-hf-id="hf-cq2e" class="field"><label data-hf-id="hf-ig9h">학원명 문구 (3p)</label><input data-hf-id="hf-kft9" id="f_slogan" placeholder="예: OO수학학원"></div>
+      <div class="row2">
+        <div class="field"><label>표지 문구 (1p 큰 제목)</label><input id="f_cover" placeholder="예: THE FOCUS" data-autofilled="1"></div>
+        <div class="field"><label>학원명 문구 (3p)</label><input id="f_slogan" placeholder="예: OO수학학원"></div>
       </div>
-      <div data-hf-id="hf-8cp3" class="field">
-        <label data-hf-id="hf-bcch">로고 이미지 (3p에 삽입, PNG 권장)</label>
-        <input data-hf-id="hf-571n" type="file" id="f_logo" accept="image/png,image/jpeg">
-        <div data-hf-id="hf-p8b5" class="logo-preview" id="logoPreview">로고 미리보기</div>
+      <div class="field">
+        <label>로고 이미지 (3p에 삽입, PNG 권장)</label>
+        <input type="file" id="f_logo" accept="image/png,image/jpeg">
+        <div class="logo-preview" id="logoPreview">로고 미리보기</div>
       </div>
     </div>
-    <p data-hf-id="hf-y27y" class="note">※ 문구·로고 배치 좌표는 예시값입니다. 생성된 PDF에서 위치가 다르면 알려주시면 조정해드립니다.</p>
+    <p class="note">※ 문구·로고 배치 좌표는 예시값입니다. 생성된 PDF에서 위치가 다르면 알려주시면 조정해드립니다.</p>
 
-    <div data-hf-id="hf-816q" class="nav">
-      <button data-hf-id="hf-plpg" class="btn plain" data-prev="2">이전</button>
-      <button data-hf-id="hf-ybuk" class="btn primary" data-next="4">다음</button>
+    <div class="nav">
+      <button class="btn plain" data-prev="2">이전</button>
+      <button class="btn primary" data-next="4">다음</button>
     </div>
   </section>
 
   <!-- STEP 4 -->
-  <section data-hf-id="hf-za8a" class="panel" data-panel="4">
-    <h2 data-hf-id="hf-sma8">PDF를 생성하고 발송해주세요</h2>
-    <p data-hf-id="hf-50gs" class="desc">선택한 페이지를 실제 순서대로 이어붙이고, 표지 문구·로고를 합성합니다. 브라우저에서 직접 처리되며 서버에는 업로드되지 않습니다.</p>
+  <section class="panel" data-panel="4">
+    <h2>PDF를 생성하고 발송해주세요</h2>
+    <p class="desc">선택한 페이지를 실제 순서대로 이어붙이고, 표지 문구·로고를 합성합니다. 브라우저에서 직접 처리되며 서버에는 업로드되지 않습니다.</p>
 
-    <button data-hf-id="hf-j7f0" class="btn primary" id="btnBuild" style="width:100%;">PDF 생성하기</button>
-    <div data-hf-id="hf-odm3" id="status"></div>
-    <div data-hf-id="hf-8baj" id="previewWrap"><iframe data-hf-id="hf-1jbh" id="previewFrame"></iframe></div>
-    <a data-hf-id="hf-qx6o" class="btn plain" id="btnDownload" style="display:none;width:100%;text-align:center;text-decoration:none;margin-top:10px;">PDF 다운로드</a>
-    <button data-hf-id="hf-r6b5" class="btn primary" id="btnSendEmail" style="width:100%;margin-top:10px;display:none;">인쇄업체로 이메일 발송하기</button>
-    <div data-hf-id="hf-0rys" id="emailStatus" style="font-size:12.5px;color:var(--muted);margin-top:8px;white-space:pre-wrap;"></div>
+    <button class="btn primary" id="btnBuild" style="width:100%;">PDF 생성하기</button>
+    <div id="status"></div>
+    <div id="previewWrap"><iframe id="previewFrame"></iframe></div>
+    <a class="btn plain" id="btnDownload" style="display:none;width:100%;text-align:center;text-decoration:none;margin-top:10px;">PDF 다운로드</a>
+    <button class="btn primary" id="btnSendEmail" style="width:100%;margin-top:10px;display:none;">인쇄업체로 이메일 발송하기</button>
+    <div id="emailStatus" style="font-size:12.5px;color:var(--muted);margin-top:8px;white-space:pre-wrap;"></div>
 
-    <div data-hf-id="hf-wfyq" class="warnbox" id="emailWarnbox">
+    <div class="warnbox" id="emailWarnbox">
       메일 자동 발송은 아직 연결되지 않았습니다. PDF를 다운로드한 뒤, 인쇄업체 웹하드 또는 이메일에 직접 첨부해서 보내주세요.
     </div>
 
-    <div data-hf-id="hf-7mvp" class="nav">
-      <button data-hf-id="hf-fjjp" class="btn plain" data-prev="3">이전</button>
-      <span data-hf-id="hf-l73p"></span>
+    <div class="nav">
+      <button class="btn plain" data-prev="3">이전</button>
+      <span></span>
     </div>
   </section>
 </div>
+</div>
+
+<!-- 현판 주문 -->
+<div class="cat-panel" data-cat="sign">
+<div class="wrap">
+  <div class="center">
+    <span class="pill">MATHOLIC 가맹학원 전용</span>
+    <h1 class="hero">우리 학원 현판을<br>제작해드립니다</h1>
+    <p class="sub">아래 디자인으로 제작되며, 학원명 문구만 입력해주시면 됩니다.</p>
+  </div>
+
+  <div class="sign-preview">
+    <img src="assets/signboard/sign-luxury-gold.png" alt="현판 디자인 (고급형 럭셔리골드 + 아크릴마감)">
+  </div>
+  <p class="note center" style="text-align:center;">고급형 · 럭셔리골드 + 아크릴마감(띄움형)</p>
+
+  <div class="field-list" style="margin-top:24px;">
+    <div class="field"><label>현판에 새길 문구 (학원명)</label><input id="sign_text" placeholder="예: OO수학학원"></div>
+    <div class="row2">
+      <div class="field"><label>수량</label><input id="sign_qty" placeholder="예: 1개"></div>
+      <div class="field"><label>담당자</label><input id="sign_manager" placeholder="담당자 성함"></div>
+    </div>
+    <div class="row2">
+      <div class="field"><label>연락처</label><input id="sign_phone" placeholder="010-0000-0000"></div>
+      <div class="field"><label>이메일</label><input id="sign_email" placeholder="example@matholic.net"></div>
+    </div>
+    <div class="field"><label>설치 · 배송 주소</label><input id="sign_addr" placeholder="현판을 설치할 주소"></div>
+  </div>
+
+  <button class="btn primary" id="btnSubmitSign" style="width:100%;margin-top:24px;">현판 신청하기</button>
+  <div id="signStatus" style="font-size:12.5px;color:var(--muted);margin-top:10px;white-space:pre-wrap;"></div>
+</div>
+</div>
+
+<!-- 웰컴키트 주문 -->
+<div class="cat-panel" data-cat="welcome">
+<div class="wrap">
+  <div class="center">
+    <span class="pill">MATHOLIC 가맹학원 전용</span>
+    <h1 class="hero">신규 원생을 위한<br>웰컴키트를 제작해드립니다</h1>
+    <p class="sub">학원명·문구와 수량을 입력해주시면 제작을 도와드립니다.</p>
+  </div>
+
+  <div class="simple-note">※ 웰컴키트 구성 이미지는 준비 중입니다. 신청해주시면 담당자가 구성안을 안내해드립니다.</div>
+
+  <div class="field-list">
+    <div class="field"><label>웰컴키트에 새길 문구 (학원명)</label><input id="wel_text" placeholder="예: OO수학학원"></div>
+    <div class="row2">
+      <div class="field"><label>수량</label><input id="wel_qty" placeholder="예: 10개"></div>
+      <div class="field"><label>담당자</label><input id="wel_manager" placeholder="담당자 성함"></div>
+    </div>
+    <div class="row2">
+      <div class="field"><label>연락처</label><input id="wel_phone" placeholder="010-0000-0000"></div>
+      <div class="field"><label>이메일</label><input id="wel_email" placeholder="example@matholic.net"></div>
+    </div>
+    <div class="field"><label>배송 주소</label><input id="wel_addr" placeholder="웰컴키트를 받을 주소"></div>
+  </div>
+
+  <button class="btn primary" id="btnSubmitWelcome" style="width:100%;margin-top:24px;">웰컴키트 신청하기</button>
+  <div id="welcomeStatus" style="font-size:12.5px;color:var(--muted);margin-top:10px;white-space:pre-wrap;"></div>
+</div>
+</div>
 
 <!-- 디자인 테마 모달 -->
-<div data-hf-id="hf-uibs" class="modal-overlay" id="themeModalOverlay">
-  <div data-hf-id="hf-keer" class="modal">
-    <div data-hf-id="hf-bu2y" class="modal-head">
-      <h3 data-hf-id="hf-5o5q" id="themeModalTitle">표지 컨셉 고르기</h3>
-      <button data-hf-id="hf-nnpe" class="modal-close" id="themeModalClose">×</button>
+<div class="modal-overlay" id="themeModalOverlay">
+  <div class="modal">
+    <div class="modal-head">
+      <h3 id="themeModalTitle">표지 컨셉 고르기</h3>
+      <button class="modal-close" id="themeModalClose">×</button>
     </div>
-    <button data-hf-id="hf-sdxf" class="modal-back" id="themeBackBtn">← 컨셉 목록으로</button>
-    <p data-hf-id="hf-s5pl" class="note" id="themeModalDesc" style="margin-top:0;">먼저 마음에 드는 컨셉을 골라주세요. 컨셉마다 2가지 디자인이 준비되어 있어요.</p>
-    <div data-hf-id="hf-toer" id="themeModalBody"></div>
+    <button class="modal-back" id="themeBackBtn">← 컨셉 목록으로</button>
+    <p class="note" id="themeModalDesc" style="margin-top:0;">먼저 마음에 드는 컨셉을 골라주세요. 컨셉마다 다양한 디자인이 준비되어 있어요.</p>
+    <div id="themeModalBody"></div>
   </div>
 </div>
 
 <!-- 구성 페이지 모달 -->
-<div data-hf-id="hf-kos7" class="modal-overlay" id="modalOverlay">
-  <div data-hf-id="hf-cn6b" class="modal">
-    <div data-hf-id="hf-db66" class="modal-head">
-      <h3 data-hf-id="hf-cx4m">구성 페이지 선택</h3>
-      <button data-hf-id="hf-44ph" class="modal-close" id="modalClose">×</button>
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <div class="modal-head">
+      <h3>구성 페이지 선택</h3>
+      <button class="modal-close" id="modalClose">×</button>
     </div>
-    <p data-hf-id="hf-lasq" class="note" style="margin-top:0;">🔒 필수 챕터는 고정되어 있어요. 그 외 챕터는 페이지 단위로 자유롭게 선택하세요.</p>
-    <div data-hf-id="hf-70kb" id="chapters"></div>
-    <div data-hf-id="hf-af0w" class="nav">
-      <span data-hf-id="hf-me0s"></span>
-      <button data-hf-id="hf-pu0j" class="btn primary" id="modalDone">선택 완료</button>
+    <p class="note" style="margin-top:0;">🔒 필수 챕터는 고정되어 있어요. 그 외 챕터는 페이지 단위로 자유롭게 선택하세요.</p>
+    <div id="chapters"></div>
+    <div class="nav">
+      <span></span>
+      <button class="btn primary" id="modalDone">선택 완료</button>
     </div>
   </div>
 </div>
 
 <!-- 사용 가이드 영상 모달 -->
-<div data-hf-id="hf-hn7g" class="modal-overlay video-modal" id="guideModalOverlay">
-  <div data-hf-id="hf-c8va" class="modal">
-    <div data-hf-id="hf-dph7" class="modal-head">
-      <h3 data-hf-id="hf-3wbm">학원맞춤키트 신청 가이드</h3>
-      <button data-hf-id="hf-03cn" class="modal-close" id="guideModalClose">×</button>
+<div class="modal-overlay video-modal" id="guideModalOverlay">
+  <div class="modal">
+    <div class="modal-head">
+      <h3>학원맞춤키트 신청 가이드</h3>
+      <button class="modal-close" id="guideModalClose">×</button>
     </div>
-    <p data-hf-id="hf-116v" class="note" style="margin-top:0;">신청 방법을 짧은 영상으로 안내해드립니다.</p>
-    <div data-hf-id="hf-iq3d" class="video-frame">
-      <video data-hf-id="hf-vvpp" id="guideVideoEl" controls playsinline preload="metadata">
-        <source data-hf-id="hf-js1b" src="assets/guide-video.mp4" type="video/mp4">
-        브라우저가 동영상 재생을 지원하지 않습니다. <a data-hf-id="hf-a130" href="assets/guide-video.mp4">영상 다운로드</a>
+    <p class="note" style="margin-top:0;">신청 방법을 짧은 영상으로 안내해드립니다.</p>
+    <div class="video-frame">
+      <video id="guideVideoEl" controls playsinline preload="metadata">
+        <source src="assets/guide-video.mp4" type="video/mp4">
+        브라우저가 동영상 재생을 지원하지 않습니다. <a href="assets/guide-video.mp4">영상 다운로드</a>
       </video>
     </div>
   </div>
@@ -356,6 +448,14 @@ function goStep(n){
 }
 document.querySelectorAll('[data-next]').forEach(b=> b.onclick = ()=> goStep(+b.dataset.next));
 document.querySelectorAll('[data-prev]').forEach(b=> b.onclick = ()=> goStep(+b.dataset.prev));
+
+// ===================== 상품 카테고리 탭 =====================
+function goCat(cat){
+  document.querySelectorAll('.cat-panel').forEach(p=> p.classList.toggle('active', p.dataset.cat===cat));
+  document.querySelectorAll('.cat-tab').forEach(t=> t.classList.toggle('active', t.dataset.cat===cat));
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+document.querySelectorAll('.cat-tab').forEach(t=> t.onclick = ()=> goCat(t.dataset.cat));
 
 // ===================== 사용 가이드 영상 모달 =====================
 const guideOverlay = document.getElementById('guideModalOverlay');
@@ -416,8 +516,7 @@ CHAPTERS.forEach(ch => ch.pages.forEach(p => state[p.n] = ch.defaultOn));
 function thumbSrc(n){ return `assets/thumbs/pg-${String(n).padStart(2,'0')}.jpg`; }
 
 // ===================== 표지 디자인 : 컨셉 3안 -> 컨셉별 디자인 2종 =====================
-// bg는 미리보기용 CSS 그라디언트, accent는 실제 PDF 합성 시 사용할 색상(0~1 RGB)입니다.
-// 실제 인쇄 디자인 시안 이미지가 나오면 bg를 background-image로, accent를 해당 시안의 대표색으로 교체하면 됩니다.
+// img는 실제 표지 디자인 이미지 경로, accent는 표지 문구 배경 띠에 쓰이는 색상(0~1 RGB)입니다.
 const CONCEPTS = [
   {
     id:'frame', keyword:'Focus', name:'THE FRAME',
@@ -428,8 +527,9 @@ const CONCEPTS = [
       { title:'THE FRAME OF TRUST', sub:'흔들리지 않는 학습의 기준' },
     ],
     designs:[
-      { id:'frame-1', name:'프레임 다이애거널', bg:'linear-gradient(135deg,#0B3B2E 0%,#1F6E4A 45%,#A9E8C9 100%)', accent:[0.122,0.435,0.29] },
-      { id:'frame-2', name:'프레임 화이트 그리드', bg:'linear-gradient(160deg,#F4FBF8 0%,#BFE9D6 55%,#1F6E4A 100%)', accent:[0.122,0.435,0.29] },
+      { id:'frame-1', name:'프레임 다이애거널 01', img:'assets/covers/frame-1.png', accent:[0.122,0.435,0.29] },
+      { id:'frame-2', name:'프레임 다이애거널 02', img:'assets/covers/frame-2.png', accent:[0.122,0.435,0.29] },
+      { id:'frame-3', name:'프레임 다이애거널 03', img:'assets/covers/frame-3.png', accent:[0.122,0.435,0.29] },
     ]
   },
   {
@@ -441,8 +541,9 @@ const CONCEPTS = [
       { title:'COMPASS OF GROWTH', sub:'아이의 내일을 밝히는 성장의 나침반' },
     ],
     designs:[
-      { id:'compass-1', name:'컴퍼스 스트라이프', bg:'repeating-linear-gradient(100deg,#0B3B2E 0 14px,#2E8F63 14px 28px,#CFF3E1 28px 42px)', accent:[0.043,0.235,0.18] },
-      { id:'compass-2', name:'컴퍼스 라디얼', bg:'radial-gradient(circle at 30% 30%,#E9FBF2 0%,#6FCB9F 45%,#0B3B2E 100%)', accent:[0.043,0.235,0.18] },
+      { id:'compass-1', name:'컴퍼스 바 01', img:'assets/covers/compass-1.png', accent:[0.043,0.235,0.18] },
+      { id:'compass-2', name:'컴퍼스 바 02', img:'assets/covers/compass-2.png', accent:[0.043,0.235,0.18] },
+      { id:'compass-3', name:'컴퍼스 바 03', img:'assets/covers/compass-3.png', accent:[0.043,0.235,0.18] },
     ]
   },
   {
@@ -454,8 +555,9 @@ const CONCEPTS = [
       { title:'ESSENCE & SOLUTION', sub:'본질에 깊이를, 성장에 해답을' },
     ],
     designs:[
-      { id:'essence-1', name:'에센스 솔리드 그린', bg:'linear-gradient(160deg,#1F6E4A 0%,#2E8F63 100%)', accent:[0.122,0.433,0.294] },
-      { id:'essence-2', name:'에센스 딥 그린', bg:'linear-gradient(135deg,#0B3B2E 0%,#1F6E4A 100%)', accent:[0.043,0.231,0.18] },
+      { id:'essence-1', name:'에센스 글로우 01', img:'assets/covers/essence-1.png', accent:[0.122,0.433,0.294] },
+      { id:'essence-2', name:'에센스 글로우 02', img:'assets/covers/essence-2.png', accent:[0.043,0.231,0.18] },
+      { id:'essence-3', name:'에센스 글로우 03', img:'assets/covers/essence-3.png', accent:[0.043,0.231,0.18] },
     ]
   },
 ];
@@ -474,14 +576,14 @@ function renderThemeModalBody(){
   if(themeState.view === 'concept'){
     backBtn.classList.remove('show');
     title.textContent = '표지 컨셉 고르기';
-    desc.textContent = '먼저 마음에 드는 컨셉을 골라주세요. 컨셉마다 2가지 디자인이 준비되어 있어요.';
+    desc.textContent = '먼저 마음에 드는 컨셉을 골라주세요. 컨셉마다 다양한 디자인이 준비되어 있어요.';
     body.innerHTML = `<div class="concept-grid">${CONCEPTS.map(c=>`
       <div class="concept-card ${c.id===themeState.selectedConceptId?'selected':''}" data-id="${c.id}">
         <span class="concept-kw">${c.keyword}</span>
         <div class="concept-name">${c.name}</div>
         <div class="concept-sub">${c.sub}</div>
         <div class="concept-mini-row">
-          ${c.designs.map(d=>`<div class="concept-mini" style="background:${d.bg};"></div>`).join('')}
+          ${c.designs.map(d=>`<div class="concept-mini" style="background-image:url('${d.img}');"></div>`).join('')}
         </div>
       </div>
     `).join('')}</div>`;
@@ -512,7 +614,7 @@ function renderThemeModalBody(){
     const designsHtml = `<div class="design-grid">${concept.designs.map(d=>`
       <div class="design-card ${d.id===themeState.selectedDesignId?'selected':''}" data-id="${d.id}">
         <div class="design-card-wrap">
-          <div class="design-card-inner" style="background:${d.bg};">
+          <div class="design-card-inner" style="background-image:url('${d.img}');">
             <span class="design-check">✓</span>
             <span class="design-badge logo">로고 영역</span>
             <span class="design-badge text">문구 영역</span>
@@ -548,7 +650,7 @@ function updateThemeSummary(){
   const design = concept && findDesign(concept, themeState.selectedDesignId);
   if(!concept || !design) return;
   document.getElementById('themeSummary').style.display = 'flex';
-  document.getElementById('themeSummarySwatch').style.background = design.bg;
+  document.getElementById('themeSummarySwatch').style.backgroundImage = `url('${design.img}')`;
   document.getElementById('themeSummaryName').textContent = `${concept.name} · ${design.name}`;
   document.getElementById('themeSummarySub').textContent = concept.keyword;
 
@@ -685,6 +787,7 @@ async function sendToVendor(){
   try{
     const payload = {
       secret: GAS_SHARED_SECRET,
+      orderType: 'kit',
       fileName: lastPdfFileName,
       pdfBase64: lastPdfBase64,
       academyName: document.getElementById('f_name').value.trim(),
@@ -714,6 +817,47 @@ async function sendToVendor(){
 }
 document.getElementById('btnSendEmail').onclick = sendToVendor;
 updateEmailUi();
+
+// ===================== 현판 / 웰컴키트 : PDF 없이 바로 신청 =====================
+async function submitSimpleOrder(orderType, fieldIds, btn, statusEl){
+  if(!GAS_WEBHOOK_URL){
+    statusEl.textContent = '신청 접수가 아직 설정되지 않았습니다. 관리자에게 문의해주세요.';
+    return;
+  }
+  const values = {};
+  for(const key in fieldIds){ values[key] = document.getElementById(fieldIds[key]).value.trim(); }
+  if(!values.text){ statusEl.textContent = '문구(학원명)를 입력해주세요.'; return; }
+
+  btn.disabled = true;
+  statusEl.textContent = '신청을 접수하는 중...';
+  try{
+    const payload = { secret: GAS_SHARED_SECRET, orderType, ...values };
+    const res = await fetch(GAS_WEBHOOK_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(payload),
+    });
+    const data = await res.json().catch(()=>({status:'unknown'}));
+    if(data.status === 'ok'){
+      statusEl.textContent = '신청이 접수되었습니다. 담당자가 확인 후 연락드릴게요.';
+    } else {
+      statusEl.textContent = '접수 중 문제가 발생했습니다: ' + (data.message || '알 수 없는 오류');
+    }
+  }catch(err){
+    console.error(err);
+    statusEl.textContent = '접수에 실패했습니다: ' + err.message;
+  }finally{
+    btn.disabled = false;
+  }
+}
+
+document.getElementById('btnSubmitSign').onclick = ()=> submitSimpleOrder('sign', {
+  text:'sign_text', qty:'sign_qty', manager:'sign_manager', phone:'sign_phone', email:'sign_email', address:'sign_addr',
+}, document.getElementById('btnSubmitSign'), document.getElementById('signStatus'));
+
+document.getElementById('btnSubmitWelcome').onclick = ()=> submitSimpleOrder('welcome', {
+  text:'wel_text', qty:'wel_qty', manager:'wel_manager', phone:'wel_phone', email:'wel_email', address:'wel_addr',
+}, document.getElementById('btnSubmitWelcome'), document.getElementById('welcomeStatus'));
 
 // ===================== PDF 조립 =====================
 function setStatus(msg, isErr){
@@ -763,14 +907,25 @@ async function buildPdf(){
     const selDesign = findDesign(selConcept, themeState.selectedDesignId) || selConcept.designs[0];
     const accent = rgb(selDesign.accent[0], selDesign.accent[1], selDesign.accent[2]);
 
-    const coverText = document.getElementById('f_cover').value.trim();
-    if(coverText && selected.includes(1)){
+    if(selected.includes(1)){
       const pageIdx = selected.indexOf(1);
       const page = out.getPage(pageIdx);
       const { width, height } = page.getSize();
-      page.drawRectangle({ x:0, y:height-220, width, height:140, color: accent });
-      const size = 34;
-      page.drawText(coverText, { x:40, y:height-160, size, font, color: rgb(1,1,1) });
+
+      // 실제 표지 디자인 이미지를 페이지 전체에 채워 넣기
+      if(selDesign.img){
+        setStatus('표지 디자인 이미지를 합성하는 중...');
+        const coverImgBytes = await fetch(selDesign.img).then(r=>r.arrayBuffer());
+        const coverImg = await out.embedPng(coverImgBytes);
+        page.drawImage(coverImg, { x:0, y:0, width, height });
+      }
+
+      const coverText = document.getElementById('f_cover').value.trim();
+      if(coverText){
+        page.drawRectangle({ x:0, y:height-220, width, height:140, color: accent, opacity:0.88 });
+        const size = 34;
+        page.drawText(coverText, { x:40, y:height-160, size, font, color: rgb(1,1,1) });
+      }
     }
 
     const sloganText = document.getElementById('f_slogan').value.trim();
