@@ -128,4 +128,64 @@ function handleSimpleOrder(orderType, data) {
   return jsonOutput({ status: 'ok' });
 }
 
-// ===================== 신청내역을 구글 시트에
+// ===================== 신청내역을 구글 시트에 기록 =====================
+function logToSheet(orderType, data) {
+  try {
+    if (!LOG_SHEET_ID || LOG_SHEET_ID.indexOf('PUT_YOUR') === 0) return; // 아직 설정 안 됨 - 조용히 건너뜀
+
+    var ss = SpreadsheetApp.openById(LOG_SHEET_ID);
+    var sheet = ss.getSheetByName('신청내역');
+    if (!sheet) {
+      sheet = ss.insertSheet('신청내역');
+      sheet.appendRow(['타임스탬프', '유형', '학원명/문구', '담당자', '연락처', '이메일', '수량', '주소', '파일명']);
+    }
+
+    sheet.appendRow([
+      new Date(),
+      orderType,
+      data.academyName || data.text || '',
+      data.manager || '',
+      data.phone || '',
+      data.email || '',
+      data.qty || '',
+      data.address || '',
+      data.fileName || '',
+    ]);
+  } catch (err) {
+    // 시트 기록이 실패해도 이메일 발송/접수 자체는 계속 진행합니다.
+  }
+}
+
+// ===================== 관리자 페이지용: 신청내역 조회 (GET) =====================
+function doGet(e) {
+  var pw = (e && e.parameter && e.parameter.password) || '';
+  if (pw !== ADMIN_PASSWORD) {
+    return jsonOutput({ status: 'error', message: '비밀번호가 올바르지 않습니다.' });
+  }
+  try {
+    if (!LOG_SHEET_ID || LOG_SHEET_ID.indexOf('PUT_YOUR') === 0) {
+      return jsonOutput({ status: 'error', message: '관리자 시트(LOG_SHEET_ID)가 아직 설정되지 않았습니다.' });
+    }
+    var ss = SpreadsheetApp.openById(LOG_SHEET_ID);
+    var sheet = ss.getSheetByName('신청내역');
+    if (!sheet) return jsonOutput({ status: 'ok', rows: [] });
+
+    var values = sheet.getDataRange().getValues();
+    var header = values.shift() || [];
+    var rows = values.map(function (r) {
+      var obj = {};
+      header.forEach(function (h, i) { obj[h] = r[i]; });
+      return obj;
+    });
+    rows.reverse(); // 최신 신청이 위로 오도록
+    return jsonOutput({ status: 'ok', rows: rows });
+  } catch (err) {
+    return jsonOutput({ status: 'error', message: String(err) });
+  }
+}
+
+function jsonOutput(obj) {
+  return ContentService
+    .createTextOutput(JSON.stringify(obj))
+    .setMimeType(ContentService.MimeType.JSON);
+}

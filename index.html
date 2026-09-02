@@ -40,6 +40,9 @@
 
   .pill{display:inline-block;margin:0 auto 18px;font-size:12.5px;font-weight:700;color:var(--seafoam);
     background:var(--paleMint);padding:6px 14px;border-radius:999px;}
+  .step-kicker{display:inline-block;font-size:11px;font-weight:800;color:#fff;background:var(--seafoam);
+    padding:4px 11px;border-radius:6px;letter-spacing:.04em;margin-bottom:10px;}
+  .accent{color:var(--seafoam);}
   .center{text-align:center;}
   h1.hero{font-size:28px;line-height:1.35;margin:0 0 14px;font-weight:800;}
   p.sub{color:var(--body);font-size:14.5px;margin:0 0 40px;}
@@ -72,10 +75,14 @@
   .selection-summary .count{font-weight:800;color:var(--deepTeal);}
   .selection-summary a{font-size:12.5px;color:var(--seafoam);font-weight:700;cursor:pointer;text-decoration:underline;}
 
+  .subhead{font-size:14.5px;font-weight:800;margin:32px 0 12px;padding-top:24px;border-top:1px solid var(--line);}
+  .subhead:first-of-type{margin-top:24px;padding-top:0;border-top:none;}
+
   .field-list{display:flex;flex-direction:column;gap:16px;}
   .field label{display:block;font-size:12.5px;color:var(--muted);font-weight:600;margin-bottom:6px;}
   .field input,.field textarea{width:100%;border:1px solid var(--line);border-radius:10px;padding:11px 13px;
     font-size:14px;font-family:inherit;background:#fff;color:var(--ink);}
+  .field textarea{resize:vertical;line-height:1.5;}
   .field input:focus,.field textarea:focus{outline:2px solid var(--mint);outline-offset:1px;}
   .row2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
   .logo-preview{width:100%;height:80px;border:1px dashed var(--line);border-radius:10px;display:flex;
@@ -113,15 +120,7 @@
   .chapter-head .meta{font-size:11.5px;color:var(--body);display:flex;align-items:center;gap:10px;}
   .lockbadge{font-size:10px;color:var(--seafoam);font-weight:700;border:1px solid var(--seafoam);border-radius:5px;padding:1px 6px;}
   .chapter-body{padding:14px 16px;display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:10px;border-radius:0 0 12px 12px;}
-  .page-card{border:1px solid var(--line);border-radius:8px;padding:5px;text-align:center;font-size:10.5px;
-    color:var(--body);position:relative;background:#fff;cursor:zoom-in;
-    transition:transform .18s ease, box-shadow .18s ease;}
-  .page-card:hover{transform:scale(1.9);z-index:6;box-shadow:0 14px 30px rgba(16,40,43,.32);border-color:var(--seafoam);}
-  .page-card img{width:100%;border-radius:4px;border:1px solid #eee;margin-bottom:4px;}
-  .page-card label{display:flex;align-items:flex-start;gap:4px;cursor:pointer;}
-  .page-card input{margin-top:2px;accent-color:var(--seafoam);flex:none;}
-  .page-card.locked{opacity:.85;}
-  .page-card .pnum{position:absolute;top:4px;left:4px;background:rgba(16,40,43,.7);color:#fff;font-size:9px;padding:1px 5px;border-radius:4px;}
+  .topic-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;}
   .toggle-all{font-size:11px;color:var(--seafoam);cursor:pointer;text-decoration:underline;}
 
   /* 디자인 테마 모달 : 1) 컨셉 3안 선택 -> 2) 컨셉 내 디자인 2종 선택 */
@@ -141,32 +140,25 @@
   .concept-mini-row{display:flex;gap:6px;}
   .concept-mini{flex:1;height:36px;border-radius:6px;background-size:cover;background-position:center;}
 
-  .design-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:34px;}
-  .design-card{cursor:pointer;text-align:left;}
-  .design-card-wrap{overflow:visible;perspective:1000px;padding:6px 26px 22px 6px;}
-  .design-card-inner{position:relative;border-radius:3px 8px 8px 3px;aspect-ratio:1075/1519;height:auto;overflow:hidden;
-    border:3px solid transparent;background-size:cover;background-position:center;
-    transform:perspective(1000px) rotateY(-20deg);
-    transform-style:preserve-3d;
-    box-shadow:16px 18px 28px rgba(16,40,43,.28), inset -10px 0 16px rgba(0,0,0,.18);
-    transition:transform .3s ease, box-shadow .3s ease, border-color .15s;}
-  .design-card-inner::after{
-    content:'';position:absolute;top:1.5%;right:-7px;bottom:1.5%;width:9px;
-    background:repeating-linear-gradient(to bottom,#fff 0 2px,#dfe6e4 2px 3px);
-    transform:rotateY(90deg) translateZ(4.5px);transform-origin:right center;
-    box-shadow:2px 0 5px rgba(0,0,0,.25);}
-  .design-card:hover .design-card-inner{transform:perspective(1000px) rotateY(-8deg) scale(1.05);
-    box-shadow:22px 24px 38px rgba(16,40,43,.34), inset -10px 0 16px rgba(0,0,0,.18);z-index:2;}
-  .design-card.selected .design-card-inner{border-color:var(--seafoam);}
-  .design-badge{position:absolute;font-size:9px;font-weight:700;color:#fff;background:rgba(255,255,255,.22);
-    border:1px solid rgba(255,255,255,.55);border-radius:5px;padding:2px 7px;backdrop-filter:blur(2px);}
-  .design-badge.logo{top:8px;right:8px;}
-  .design-badge.text{bottom:8px;left:8px;}
-  .design-check{position:absolute;top:8px;left:8px;width:20px;height:20px;border-radius:50%;background:var(--seafoam);
+  /* 현대카드 챔피언브랜드 스타일: 제목(왼쪽) + 썸네일 그리드(오른쪽) 섹션 */
+  .cb-section{display:flex;gap:16px;align-items:flex-start;padding:24px 0;border-bottom:1px solid var(--line);}
+  .cb-section:first-child{padding-top:0;}
+  .cb-section:last-child{border-bottom:none;padding-bottom:0;}
+  .cb-head{flex:0 0 108px;}
+  .cb-head .cb-title{font-weight:800;font-size:16px;line-height:1.3;margin-bottom:6px;}
+  .cb-head .cb-desc{font-size:11px;color:var(--muted);line-height:1.4;}
+  .cb-grid{flex:1;min-width:0;display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+  .cb-thumb{cursor:pointer;text-align:center;}
+  .cb-thumb.preview{cursor:default;}
+  .cb-thumb .thumb-img{position:relative;width:100%;aspect-ratio:1075/1519;border-radius:8px;
+    border:2px solid var(--line);background:#f2f5f4;background-size:cover;background-position:center;
+    overflow:hidden;transition:border-color .15s, box-shadow .15s;}
+  .cb-thumb:not(.preview):hover .thumb-img{border-color:var(--seafoam);box-shadow:0 6px 16px rgba(2,128,144,.14);}
+  .cb-thumb.selected .thumb-img{border-color:var(--seafoam);box-shadow:0 0 0 2px var(--lightMint);}
+  .thumb-check{position:absolute;top:6px;left:6px;width:20px;height:20px;border-radius:50%;background:var(--seafoam);
     color:#fff;font-size:12px;display:none;align-items:center;justify-content:center;font-weight:800;}
-  .design-card.selected .design-check{display:flex;}
-  .design-name{font-weight:700;font-size:13.5px;margin:10px 0 2px;}
-  .design-sub{font-size:11.5px;color:var(--muted);}
+  .cb-thumb.selected .thumb-check{display:flex;}
+  .thumb-name{font-size:11px;font-weight:600;color:var(--body);margin-top:6px;}
 
   .headline-block{margin:18px 0 22px;padding:14px 16px;background:#F7FAF9;border-radius:12px;}
   .headline-block .htitle{font-size:12px;font-weight:700;color:var(--body);margin-bottom:10px;}
@@ -181,12 +173,74 @@
     padding:12px 16px;margin-top:14px;}
   .theme-swatch{width:28px;height:28px;border-radius:8px;flex:none;background-size:cover;background-position:center;}
 
-  /* 사용 가이드 영상 모달 */
-  .video-modal .modal{max-width:960px;padding:20px 22px 26px;}
-  .video-frame{position:relative;width:100%;aspect-ratio:16/9;background:#000;border-radius:12px;overflow:hidden;margin-top:10px;}
-  .video-frame video{width:100%;height:100%;display:block;}
+  /* 신청 방법 온보딩 투어: 실제 화면 위 스포트라이트 + 말풍선 */
+  .tour-overlay{position:fixed;inset:0;z-index:200;display:none;}
+  .tour-overlay.show{display:block;}
+  .tour-mask{position:fixed;background:rgba(9,20,22,.62);}
+  .tour-ring{position:fixed;border:2px solid var(--seafoam);border-radius:10px;pointer-events:none;
+    box-shadow:0 0 0 4px rgba(0,168,150,.25);
+    transition:top .25s ease, left .25s ease, width .25s ease, height .25s ease;
+    animation:tourPulse 1.6s ease-in-out infinite;}
+  @keyframes tourPulse{
+    0%,100%{box-shadow:0 0 0 4px rgba(0,168,150,.25);}
+    50%{box-shadow:0 0 0 9px rgba(0,168,150,.08);}
+  }
+  .tour-card{position:fixed;width:280px;max-width:calc(100vw - 32px);background:#fff;border-radius:14px;
+    padding:16px 18px;box-shadow:0 12px 32px rgba(0,0,0,.32);
+    transition:top .25s ease, left .25s ease;}
+  .tour-card-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+  .tour-step-badge{font-size:11px;font-weight:800;color:#fff;background:var(--seafoam);border-radius:999px;padding:3px 10px;}
+  .tour-title{font-weight:800;font-size:14.5px;margin-bottom:6px;}
+  .tour-desc{font-size:12.5px;color:var(--body);line-height:1.5;margin-bottom:10px;}
+  .tour-hint{font-size:11.5px;color:var(--seafoam);font-weight:700;margin-bottom:12px;display:none;}
+  .tour-hint.show{display:block;}
+  .tour-nav{display:flex;justify-content:space-between;gap:8px;}
+  .tour-nav .btn{flex:1;padding:8px 0;font-size:12.5px;}
 
-  @media (max-width:600px){.row2{grid-template-columns:1fr;}.step{width:80px;}.step-line{max-width:40px;}}
+  /* 신청 방법 둘러보기 : 우측 하단 플로팅 배너 */
+  .tour-banner{position:fixed;right:20px;bottom:20px;width:280px;z-index:120;
+    background:linear-gradient(160deg,#0B2E33,var(--ink));color:#fff;border-radius:16px;
+    padding:22px 22px 20px;box-shadow:0 16px 40px rgba(0,0,0,.28);display:none;}
+  .tour-banner.show{display:block;animation:tourBannerIn .35s ease;}
+  @keyframes tourBannerIn{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
+  .tour-banner-close{position:absolute;top:10px;right:12px;border:none;background:none;color:rgba(255,255,255,.65);
+    font-size:19px;cursor:pointer;line-height:1;}
+  .tour-banner-close:hover{color:#fff;}
+  .tour-banner-icon{font-size:30px;margin-bottom:8px;}
+  .tour-banner-title{font-weight:800;font-size:18px;margin-bottom:8px;line-height:1.3;}
+  .tour-banner-desc{font-size:14px;color:rgba(255,255,255,.78);line-height:1.55;margin-bottom:16px;}
+  .tour-banner-cta{width:100%;border:none;border-radius:10px;background:var(--seafoam);color:#fff;
+    font-weight:800;font-size:15px;padding:12px 0;cursor:pointer;}
+  .tour-banner-cta:hover{background:var(--mint);}
+
+  /* 추천 템플릿 카드 */
+  .template-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;}
+  .template-card{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:#fff;}
+  .template-mockup{aspect-ratio:4/3;background:#F0F4F3;position:relative;overflow:hidden;}
+  .template-mockup img{width:100%;height:100%;object-fit:cover;display:block;}
+  .template-mockup-fallback{display:none;position:absolute;inset:0;align-items:center;justify-content:center;
+    color:var(--muted);font-size:11.5px;text-align:center;padding:10px;}
+  .template-body{padding:14px 16px 16px;}
+  .template-name{font-weight:800;font-size:14px;margin-bottom:4px;}
+  .template-desc{font-size:11.5px;color:var(--muted);line-height:1.5;margin-bottom:12px;min-height:32px;}
+  .template-preview-btn{width:100%;border:1px solid var(--seafoam);background:#fff;color:var(--seafoam);
+    font-weight:700;font-size:12px;padding:9px 0;border-radius:8px;cursor:pointer;}
+  .template-preview-btn:hover{background:var(--paleMint);}
+
+  /* 펼친면 미리보기 라이트박스 (HEYZINE 플립북 임베드) */
+  .spread-overlay{position:fixed;inset:0;z-index:210;background:rgba(9,20,22,.72);display:none;
+    align-items:center;justify-content:center;padding:24px;}
+  .spread-overlay.show{display:flex;}
+  .spread-box{position:relative;background:#fff;border-radius:16px;padding:22px 24px 18px;max-width:900px;width:100%;}
+  .spread-title{font-weight:800;font-size:15px;margin-bottom:12px;padding-right:24px;}
+  .spread-frame{position:relative;aspect-ratio:16/10;background:#F0F4F3;border-radius:10px;overflow:hidden;}
+  .spread-frame iframe{width:100%;height:100%;border:0;display:block;}
+  .spread-empty{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+    text-align:center;padding:24px;color:var(--muted);font-size:12.5px;line-height:1.6;}
+
+  @media (max-width:600px){.row2{grid-template-columns:1fr;}.step{width:80px;}.step-line{max-width:40px;}
+    .tour-banner{right:12px;bottom:12px;left:12px;width:auto;}
+    .template-grid{grid-template-columns:1fr;}}
 </style>
 </head>
 <body>
@@ -197,7 +251,6 @@
     <span class="x">×</span>
     <span class="partner">학원맞춤키트</span>
   </span>
-  <button class="guide-btn" id="openGuideVideo">▶ 사용 가이드 보기</button>
 </div>
 
 <div class="cat-tabs">
@@ -215,68 +268,45 @@
   </div>
 
   <div class="steps">
-    <div class="step active" data-step="1"><div class="circle">1</div><div class="label">디자인</div></div>
+    <div class="step active" data-step="1"><div class="circle">1</div><div class="label">구성 선택</div></div>
     <div class="step-line"></div>
-    <div class="step" data-step="2"><div class="circle">2</div><div class="label">구성 선택</div></div>
+    <div class="step" data-step="2"><div class="circle">2</div><div class="label">주문 정보</div></div>
     <div class="step-line"></div>
-    <div class="step" data-step="3"><div class="circle">3</div><div class="label">학원 정보</div></div>
-    <div class="step-line"></div>
-    <div class="step" data-step="4"><div class="circle">4</div><div class="label">생성 · 발송</div></div>
+    <div class="step" data-step="3"><div class="circle">3</div><div class="label">생성 · 발송</div></div>
   </div>
 
-  <!-- STEP 1: 디자인 테마 -->
+  <!-- STEP 1: 구성 선택 (공통 구성 4종 + 주제별 구성, 모달 없이 한 페이지) -->
   <section class="panel active" data-panel="1">
-    <h2>표지 디자인을 골라주세요</h2>
-    <p class="desc">마음에 드는 디자인을 누르시면 선택됩니다. 로고와 문구는 다음 단계에서 직접 입력하실 수 있어요.</p>
+    <span class="step-kicker">STEP 1</span>
+    <h2>브랜드북 <span class="accent">구성</span>을 선택해주세요</h2>
+    <p class="desc">표지 디자인을 고르고, 브랜드북에 공통으로 포함되는 구성을 확인한 뒤, 12개 주제 중 6개 이상을 선택해주세요. 학원명·문구·로고는 다음 단계에서 입력합니다.</p>
 
-    <div class="picker-card" id="openThemeGallery">
-      <div class="picker-icon">🎨</div>
-      <div class="picker-title">표지 디자인 고르기</div>
-      <div class="picker-sub">눌러서 디자인을 살펴보세요</div>
-    </div>
+    <div id="commonSectionsInline"></div>
+    <p class="note">※ 실제 인쇄 시안 이미지입니다. 문구 위치는 예시이며, 다르게 보이면 알려주시면 조정해드립니다.</p>
 
-    <div class="theme-summary" id="themeSummary" style="display:none;">
-      <div class="theme-swatch" id="themeSummarySwatch"></div>
-      <div style="flex:1;"><strong id="themeSummaryName"></strong><div class="picker-sub" id="themeSummarySub"></div></div>
-      <a id="reopenThemeGallery" style="font-size:12.5px;color:var(--seafoam);font-weight:700;cursor:pointer;text-decoration:underline;">다시 고르기</a>
+    <h3 class="subhead">주제별 구성 (12개 중 6개 이상 선택)</h3>
+    <div class="selection-summary">
+      <div id="totalPages">0개 선택 (6개 이상 필수)</div>
     </div>
-    <p class="note">※ 실제 인쇄 표지 시안 이미지입니다. 문구 위치는 예시이며, 다르게 보이면 알려주시면 조정해드립니다.</p>
+    <div id="chapters"></div>
+
+    <h3 class="subhead">추천 템플릿으로 빠르게 구성하기</h3>
+    <p class="note" style="margin-top:0;">직접 고르기 어렵다면, 미리 구성해둔 추천 템플릿의 펼친면을 확인해보세요.</p>
+    <div id="templateSectionInline"></div>
 
     <div class="nav">
       <span></span>
-      <button class="btn primary" data-next="2">다음</button>
+      <button class="btn primary" data-next="2" id="step1NextBtn">다음</button>
     </div>
   </section>
 
-  <!-- STEP 2: 구성 페이지 -->
+  <!-- STEP 2: 주문 정보 -->
   <section class="panel" data-panel="2">
-    <h2>구성 페이지를 골라주세요</h2>
-    <p class="desc">챕터별로 필요한 페이지만 선택할 수 있어요. 표지·마무리 페이지는 공통 필수 구성이라 고정되어 있어요.</p>
-
-    <div class="picker-card" id="openGallery">
-      <div class="picker-icon">🖼</div>
-      <div class="picker-title">구성 페이지 고르기</div>
-      <div class="picker-sub">눌러서 전체 페이지를 살펴보세요</div>
-    </div>
-
-    <div class="selection-summary">
-      <div><span class="count" id="totalPages">0</span>페이지가 선택되어 있어요</div>
-      <a id="reopenGallery">다시 고르기</a>
-    </div>
-
-    <div class="nav">
-      <button class="btn plain" data-prev="1">이전</button>
-      <button class="btn primary" data-next="3">다음</button>
-    </div>
-  </section>
-
-  <!-- STEP 3: 학원 정보 -->
-  <section class="panel" data-panel="3">
-    <h2>받으실 정보를 입력해주세요</h2>
-    <p class="desc">표지에 들어갈 문구와 로고, 그리고 발송지 정보입니다.</p>
+    <h2>주문 정보를 입력해주세요</h2>
+    <p class="desc">학원 정보, 표지·본문 문구, 원장님 프로필 사진과 로고를 입력해주세요.</p>
 
     <div class="field-list">
-      <div class="row2">
+      <div class="row2" id="fgBasicInfo1">
         <div class="field"><label>학원명</label><input id="f_name" placeholder="예: OO수학학원"></div>
         <div class="field"><label>담당자</label><input id="f_manager" placeholder="담당자 성함"></div>
       </div>
@@ -288,26 +318,40 @@
         <div class="field"><label>희망 부수</label><input id="f_qty" placeholder="예: 100부"></div>
         <div class="field"><label>배송 주소</label><input id="f_addr" placeholder="인쇄물을 받을 주소"></div>
       </div>
-      <div class="row2">
-        <div class="field"><label>표지 문구 (1p 큰 제목)</label><input id="f_cover" placeholder="예: THE FOCUS" data-autofilled="1"></div>
-        <div class="field"><label>학원명 문구 (3p)</label><input id="f_slogan" placeholder="예: OO수학학원"></div>
+      <div id="fgTextContent">
+        <div class="field"><label>표지 문구 (앞표지 학원명·슬로건, 비워두면 학원명이 대신 들어가요)</label><input id="f_cover" placeholder="예: THE FOCUS" data-autofilled="1"></div>
+        <div class="field">
+          <label>우리학원은 이렇게 다릅니다 (1P) — 소개 문구를 직접 작성해주세요</label>
+          <textarea id="f_slogan" rows="4" placeholder="우리 학원만의 차별점을 자유롭게 작성해주세요."></textarea>
+        </div>
+        <div class="field">
+          <label>인사말 (2P) — 학부모님께 전하는 인사말을 직접 작성해주세요</label>
+          <textarea id="f_greeting" rows="6" placeholder="안녕하세요, OO수학학원입니다. ..."></textarea>
+        </div>
       </div>
-      <div class="field">
-        <label>로고 이미지 (3p에 삽입, PNG 권장)</label>
-        <input type="file" id="f_logo" accept="image/png,image/jpeg">
-        <div class="logo-preview" id="logoPreview">로고 미리보기</div>
+      <div class="row2" id="fgUploads">
+        <div class="field">
+          <label>학원장님 프로필 사진 (인사말 페이지에 삽입)</label>
+          <input type="file" id="f_photo" accept="image/png,image/jpeg">
+          <div class="logo-preview" id="photoPreview">사진 미리보기</div>
+        </div>
+        <div class="field">
+          <label>로고 이미지 (우리학원은 이렇게 다릅니다 페이지에 삽입, PNG 권장)</label>
+          <input type="file" id="f_logo" accept="image/png,image/jpeg">
+          <div class="logo-preview" id="logoPreview">로고 미리보기</div>
+        </div>
       </div>
     </div>
-    <p class="note">※ 문구·로고 배치 좌표는 예시값입니다. 생성된 PDF에서 위치가 다르면 알려주시면 조정해드립니다.</p>
+    <p class="note">※ 문구·사진·로고 배치 좌표는 예시값입니다. 생성된 PDF에서 위치가 다르면 알려주시면 조정해드립니다.</p>
 
     <div class="nav">
-      <button class="btn plain" data-prev="2">이전</button>
-      <button class="btn primary" data-next="4">다음</button>
+      <button class="btn plain" data-prev="1">이전</button>
+      <button class="btn primary" data-next="3" id="step2NextBtn">다음</button>
     </div>
   </section>
 
-  <!-- STEP 4 -->
-  <section class="panel" data-panel="4">
+  <!-- STEP 3: 생성 · 발송 -->
+  <section class="panel" data-panel="3">
     <h2>PDF를 생성하고 발송해주세요</h2>
     <p class="desc">선택한 페이지를 실제 순서대로 이어붙이고, 표지 문구·로고를 합성합니다. 브라우저에서 직접 처리되며 서버에는 업로드되지 않습니다.</p>
 
@@ -323,7 +367,7 @@
     </div>
 
     <div class="nav">
-      <button class="btn plain" data-prev="3">이전</button>
+      <button class="btn plain" data-prev="2">이전</button>
       <span></span>
     </div>
   </section>
@@ -390,48 +434,44 @@
 </div>
 </div>
 
-<!-- 디자인 테마 모달 -->
-<div class="modal-overlay" id="themeModalOverlay">
-  <div class="modal">
-    <div class="modal-head">
-      <h3 id="themeModalTitle">표지 컨셉 고르기</h3>
-      <button class="modal-close" id="themeModalClose">×</button>
-    </div>
-    <button class="modal-back" id="themeBackBtn">← 컨셉 목록으로</button>
-    <p class="note" id="themeModalDesc" style="margin-top:0;">먼저 마음에 드는 컨셉을 골라주세요. 컨셉마다 다양한 디자인이 준비되어 있어요.</p>
-    <div id="themeModalBody"></div>
-  </div>
+<!-- 신청 방법 둘러보기 : 우측 하단 배너 -->
+<div class="tour-banner" id="tourBanner">
+  <button class="tour-banner-close" id="tourBannerClose">×</button>
+  <div class="tour-banner-icon">🎯</div>
+  <div class="tour-banner-title">신청이 처음이신가요?</div>
+  <div class="tour-banner-desc">실제 신청 화면을 그대로 따라가며<br>표지 선택부터 발송까지 알려드려요.</div>
+  <button class="tour-banner-cta" id="tourBannerCta">신청 방법 둘러보기 →</button>
 </div>
 
-<!-- 구성 페이지 모달 -->
-<div class="modal-overlay" id="modalOverlay">
-  <div class="modal">
-    <div class="modal-head">
-      <h3>구성 페이지 선택</h3>
-      <button class="modal-close" id="modalClose">×</button>
-    </div>
-    <p class="note" style="margin-top:0;">🔒 필수 챕터는 고정되어 있어요. 그 외 챕터는 페이지 단위로 자유롭게 선택하세요.</p>
-    <div id="chapters"></div>
-    <div class="nav">
-      <span></span>
-      <button class="btn primary" id="modalDone">선택 완료</button>
+<!-- 추천 템플릿 펼친면 미리보기 라이트박스 (HEYZINE 플립북 임베드) -->
+<div class="spread-overlay" id="spreadOverlay">
+  <div class="spread-box">
+    <button class="modal-close" id="spreadCloseBtn">×</button>
+    <div class="spread-title" id="spreadTitle"></div>
+    <div class="spread-frame" id="spreadFrame">
+      <span class="spread-empty" id="spreadEmpty">펼친면 미리보기 준비 중입니다.<br>교재 PDF를 HEYZINE에 업로드하면 이 자리에 실제 책장 넘기기 화면이 표시돼요.</span>
     </div>
   </div>
 </div>
 
-<!-- 사용 가이드 영상 모달 -->
-<div class="modal-overlay video-modal" id="guideModalOverlay">
-  <div class="modal">
-    <div class="modal-head">
-      <h3>학원맞춤키트 신청 가이드</h3>
-      <button class="modal-close" id="guideModalClose">×</button>
+<!-- 신청 방법 온보딩 투어 (실제 화면 위 스포트라이트 오버레이) -->
+<div class="tour-overlay" id="tourOverlay">
+  <div class="tour-mask" id="tourMaskTop"></div>
+  <div class="tour-mask" id="tourMaskBottom"></div>
+  <div class="tour-mask" id="tourMaskLeft"></div>
+  <div class="tour-mask" id="tourMaskRight"></div>
+  <div class="tour-ring" id="tourRing"></div>
+  <div class="tour-card" id="tourCard">
+    <div class="tour-card-head">
+      <span class="tour-step-badge" id="tourStepBadge">STEP 1/8</span>
+      <button class="modal-close" id="tourCloseBtn">×</button>
     </div>
-    <p class="note" style="margin-top:0;">신청 방법을 짧은 영상으로 안내해드립니다.</p>
-    <div class="video-frame">
-      <video id="guideVideoEl" controls playsinline preload="metadata">
-        <source src="assets/guide-video.mp4" type="video/mp4">
-        브라우저가 동영상 재생을 지원하지 않습니다. <a href="assets/guide-video.mp4">영상 다운로드</a>
-      </video>
+    <div class="tour-title" id="tourTitle"></div>
+    <div class="tour-desc" id="tourDesc"></div>
+    <div class="tour-hint" id="tourHint">👆 표시된 곳을 눌러보세요</div>
+    <div class="tour-nav">
+      <button class="btn plain" id="tourPrevBtn">이전</button>
+      <button class="btn primary" id="tourNextBtn">다음</button>
     </div>
   </div>
 </div>
@@ -460,130 +500,276 @@ function goCat(cat){
 }
 document.querySelectorAll('.cat-tab').forEach(t=> t.onclick = ()=> goCat(t.dataset.cat));
 
+// ===================== 웰컴키트 탭 노출 제어 (URL에 ?welcome=1 이 있어야 보임) =====================
+// 예: https://.../index.html?welcome=1 링크로 들어온 경우에만 웰컴키트 주문 탭이 보입니다.
+if(new URLSearchParams(location.search).get('welcome') !== '1'){
+  const welcomeTab = document.querySelector('.cat-tab[data-cat="welcome"]');
+  if(welcomeTab) welcomeTab.style.display = 'none';
+}
+
 // ===================== 홈으로 이동 / 처음으로 (신청 완료 후 초기화) =====================
 document.getElementById('goHomeBtn').onclick = ()=> location.reload();
 document.getElementById('btnRestartKit').onclick = ()=> location.reload();
 document.getElementById('btnRestartSign').onclick = ()=> location.reload();
 document.getElementById('btnRestartWelcome').onclick = ()=> location.reload();
 
-// ===================== 사용 가이드 영상 모달 =====================
-const guideOverlay = document.getElementById('guideModalOverlay');
-const guideVideoEl = document.getElementById('guideVideoEl');
-function openGuideModal(){ guideOverlay.classList.add('show'); }
-function closeGuideModal(){ guideOverlay.classList.remove('show'); guideVideoEl.pause(); }
-document.getElementById('openGuideVideo').onclick = openGuideModal;
-document.getElementById('guideModalClose').onclick = closeGuideModal;
-guideOverlay.addEventListener('click', (e)=>{ if(e.target===guideOverlay) closeGuideModal(); });
+// ===================== 신청 방법 온보딩 투어 (실제 화면 위 스포트라이트) =====================
+// mode: 'click'(정확히 한 번의 실제 클릭으로 완료) / 'condition'(조건 충족 시 완료) / 'info'(설명만, [다음]으로 진행)
+const TOUR_STEPS = [
+  { panel:1, target:'#commonSectionsInline .cb-section:nth-child(1)',
+    title:'표지 디자인 선택', desc:'마음에 드는 표지 디자인을 눌러 선택해보세요. 앞표지·앞표지 내지·뒷표지·뒤표지 내지 4장이 함께 정해져요.',
+    mode:'click', clickTarget:'#commonSectionsInline .cb-section:nth-child(1) .cb-thumb' },
+  { panel:1, target:'#commonSectionsInline .cb-section:nth-child(2)',
+    title:'원장님 프로필 (확인)', desc:'모든 브랜드북에 공통으로 포함되는 1페이지예요. 학원명과 원장님 사진은 다음 단계에서 넣은 정보가 자동으로 들어가요.',
+    mode:'info' },
+  { panel:1, target:'#commonSectionsInline .cb-section:nth-child(3)',
+    title:'우리학원은 이렇게 다릅니다 (확인)', desc:'모든 브랜드북에 공통으로 포함되는 1페이지예요. 학원 소개 문구는 다음 단계에서 직접 작성하실 수 있어요.',
+    mode:'info' },
+  { panel:1, target:'#commonSectionsInline .cb-section:nth-child(4)',
+    title:'인사말 (확인)', desc:'모든 브랜드북에 공통으로 포함되는 2페이지예요. 인사말 문구와 학원장님 사진도 다음 단계에서 넣을 수 있어요.',
+    mode:'info' },
+  { panel:1, target:'#commonSectionsInline .cb-section:nth-child(5)',
+    title:'좋은 수학학원 고르는 법 (확인)', desc:'모든 브랜드북에 공통으로 포함되는 7페이지 구성이에요. 별도로 선택하실 내용은 없어요.',
+    mode:'info' },
+  { panel:1, target:'#chapters',
+    title:'주제별 구성 선택', desc:'12개 주제 중 마음에 드는 것을 6개 이상 눌러 선택해보세요.',
+    mode:'condition', clickTarget:'#chapters', check: ()=> selectedTopics.size >= MIN_TOPIC_COUNT },
+  { panel:1, target:'#step1NextBtn',
+    title:'다음 단계로', desc:'표지와 주제 6개 이상을 선택했다면 [다음] 버튼을 눌러주세요.',
+    mode:'click', clickTarget:'#step1NextBtn' },
+  { panel:2, target:'#fgBasicInfo1',
+    title:'학원 정보 입력', desc:'학원명, 담당자, 연락처, 이메일, 희망 부수, 배송 주소를 입력해주세요.',
+    mode:'info' },
+  { panel:2, target:'#fgTextContent',
+    title:'표지·소개 문구 작성', desc:'표지 문구, "우리학원은 이렇게 다릅니다" 소개 문구, 인사말을 자유롭게 작성해주세요.',
+    mode:'info' },
+  { panel:2, target:'#fgUploads',
+    title:'사진·로고 업로드', desc:'학원장님 프로필 사진과 로고 이미지를 올려주세요.',
+    mode:'info' },
+  { panel:2, target:'#step2NextBtn',
+    title:'다음 단계로', desc:'정보를 다 입력했다면 [다음] 버튼을 눌러주세요.',
+    mode:'click', clickTarget:'#step2NextBtn' },
+  { panel:3, target:'#btnBuild',
+    title:'PDF 생성 및 발송', desc:'[PDF 미리보기 생성하기]를 눌러 결과를 확인하고, 이상이 없으면 이어서 나타나는 [인쇄업체로 이메일 발송하기] 버튼으로 신청을 완료하세요.',
+    mode:'info' },
+];
+
+let tourIndex = 0;
+let tourStepCleanup = null;
+
+function currentPanel(){
+  const active = document.querySelector('.panel.active');
+  return active ? +active.dataset.panel : 1;
+}
+
+function positionTourAt(el){
+  const rect = el.getBoundingClientRect();
+  const pad = 8;
+  const r = { top: rect.top-pad, left: rect.left-pad, right: rect.right+pad, bottom: rect.bottom+pad };
+  const vw = window.innerWidth, vh = window.innerHeight;
+  document.getElementById('tourMaskTop').style.cssText = `top:0;left:0;width:${vw}px;height:${Math.max(0,r.top)}px;`;
+  document.getElementById('tourMaskBottom').style.cssText = `top:${r.bottom}px;left:0;width:${vw}px;height:${Math.max(0, vh-r.bottom)}px;`;
+  document.getElementById('tourMaskLeft').style.cssText = `top:${r.top}px;left:0;width:${Math.max(0,r.left)}px;height:${r.bottom-r.top}px;`;
+  document.getElementById('tourMaskRight').style.cssText = `top:${r.top}px;left:${r.right}px;width:${Math.max(0, vw-r.right)}px;height:${r.bottom-r.top}px;`;
+  document.getElementById('tourRing').style.cssText = `top:${r.top}px;left:${r.left}px;width:${r.right-r.left}px;height:${r.bottom-r.top}px;`;
+
+  const card = document.getElementById('tourCard');
+  const cardH = card.offsetHeight || 200;
+  const cardW = card.offsetWidth || 280;
+  let cardTop;
+  if(vh - r.bottom > cardH + 24) cardTop = r.bottom + 16;
+  else if(r.top > cardH + 24) cardTop = r.top - cardH - 16;
+  else cardTop = Math.max(16, (vh-cardH)/2);
+  const cardLeft = Math.min(Math.max(16, r.left), Math.max(16, vw - cardW - 16));
+  card.style.top = cardTop + 'px';
+  card.style.left = cardLeft + 'px';
+}
+
+// 스크롤/이미지 로딩 등으로 타겟 위치가 계속 바뀌어도 링·마스크가 어긋나지 않도록
+// 현재 스텝이 떠 있는 동안은 매 프레임 실제 위치를 다시 계산합니다.
+let tourTrackRaf = null;
+function startTourTracking(){
+  stopTourTracking();
+  const loop = ()=>{
+    const step = TOUR_STEPS[tourIndex];
+    const el = step && document.querySelector(step.target);
+    if(el) positionTourAt(el);
+    tourTrackRaf = requestAnimationFrame(loop);
+  };
+  tourTrackRaf = requestAnimationFrame(loop);
+}
+function stopTourTracking(){
+  if(tourTrackRaf){ cancelAnimationFrame(tourTrackRaf); tourTrackRaf = null; }
+}
+
+function attachTourStepListener(step){
+  if(tourStepCleanup){ tourStepCleanup(); tourStepCleanup = null; }
+  if(step.mode === 'info' || !step.clickTarget) return;
+  const handler = (e)=>{
+    if(!e.target.closest(step.clickTarget)) return;
+    if(step.mode === 'condition'){
+      setTimeout(()=>{ if(step.check && step.check()) nextTourStep(); }, 50);
+    } else {
+      setTimeout(()=> nextTourStep(), 250);
+    }
+  };
+  document.addEventListener('click', handler, true);
+  tourStepCleanup = ()=> document.removeEventListener('click', handler, true);
+}
+
+function showTourStep(i){
+  if(i < 0) i = 0;
+  if(i >= TOUR_STEPS.length){ endTour(); return; }
+  tourIndex = i;
+  const step = TOUR_STEPS[i];
+  if(currentPanel() !== step.panel) goStep(step.panel);
+
+  document.getElementById('tourStepBadge').textContent = `STEP ${i+1}/${TOUR_STEPS.length}`;
+  document.getElementById('tourTitle').textContent = step.title;
+  document.getElementById('tourDesc').textContent = step.desc;
+  document.getElementById('tourHint').classList.toggle('show', step.mode !== 'info');
+  document.getElementById('tourPrevBtn').style.visibility = i === 0 ? 'hidden' : 'visible';
+  document.getElementById('tourNextBtn').textContent = (i === TOUR_STEPS.length-1) ? '완료' : '다음';
+
+  setTimeout(()=>{
+    const el = document.querySelector(step.target);
+    if(el) el.scrollIntoView({ behavior:'smooth', block:'center' });
+  }, 60);
+  startTourTracking();
+
+  attachTourStepListener(step);
+}
+
+function nextTourStep(){ showTourStep(tourIndex+1); }
+function prevTourStep(){ showTourStep(Math.max(0, tourIndex-1)); }
+
+function startTour(){
+  hideTourBanner();
+  goCat('kit');
+  document.getElementById('tourOverlay').classList.add('show');
+  showTourStep(0);
+}
+function endTour(){
+  document.getElementById('tourOverlay').classList.remove('show');
+  stopTourTracking();
+  if(tourStepCleanup){ tourStepCleanup(); tourStepCleanup = null; }
+}
+
+document.getElementById('tourCloseBtn').onclick = endTour;
+document.getElementById('tourPrevBtn').onclick = prevTourStep;
+document.getElementById('tourNextBtn').onclick = ()=>{
+  if(tourIndex === TOUR_STEPS.length-1) endTour(); else nextTourStep();
+};
+
+// ===================== 신청 방법 둘러보기 : 우측 하단 배너 =====================
+let tourBannerClosedThisSession = false;
+
+function hideTourBanner(){
+  document.getElementById('tourBanner').classList.remove('show');
+}
+function updateTourBannerVisibility(){
+  const kitActive = document.querySelector('.cat-panel[data-cat="kit"]').classList.contains('active');
+  const step1Active = currentPanel() === 1;
+  const tourRunning = document.getElementById('tourOverlay').classList.contains('show');
+  const shouldShow = kitActive && step1Active && !tourRunning && !tourBannerClosedThisSession;
+  document.getElementById('tourBanner').classList.toggle('show', shouldShow);
+}
+
+document.getElementById('tourBannerCta').onclick = startTour;
+document.getElementById('tourBannerClose').onclick = ()=>{ tourBannerClosedThisSession = true; hideTourBanner(); };
+
+// goStep/goCat이 호출될 때마다 배너 노출 여부를 다시 계산합니다.
+const _goStepOrig = goStep, _goCatOrig = goCat;
+goStep = function(n){ _goStepOrig(n); updateTourBannerVisibility(); };
+goCat = function(cat){ _goCatOrig(cat); updateTourBannerVisibility(); };
+
+updateTourBannerVisibility();
 
 // ===================== 페이지 매니페스트 (마스터 PDF 64p 기준) =====================
-const CHAPTERS = [
-  { key:'cover', label:'표지', locked:true, defaultOn:true, pages:[
-    {n:1,title:'표지 (앞면)'},{n:2,title:'표지 내지'},{n:3,title:'학원 로고·슬로건'}
-  ]},
-  { key:'prologue', label:'프롤로그 / 인트로', locked:false, defaultOn:true, pages:[
-    {n:4,title:'인사말 1'},{n:5,title:'인사말 2'},{n:6,title:'타이틀 이미지'},{n:7,title:'좋은 학원 고르는 법'},
-    {n:8,title:'JOURNEY'},{n:9,title:'INSIGHT'},{n:10,title:'ATTITUDE'},{n:11,title:'STRATEGY'},
-    {n:12,title:'ANALYSIS'},{n:13,title:'CURRICULUM'},{n:14,title:'VISION'}
-  ]},
-  { key:'diag', label:'진단', locked:false, defaultOn:true, pages:[
-    {n:15,title:'진단 간지'},{n:16,title:'교재채점 1'},{n:17,title:'교재채점 2'},{n:18,title:'진단평가 1'},
-    {n:19,title:'진단평가 2'},{n:20,title:'기출분석 1'},{n:21,title:'기출분석 2'}
-  ]},
-  { key:'analysis', label:'분석', locked:false, defaultOn:true, pages:[
-    {n:22,title:'분석 간지'},{n:23,title:'10문제 예측'},{n:24,title:'학습이력 데이터화'},
-    {n:25,title:'진짜 약점 찾기'},{n:26,title:'과정 전체 예측'}
-  ]},
-  { key:'rx', label:'처방', locked:false, defaultOn:true, pages:[
-    {n:27,title:'처방 간지'},{n:28,title:'개념 채우기'},{n:29,title:'클리닉 진행'},{n:30,title:'오답관리'},
-    {n:31,title:'약점관리 3단계'},{n:32,title:'AI 힌트 지원'},{n:33,title:'서술형 대비'},
-    {n:34,title:'동영상·질문하기'},{n:35,title:'색관리 완료'}
-  ]},
-  { key:'exam', label:'시험대비', locked:false, defaultOn:true, pages:[
-    {n:36,title:'시험대비 간지'},{n:37,title:'목표기반 인트로 1'},{n:38,title:'목표기반 인트로 2'},
-    {n:39,title:'목표기반 프로세스'},{n:40,title:'시험대비 콘텐츠 종류'},{n:41,title:'교과서·평가자료'},
-    {n:42,title:'만점 시험대비'},{n:43,title:'시험대비 클리닉'},{n:44,title:'쪽집게교재'},
-    {n:45,title:'시험대비 유형서'},{n:46,title:'학교시험 만점공략'},{n:47,title:'학교별 시험대비 총정리'}
-  ]},
-  { key:'share', label:'나눔', locked:false, defaultOn:true, pages:[
-    {n:48,title:'나눔 간지'},{n:49,title:'학생화면 분석'},{n:50,title:'학원 리포트'},
-    {n:51,title:'학습 성취 요약'},{n:52,title:'매일 리포트'},{n:53,title:'담임 코멘트'}
-  ]},
-  { key:'toma', label:'전국평가 (수학경시대회 · TOMA)', locked:false, defaultOn:false, pages:[
-    {n:54,title:'전국평가 간지'},{n:55,title:'실력 점검'},{n:56,title:'연습과정'},{n:57,title:'전국평가 보고서'}
-  ]},
-  { key:'appendix', label:'별책부록', locked:false, defaultOn:true, pages:[
-    {n:58,title:'별책부록 간지'},{n:59,title:'색깔로 보는 유형분석'},{n:60,title:'상담 전 체크리스트'},{n:61,title:'학습 키워드'}
-  ]},
-  { key:'closing', label:'마무리', locked:true, defaultOn:true, pages:[
-    {n:62,title:'여백'},{n:63,title:'크레딧'},{n:64,title:'뒷표지'}
-  ]},
+// ===================== 새 구성 : 고정 섹션 + 주제별 구성(12개 중 6개 선택) =====================
+// prefix로 assets/pages/{prefix}-{n}.png (실제 조립용), assets/thumbs/{prefix}-{n}.jpg (미리보기용) 파일을 찾습니다.
+const FIXED_INTRO = [
+  { key:'profile', label:'원장님 프로필', count:1, prefix:'profile' },
+  { key:'why', label:'우리학원은 이렇게 다릅니다', count:1, prefix:'why' },
+  { key:'greeting', label:'인사말', count:2, prefix:'greeting' },
+  { key:'guide', label:'좋은 수학학원 고르는 법', count:7, prefix:'guide', cols:4 }, // 7장을 2줄로 배치
+];
+// 뒷표지·뒤표지 내지는 표지 디자인 세트 안에 포함되지만, 실제 페이지 배치에서는 맨 뒤로 이동합니다 (COVERS/buildPdf 참고).
+
+const TOPICS = [
+  { id:1, label:'진단평가와 기출분석', count:5, prefix:'topic-01' },
+  { id:2, label:'교재채점', count:2, prefix:'topic-02' },
+  { id:3, label:'유형분석을 통한 시각화', count:5, prefix:'topic-03' },
+  { id:4, label:'동영상을 통한 클리닉', count:2, prefix:'topic-04' },
+  { id:5, label:'문제(쌍둥이·유사·오답관리를 통한 클리닉)', count:3, prefix:'topic-05' },
+  { id:6, label:'목표관리 시험대비', count:3, prefix:'topic-06' },
+  { id:7, label:'내신 시험대비', count:4, prefix:'topic-07' },
+  { id:8, label:'고등상위권 시험대비와 수능대비', count:2, prefix:'topic-08' },
+  { id:9, label:'AI 학습지원', count:4, prefix:'topic-09' },
+  { id:10, label:'통합학습보고서', count:3, prefix:'topic-10' },
+  { id:11, label:'모바일 학습보고서', count:2, prefix:'topic-11' },
+  { id:12, label:'경시대회', count:4, prefix:'topic-12' },
+];
+const MIN_TOPIC_COUNT = 6; // 12개 중 최소 6개 이상 선택 (상한 없음, 최대 12개)
+const selectedTopics = new Set();
+
+function pageFile(prefix, idx){ return `assets/pages/${prefix}-${idx}.png`; }
+function thumbFile(prefix, idx){ return `assets/thumbs/${prefix}-${idx}.jpg`; }
+function totalSelectedPages(){
+  const fixedTotal = FIXED_INTRO.reduce((s,sec)=>s+sec.count,0) + 3; // +3 표지(앞표지·뒷표지·뒤표지내지). 앞표지내지는 "원장님 프로필"이 대신합니다.
+  const topicTotal = TOPICS.filter(t=>selectedTopics.has(t.id)).reduce((s,t)=>s+t.count,0);
+  return fixedTotal + topicTotal;
+}
+
+// ===================== 표지 디자인 6종 (앞표지·뒷표지·뒤표지 내지 총 3P 세트) =====================
+// front/back/backInside는 실제 이미지 경로입니다.
+// 실제 페이지 배치 순서: 앞표지(맨 앞) → 원장님 프로필(앞표지 내지 역할 대체) → ... 본문 ... → 뒤표지 내지 → 뒷표지(맨 뒤).
+// 즉 앞표지 내지는 별도 이미지가 필요 없고(원장님 프로필로 대체), 뒷표지·뒤표지 내지는 PDF의 맨 마지막 페이지로 붙습니다.
+// title은 앞표지에 들어가는 학원명·슬로건 문구의 배치 스펙입니다 (1075x1519px 기준 좌표, color는 0~1 RGB).
+// ※ 실제 디자인 파일과 정확한 문구 위치는 아직 임시값입니다. 파일을 넣어주시고 미리보기를 캡처해 보내주시면 좌표를 맞춰드립니다.
+const COVERS = [
+  { id:'cover-1', name:'브랜드북 01',
+    front:'assets/covers/cover-1-front.png',
+    back:'assets/covers/cover-1-back.png', backInside:'assets/covers/cover-1-back-inside.png',
+    title:{ w:800, h:120, x:137.5, y:520, font:'Medium', size:34, ls:-2, align:'left', color:[1,1,1] } },
+  { id:'cover-2', name:'브랜드북 02',
+    front:'assets/covers/cover-2-front.png',
+    back:'assets/covers/cover-2-back.png', backInside:'assets/covers/cover-2-back-inside.png',
+    title:{ w:800, h:120, x:137.5, y:520, font:'Medium', size:34, ls:-2, align:'left', color:[1,1,1] } },
+  { id:'cover-3', name:'브랜드북 03',
+    front:'assets/covers/cover-3-front.png',
+    back:'assets/covers/cover-3-back.png', backInside:'assets/covers/cover-3-back-inside.png',
+    title:{ w:800, h:120, x:137.5, y:520, font:'Medium', size:34, ls:-2, align:'left', color:[1,1,1] } },
+  { id:'cover-4', name:'브랜드북 04',
+    front:'assets/covers/cover-4-front.png',
+    back:'assets/covers/cover-4-back.png', backInside:'assets/covers/cover-4-back-inside.png',
+    title:{ w:800, h:120, x:137.5, y:520, font:'Medium', size:34, ls:-2, align:'left', color:[1,1,1] } },
+  { id:'cover-5', name:'브랜드북 05',
+    front:'assets/covers/cover-5-front.png',
+    back:'assets/covers/cover-5-back.png', backInside:'assets/covers/cover-5-back-inside.png',
+    title:{ w:800, h:120, x:137.5, y:520, font:'Medium', size:34, ls:-2, align:'left', color:[1,1,1] } },
+  { id:'cover-6', name:'브랜드북 06',
+    front:'assets/covers/cover-6-front.png',
+    back:'assets/covers/cover-6-back.png', backInside:'assets/covers/cover-6-back-inside.png',
+    title:{ w:800, h:120, x:137.5, y:520, font:'Medium', size:34, ls:-2, align:'left', color:[1,1,1] } },
 ];
 
-const state = {};
-CHAPTERS.forEach(ch => ch.pages.forEach(p => state[p.n] = ch.defaultOn));
+// 원장님 프로필(1P) 배치 스펙 - 임시값입니다.
+// title: "{학원명} BRANDBOOK" 형태로 자동 조합됩니다 (학원명은 주문정보의 학원명 입력값). 별도 입력칸 없음.
+// tagline: 모든 학원 공통 고정 문구(PROFILE_TAGLINE_TEXT)가 들어갑니다. 학원별로 다르게 하려면 이 문구를 편집하거나 입력칸을 추가해주세요.
+// photo: 주문정보에서 올린 학원장님 프로필 사진(f_photo)을 그대로 재사용합니다.
+const PROFILE_TITLE_SPEC = { w:600, h:60, x:96, y:1370, font:'Regular', size:20, ls:0, align:'left', color:[1,1,1] };
+const PROFILE_TAGLINE_SPEC = { w:600, h:140, x:96, y:1460, font:'Medium', size:22, ls:-1, align:'left', color:[1,1,1] };
+const PROFILE_TAGLINE_TEXT = '보이지 않는 학습의 맥락을 발견하고,\n결과보다 앞선 과정을 증명하여\n학습의 방향을 제시합니다.';
+const PROFILE_PHOTO_SPEC = { w:180, h:180, x:96, y:1170 };
 
-function thumbSrc(n){ return `assets/thumbs/pg-${String(n).padStart(2,'0')}.jpg`; }
+// 우리학원은 이렇게 다릅니다(1P) 소개 문구 및 로고 배치 스펙 - 임시값입니다.
+const WHY_TEXT_SPEC = { w:734, h:360, x:170.5, y:160, font:'Light', size:34, ls:-2, align:'center', color:[0.176,0.588,0.427] };
+const WHY_LOGO_SPEC = { w:308, h:94, marginBottom:100 };
 
-// ===================== 표지 디자인 : 컨셉 3안 -> 컨셉별 디자인 2종 =====================
-// img는 실제 표지 디자인 이미지 경로, accent는 표지 문구 배경 띠에 쓰이는 색상(0~1 RGB)입니다.
-const CONCEPTS = [
-  {
-    id:'frame', keyword:'Focus', name:'THE FRAME',
-    sub:'학습의 복잡함은 줄이고, 성장의 핵심에 시선을 모으는 브랜드 정체성을 강조합니다.',
-    headlines:[
-      { title:'THE FOCUS', sub:'성장에 집중하는 단 하나의 틀' },
-      { title:'FOCUS ON ESSENCE', sub:'아이의 가능성에 시선을 모으다' },
-      { title:'THE FRAME OF TRUST', sub:'흔들리지 않는 학습의 기준' },
-    ],
-    designs:[
-      { id:'frame-1', name:'프레임 다이애거널 01', img:'assets/covers/frame-1.png', accent:[0.122,0.435,0.29],
-        title:{ w:930, h:300, x:72.5, y:77, font:'Regular', size:140, ls:-5, align:'center' } },
-      { id:'frame-2', name:'프레임 다이애거널 02', img:'assets/covers/frame-2.png', accent:[0.122,0.435,0.29],
-        title:{ w:930, h:300, x:72.5, y:77, font:'Regular', size:140, ls:-5, align:'center' } },
-      { id:'frame-3', name:'프레임 다이애거널 03', img:'assets/covers/frame-3.png', accent:[0.122,0.435,0.29],
-        title:{ w:540, h:56, x:382, y:984, font:'Regular', size:45, ls:-2, align:'left' } },
-    ]
-  },
-  {
-    id:'compass', keyword:'Insight', name:'COMPASS',
-    sub:'데이터 기반의 정밀한 통찰로 성장의 올바른 길을 제시하는 가치를 전합니다.',
-    headlines:[
-      { title:'INSIGHT & DIRECTION', sub:'데이터로 읽고, 방향으로 이끌다' },
-      { title:'THE INSIGHT', sub:'깊이 있게 보고, 바르게 이끄는 교육' },
-      { title:'COMPASS OF GROWTH', sub:'아이의 내일을 밝히는 성장의 나침반' },
-    ],
-    designs:[
-      { id:'compass-1', name:'컴퍼스 바 01', img:'assets/covers/compass-1.png', accent:[0.043,0.235,0.18],
-        title:{ w:930, h:300, x:72.5, y:77, font:'Light', size:140, ls:-5, align:'center' } },
-      { id:'compass-2', name:'컴퍼스 바 02', img:'assets/covers/compass-2.png', accent:[0.043,0.235,0.18],
-        title:{ w:930, h:300, x:72.5, y:110, font:'Medium', size:60, ls:-5, align:'center' } },
-      { id:'compass-3', name:'컴퍼스 바 03', img:'assets/covers/compass-3.png', accent:[0.043,0.235,0.18],
-        title:{ w:700, h:56, x:95, y:97, font:'SemiBold', size:45, ls:-5, align:'left' } },
-    ]
-  },
-  {
-    id:'essence', keyword:'Solution', name:'THE ESSENCE',
-    sub:'군더더기 없이 본질에 집중하며, 확실한 교육적 해답을 제시하는 정직함을 담았습니다.',
-    headlines:[
-      { title:'THE ESSENCE', sub:'수학의 본질, 완벽한 해답' },
-      { title:'THE DEFINITIVE SOLUTION', sub:'데이터가 증명하는 학습의 본질' },
-      { title:'ESSENCE & SOLUTION', sub:'본질에 깊이를, 성장에 해답을' },
-    ],
-    designs:[
-      { id:'essence-1', name:'에센스 글로우 01', img:'assets/covers/essence-1.png', accent:[0.122,0.433,0.294],
-        title:{ w:930, h:300, x:72.5, y:77, font:'Light', size:140, ls:-5, align:'center' } },
-      { id:'essence-2', name:'에센스 글로우 02', img:'assets/covers/essence-2.png', accent:[0.043,0.231,0.18],
-        title:{ w:930, h:300, x:72.5, y:77, font:'Light', size:140, ls:-5, align:'center' } },
-      { id:'essence-3', name:'에센스 글로우 03', img:'assets/covers/essence-3.png', accent:[0.043,0.231,0.18],
-        title:{ w:885, h:56, x:95, y:97, font:'SemiBold', size:45, ls:-5, align:'left' } },
-    ]
-  },
-];
-
-// 3p(학원명 슬로건) 및 로고 배치 스펙 - 디자인 컨셉과 무관하게 공통 적용됩니다.
-// x, y, w, h는 1075x1519px 기준 디자인 좌표(y는 페이지 상단 기준), color는 0~1 RGB입니다.
-const PAGE3_SLOGAN_SPEC = { w:734, h:274, x:170.5, y:100, font:'Light', size:120, ls:-6, align:'center', color:[0.176,0.588,0.427] };
-const PAGE3_LOGO_SPEC = { w:308, h:94, marginBottom:100 };
+// 인사말(2P) 문구 및 학원장님 프로필 사진 배치 스펙 - 임시값입니다 (첫 페이지 기준).
+const GREETING_TEXT_SPEC = { w:700, h:520, x:190, y:640, font:'Regular', size:26, ls:-1, align:'left', color:[0.06,0.16,0.17] };
+const GREETING_PHOTO_SPEC = { w:280, h:280, x:397.5, y:180 };
 
 const FONT_FILES = {
   Regular: 'assets/fonts/SUIT-Regular.ttf',
@@ -602,21 +788,26 @@ function measureTextWidth(text, font, sizePt, letterSpacingPt){
   });
   return total;
 }
+// text 안의 '\n'은 항상 줄바꿈으로 유지되고(예: 원장님 프로필 태그라인), 그 안에서 폭을 넘으면 추가로 자동 줄바꿈됩니다.
 function splitIntoLines(text, font, sizePt, letterSpacingPt, maxWidthPt){
-  const words = text.split(' ').filter(w=>w.length>0);
+  const paragraphs = text.split('\n');
   const lines = [];
-  let current = '';
-  words.forEach(word=>{
-    const candidate = current ? current + ' ' + word : word;
-    const w = measureTextWidth(candidate, font, sizePt, letterSpacingPt);
-    if(w > maxWidthPt && current){
-      lines.push(current);
-      current = word;
-    } else {
-      current = candidate;
-    }
+  paragraphs.forEach(para=>{
+    const words = para.split(' ').filter(w=>w.length>0);
+    if(words.length === 0){ lines.push(''); return; }
+    let current = '';
+    words.forEach(word=>{
+      const candidate = current ? current + ' ' + word : word;
+      const w = measureTextWidth(candidate, font, sizePt, letterSpacingPt);
+      if(w > maxWidthPt && current){
+        lines.push(current);
+        current = word;
+      } else {
+        current = candidate;
+      }
+    });
+    if(current) lines.push(current);
   });
-  if(current) lines.push(current);
   return lines.length ? lines : [text];
 }
 function drawLineWithSpacing(page, text, x, y, sizePt, font, color, letterSpacingPt){
@@ -651,190 +842,173 @@ function drawTextBox(page, text, spec, font, color, scale){
   });
 }
 
-let themeState = { view:'concept', activeConceptId:null, selectedConceptId:'frame', selectedDesignId:'frame-1', selectedHeadlineIdx:0 };
+let themeState = { selectedCoverId:'cover-1' };
 
-function findConcept(id){ return CONCEPTS.find(c=>c.id===id); }
-function findDesign(concept, id){ return concept.designs.find(d=>d.id===id); }
+function findCover(id){ return COVERS.find(c=>c.id===id); }
 
-function renderThemeModalBody(){
-  const backBtn = document.getElementById('themeBackBtn');
-  const title = document.getElementById('themeModalTitle');
-  const desc = document.getElementById('themeModalDesc');
-  const body = document.getElementById('themeModalBody');
+// 현대카드 챔피언브랜드 스타일: 제목(왼쪽) + 썸네일 그리드(오른쪽)를 섹션별로 나란히 보여줍니다.
+// 표지는 선택 가능한 썸네일, 나머지 3개 공통 구성(다릅니다·인사말·가이드)은 포함 내역을 보여주는 미리보기 썸네일입니다.
+function renderCommonSections(){
+  const el = document.getElementById('commonSectionsInline');
 
-  if(themeState.view === 'concept'){
-    backBtn.classList.remove('show');
-    title.textContent = '표지 컨셉 고르기';
-    desc.textContent = '먼저 마음에 드는 컨셉을 골라주세요. 컨셉마다 다양한 디자인이 준비되어 있어요.';
-    body.innerHTML = `<div class="concept-grid">${CONCEPTS.map(c=>`
-      <div class="concept-card ${c.id===themeState.selectedConceptId?'selected':''}" data-id="${c.id}">
-        <span class="concept-kw">${c.keyword}</span>
-        <div class="concept-name">${c.name}</div>
-        <div class="concept-sub">${c.sub}</div>
-        <div class="concept-mini-row">
-          ${c.designs.map(d=>`<div class="concept-mini" style="background-image:url('${d.img}');"></div>`).join('')}
-        </div>
+  const coverThumbs = COVERS.map(c=>`
+    <div class="cb-thumb ${c.id===themeState.selectedCoverId?'selected':''}" data-id="${c.id}">
+      <div class="thumb-img" style="background-image:url('${c.front}');">
+        <span class="thumb-check">✓</span>
       </div>
-    `).join('')}</div>`;
-    body.querySelectorAll('.concept-card').forEach(el=>{
-      el.onclick = ()=>{
-        themeState.activeConceptId = el.dataset.id;
-        themeState.view = 'design';
-        renderThemeModalBody();
-      };
-    });
-  } else {
-    const concept = findConcept(themeState.activeConceptId);
-    backBtn.classList.add('show');
-    title.textContent = `${concept.name} 디자인 고르기`;
-    desc.textContent = '마음에 드는 디자인을 누르시면 선택됩니다. (마우스를 올리면 크게 볼 수 있어요)';
+      <div class="thumb-name">${c.name}</div>
+    </div>
+  `).join('');
 
-    const headlinesHtml = `
-      <div class="headline-block">
-        <div class="htitle">표지 문구 추천 (선택하면 다음 단계 입력칸에 자동으로 채워져요, 이후 자유롭게 수정 가능)</div>
-        ${concept.headlines.map((h,i)=>`
-          <div class="headline-chip ${concept.id===themeState.selectedConceptId && i===themeState.selectedHeadlineIdx ? 'selected':''}" data-idx="${i}">
-            <div class="ht">${h.title}</div>
-            <div class="hs">${h.sub}</div>
-          </div>
-        `).join('')}
-      </div>`;
-
-    const designsHtml = `<div class="design-grid">${concept.designs.map(d=>`
-      <div class="design-card ${d.id===themeState.selectedDesignId?'selected':''}" data-id="${d.id}">
-        <div class="design-card-wrap">
-          <div class="design-card-inner" style="background-image:url('${d.img}');">
-            <span class="design-check">✓</span>
-            <span class="design-badge logo">로고 영역</span>
-            <span class="design-badge text">문구 영역</span>
-          </div>
-        </div>
-        <div class="design-name">${d.name}</div>
-        <div class="design-sub">로고 + 문구</div>
+  const coverSection = `
+    <div class="cb-section">
+      <div class="cb-head">
+        <div class="cb-title">표지</div>
+        <div class="cb-desc">6종 중 선택<br>(3P)</div>
       </div>
-    `).join('')}</div>`;
+      <div class="cb-grid">${coverThumbs}</div>
+    </div>`;
 
-    body.innerHTML = headlinesHtml + designsHtml;
-
-    body.querySelectorAll('.headline-chip').forEach(el=>{
-      el.onclick = ()=>{
-        themeState.selectedConceptId = concept.id;
-        themeState.selectedHeadlineIdx = +el.dataset.idx;
-        renderThemeModalBody();
-      };
-    });
-    body.querySelectorAll('.design-card').forEach(el=>{
-      el.onclick = ()=>{
-        themeState.selectedConceptId = concept.id;
-        themeState.selectedDesignId = el.dataset.id;
-        updateThemeSummary();
-        closeThemeModal();
-      };
-    });
-  }
-}
-
-function updateThemeSummary(){
-  const concept = findConcept(themeState.selectedConceptId);
-  const design = concept && findDesign(concept, themeState.selectedDesignId);
-  if(!concept || !design) return;
-  document.getElementById('themeSummary').style.display = 'flex';
-  document.getElementById('themeSummarySwatch').style.backgroundImage = `url('${design.img}')`;
-  document.getElementById('themeSummaryName').textContent = `${concept.name} · ${design.name}`;
-  document.getElementById('themeSummarySub').textContent = concept.keyword;
-
-  // 표지 문구 추천 자동 채우기 (사용자가 기본값을 아직 안 바꿨을 때만)
-  const coverInput = document.getElementById('f_cover');
-  const headline = concept.headlines[themeState.selectedHeadlineIdx];
-  if(coverInput && headline && (coverInput.value.trim()==='' || coverInput.dataset.autofilled==='1')){
-    coverInput.value = headline.title;
-    coverInput.dataset.autofilled = '1';
-  }
-}
-
-document.getElementById('f_cover').addEventListener('input', (e)=>{ e.target.dataset.autofilled = '0'; });
-
-const themeOverlay = document.getElementById('themeModalOverlay');
-function openThemeModal(){
-  themeState.activeConceptId = themeState.selectedConceptId;
-  themeState.view = 'concept';
-  renderThemeModalBody();
-  themeOverlay.classList.add('show');
-}
-function closeThemeModal(){ themeOverlay.classList.remove('show'); }
-document.getElementById('openThemeGallery').onclick = openThemeModal;
-document.getElementById('reopenThemeGallery').onclick = openThemeModal;
-document.getElementById('themeModalClose').onclick = closeThemeModal;
-document.getElementById('themeBackBtn').onclick = ()=>{ themeState.view = 'concept'; renderThemeModalBody(); };
-themeOverlay.addEventListener('click', (e)=>{ if(e.target===themeOverlay) closeThemeModal(); });
-updateThemeSummary();
-
-function renderChapters(){
-  const el = document.getElementById('chapters');
-  el.innerHTML = CHAPTERS.map(ch=>{
-    const checkedCount = ch.pages.filter(p=>state[p.n]).length;
+  const fixedSections = FIXED_INTRO.map(sec=>{
+    const thumbs = Array.from({ length: sec.count }, (_, i) => i + 1).map(idx => `
+      <div class="cb-thumb preview">
+        <div class="thumb-img" style="background-image:url('${thumbFile(sec.prefix, idx)}');"></div>
+      </div>
+    `).join('');
     return `
-    <div class="chapter">
-      <div class="chapter-head" data-key="${ch.key}">
-        <div class="title">${ch.label} ${ch.locked?'<span class="lockbadge">필수</span>':''}</div>
-        <div class="meta">
-          ${!ch.locked ? `<span class="toggle-all" data-all="${ch.key}">전체선택/해제</span>` : ''}
-          <span>${checkedCount}/${ch.pages.length}p</span>
-        </div>
+    <div class="cb-section">
+      <div class="cb-head">
+        <div class="cb-title">${sec.label}</div>
+        <div class="cb-desc">공통 포함 구성<br>(${sec.count}P)</div>
       </div>
-      <div class="chapter-body">
-        ${ch.pages.map(p=>`
-          <div class="page-card ${ch.locked?'locked':''}">
-            <span class="pnum">${p.n}p</span>
-            <img src="${thumbSrc(p.n)}" alt="page ${p.n}" loading="lazy">
-            <label>
-              <input type="checkbox" data-n="${p.n}" ${state[p.n]?'checked':''} ${ch.locked?'disabled':''}>
-              <span>${p.title}</span>
-            </label>
-          </div>
-        `).join('')}
-      </div>
+      <div class="cb-grid" style="grid-template-columns:repeat(${sec.cols || 3},1fr);">${thumbs}</div>
     </div>`;
   }).join('');
 
-  el.querySelectorAll('input[type=checkbox]').forEach(cb=>{
-    cb.onchange = ()=>{ state[+cb.dataset.n] = cb.checked; renderChapters(); updateSummary(); };
-  });
-  el.querySelectorAll('.chapter-head').forEach(h=>{
-    h.onclick = (e)=>{
-      if(e.target.classList.contains('toggle-all')) return;
-      const body = h.nextElementSibling;
-      body.style.display = body.style.display==='none' ? '' : 'none';
+  el.innerHTML = coverSection + fixedSections;
+
+  el.querySelectorAll('.cb-thumb[data-id]').forEach(thumb=>{
+    thumb.onclick = ()=>{
+      themeState.selectedCoverId = thumb.dataset.id;
+      renderCommonSections();
     };
   });
-  el.querySelectorAll('.toggle-all').forEach(t=>{
-    t.onclick = (e)=>{
-      e.stopPropagation();
-      const ch = CHAPTERS.find(c=>c.key===t.dataset.all);
-      const allOn = ch.pages.every(p=>state[p.n]);
-      ch.pages.forEach(p=> state[p.n] = !allOn);
-      renderChapters();
+}
+
+renderCommonSections();
+
+// ===================== 추천 템플릿 A형/B형 (펼친면 미리보기) =====================
+// mockup: 카드에 보이는 3D 교재 목업 이미지. assets/templates/ 폴더에 넣으면 자동 반영됩니다. (없으면 빈 박스로 표시)
+// heyzineUrl: HEYZINE(heyzine.com)에 해당 템플릿의 PDF를 업로드해서 발급받은 플립북 임베드 주소.
+//   HEYZINE 편집 화면 > Share/Embed > "Embed code"에 나오는 iframe의 src 값만 복사해서 넣어주세요.
+//   비워두면 "펼친면 미리보기 준비 중" 안내만 표시됩니다.
+const RECOMMENDED_TEMPLATES = [
+  { id:'a', name:'추천 템플릿 A형', desc:'설명 문구를 넣어주세요.',
+    mockup:'assets/templates/template-a.png',
+    heyzineUrl:'https://heyzine.com/flip-book/f9ab55da26.html' },
+  { id:'b', name:'추천 템플릿 B형', desc:'설명 문구를 넣어주세요.',
+    mockup:'assets/templates/template-b.png',
+    heyzineUrl:'https://heyzine.com/flip-book/4ccfaba863.html' },
+];
+
+function renderTemplateSection(){
+  const el = document.getElementById('templateSectionInline');
+  el.innerHTML = `<div class="template-grid">${RECOMMENDED_TEMPLATES.map(t=>`
+    <div class="template-card">
+      <div class="template-mockup">
+        <img src="${t.mockup}" alt="${t.name}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+        <span class="template-mockup-fallback">이미지 준비 중</span>
+      </div>
+      <div class="template-body">
+        <div class="template-name">${t.name}</div>
+        <div class="template-desc">${t.desc}</div>
+        <button class="template-preview-btn" data-id="${t.id}">📖 펼친면 미리보기</button>
+      </div>
+    </div>
+  `).join('')}</div>`;
+
+  el.querySelectorAll('.template-preview-btn').forEach(btn=>{
+    btn.onclick = ()=> openSpreadPreview(btn.dataset.id);
+  });
+}
+renderTemplateSection();
+
+// ===================== 펼친면 미리보기 라이트박스 (HEYZINE 플립북 임베드) =====================
+let spreadTemplateId = null;
+
+function openSpreadPreview(templateId){
+  spreadTemplateId = templateId;
+  renderSpreadPreview();
+  document.getElementById('spreadOverlay').classList.add('show');
+}
+function closeSpreadPreview(){
+  document.getElementById('spreadOverlay').classList.remove('show');
+  // iframe 재생/로딩을 멈추기 위해 닫을 때 프레임 내용을 비웁니다.
+  document.getElementById('spreadFrame').innerHTML = `<span class="spread-empty" id="spreadEmpty"></span>`;
+}
+function renderSpreadPreview(){
+  const template = RECOMMENDED_TEMPLATES.find(t=>t.id===spreadTemplateId);
+  if(!template) return;
+  document.getElementById('spreadTitle').textContent = `${template.name} · 펼친면 미리보기`;
+  const frame = document.getElementById('spreadFrame');
+  if(template.heyzineUrl){
+    frame.innerHTML = `<iframe src="${template.heyzineUrl}" allowfullscreen scrolling="no" title="${template.name} 펼친면 미리보기"></iframe>`;
+  } else {
+    frame.innerHTML = `<span class="spread-empty">펼친면 미리보기 준비 중입니다.<br>교재 PDF를 HEYZINE에 업로드하면 이 자리에 실제 책장 넘기기 화면이 표시돼요.</span>`;
+  }
+}
+document.getElementById('spreadCloseBtn').onclick = closeSpreadPreview;
+document.getElementById('spreadOverlay').addEventListener('click', (e)=>{
+  if(e.target.id === 'spreadOverlay') closeSpreadPreview();
+});
+
+function renderTopics(){
+  const el = document.getElementById('chapters');
+
+  el.innerHTML = `<div class="topic-grid">${TOPICS.map(t=>{
+    const on = selectedTopics.has(t.id);
+    return `
+    <div class="cb-thumb ${on?'selected':''}" data-id="${t.id}">
+      <div class="thumb-img" style="background-image:url('${thumbFile(t.prefix,1)}');">
+        <span class="thumb-check">✓</span>
+      </div>
+      <div class="thumb-name">${t.id}. ${t.label} (${t.count}p)</div>
+    </div>`;
+  }).join('')}</div>`;
+
+  el.querySelectorAll('.cb-thumb').forEach(card=>{
+    card.onclick = ()=>{
+      const id = +card.dataset.id;
+      if(selectedTopics.has(id)){
+        selectedTopics.delete(id);
+      } else {
+        selectedTopics.add(id);
+      }
+      renderTopics();
       updateSummary();
     };
   });
 }
 
 function updateSummary(){
-  const total = Object.values(state).filter(Boolean).length;
-  document.getElementById('totalPages').textContent = total;
+  const remain = MIN_TOPIC_COUNT - selectedTopics.size;
+  const summaryEl = document.getElementById('totalPages');
+  if(summaryEl) summaryEl.textContent = `${selectedTopics.size}개 선택 (총 ${totalSelectedPages()}p)` + (remain>0 ? ` · 최소 ${remain}개 더 골라주세요` : '');
 }
 
-// ===================== 모달 갤러리 =====================
-const overlay = document.getElementById('modalOverlay');
-function openModal(){ overlay.classList.add('show'); renderChapters(); }
-function closeModal(){ overlay.classList.remove('show'); }
-document.getElementById('openGallery').onclick = openModal;
-document.getElementById('reopenGallery').onclick = openModal;
-document.getElementById('modalClose').onclick = closeModal;
-document.getElementById('modalDone').onclick = ()=>{ closeModal(); updateSummary(); };
-overlay.addEventListener('click', (e)=>{ if(e.target===overlay) closeModal(); });
+// ===================== 주제별 구성 : 모달 없이 12개를 첫 화면에 바로 표시 =====================
+renderTopics();
+updateSummary();
 
-// ===================== 로고 미리보기 =====================
+document.getElementById('step1NextBtn').onclick = ()=>{
+  if(selectedTopics.size < MIN_TOPIC_COUNT){
+    alert(`주제별 구성을 최소 ${MIN_TOPIC_COUNT}개 이상 선택해주세요. (현재 ${selectedTopics.size}개)`);
+    return;
+  }
+  goStep(2);
+};
+
+// ===================== 로고 · 원장님 프로필 사진 미리보기 =====================
 let logoDataUrl = null;
 document.getElementById('f_logo').addEventListener('change', (e)=>{
   const file = e.target.files[0];
@@ -843,6 +1017,18 @@ document.getElementById('f_logo').addEventListener('change', (e)=>{
   reader.onload = ()=>{
     logoDataUrl = reader.result;
     document.getElementById('logoPreview').innerHTML = `<img src="${logoDataUrl}">`;
+  };
+  reader.readAsDataURL(file);
+});
+
+let photoDataUrl = null;
+document.getElementById('f_photo').addEventListener('change', (e)=>{
+  const file = e.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = ()=>{
+    photoDataUrl = reader.result;
+    document.getElementById('photoPreview').innerHTML = `<img src="${photoDataUrl}">`;
   };
   reader.readAsDataURL(file);
 });
@@ -973,29 +1159,15 @@ async function buildPdf(){
   const btn = document.getElementById('btnBuild');
   btn.disabled = true;
   try{
-    setStatus('마스터 PDF를 불러오는 중...');
+    if(selectedTopics.size < MIN_TOPIC_COUNT){
+      throw new Error(`주제별 구성을 최소 ${MIN_TOPIC_COUNT}개 이상 선택해주세요. (현재 ${selectedTopics.size}개 선택됨)`);
+    }
+
+    setStatus('PDF를 준비하는 중...');
     const { PDFDocument, rgb } = PDFLib;
-    const masterBytes = await fetch('assets/master.pdf').then(r=>{
-      if(!r.ok) throw new Error('assets/master.pdf 를 찾을 수 없습니다. index.html과 같은 위치에 assets 폴더가 있는지 확인해주세요.');
-      return r.arrayBuffer();
-    });
-    const master = await PDFDocument.load(masterBytes);
     const out = await PDFDocument.create();
     out.registerFontkit(fontkit);
-
-    const selected = [];
-    CHAPTERS.forEach(ch => ch.pages.forEach(p => { if(state[p.n]) selected.push(p.n); }));
-    selected.sort((a,b)=>a-b);
-    if(selected.length===0) throw new Error('선택된 페이지가 없습니다.');
-
-    setStatus(`선택한 ${selected.length}페이지를 이어붙이는 중...`);
-    const indices = selected.map(n=>n-1);
-    const copied = await out.copyPages(master, indices);
-    copied.forEach(p=>out.addPage(p));
-
-    setStatus('한글 폰트를 불러오는 중...');
-    const fontBytes = await fetch('https://cdn.jsdelivr.net/fontsource/fonts/noto-sans-kr@latest/korean-700-normal.ttf').then(r=>r.arrayBuffer());
-    const font = await out.embedFont(fontBytes, { subset:true });
+    const PAGE_W = 515.906, PAGE_H = 728.504;
 
     const fontCache = {};
     async function getSuitFont(weight){
@@ -1010,58 +1182,114 @@ async function buildPdf(){
       return embedded;
     }
 
-    const selConcept = findConcept(themeState.selectedConceptId) || CONCEPTS[0];
-    const selDesign = findDesign(selConcept, themeState.selectedDesignId) || selConcept.designs[0];
-    const accent = rgb(selDesign.accent[0], selDesign.accent[1], selDesign.accent[2]);
-
-    if(selected.includes(1)){
-      const pageIdx = selected.indexOf(1);
-      const page = out.getPage(pageIdx);
-      const { width, height } = page.getSize();
-      const scale = width / 1075;
-
-      // 실제 표지 디자인 이미지를 페이지 전체에 채워 넣기
-      if(selDesign.img){
-        setStatus('표지 디자인 이미지를 합성하는 중...');
-        const coverImgBytes = await fetch(selDesign.img).then(r=>r.arrayBuffer());
-        const coverImg = await out.embedPng(coverImgBytes);
-        page.drawImage(coverImg, { x:0, y:0, width, height });
-      }
-
-      const coverText = document.getElementById('f_cover').value.trim();
-      if(coverText && selDesign.title){
-        setStatus('표지 문구를 배치하는 중...');
-        const titleFont = await getSuitFont(selDesign.title.font);
-        drawTextBox(page, coverText, selDesign.title, titleFont, rgb(0,0,0), scale);
-      }
+    async function addImagePage(path){
+      const bytes = await fetch(path).then(r=>{
+        if(!r.ok) throw new Error(`${path} 파일을 찾을 수 없습니다. assets 폴더에 해당 이미지가 있는지 확인해주세요.`);
+        return r.arrayBuffer();
+      });
+      const img = await out.embedPng(bytes);
+      const page = out.addPage([PAGE_W, PAGE_H]);
+      page.drawImage(img, { x:0, y:0, width:PAGE_W, height:PAGE_H });
+      return page;
     }
 
+    const selCover = findCover(themeState.selectedCoverId) || COVERS[0];
+    const scale = PAGE_W / 1075;
+
+    // 1) 앞표지 (1P) — 앞표지 내지는 별도 이미지 없이 바로 다음의 "원장님 프로필"이 그 역할을 대신합니다.
+    setStatus('표지를 만드는 중...');
+    const frontPage = await addImagePage(selCover.front);
+    const coverText = document.getElementById('f_cover').value.trim() || document.getElementById('f_name').value.trim();
+    if(coverText && selCover.title){
+      const titleFont = await getSuitFont(selCover.title.font);
+      const c = selCover.title.color || [1,1,1];
+      drawTextBox(frontPage, coverText, selCover.title, titleFont, rgb(c[0],c[1],c[2]), scale);
+    }
+
+    // 2) 원장님 프로필 (1P, 제목·태그라인·프로필 사진 삽입) — 앞표지 내지 자리를 대신합니다.
+    setStatus('원장님 프로필 페이지를 만드는 중...');
+    const profilePage1 = await addImagePage(pageFile('profile', 1));
+    const profileAcademyName = document.getElementById('f_name').value.trim();
+    const profileTitleText = `${profileAcademyName || '학원명'} BRANDBOOK`;
+    const profileTitleFont = await getSuitFont(PROFILE_TITLE_SPEC.font);
+    const profileTitleColor = rgb(PROFILE_TITLE_SPEC.color[0], PROFILE_TITLE_SPEC.color[1], PROFILE_TITLE_SPEC.color[2]);
+    drawTextBox(profilePage1, profileTitleText, PROFILE_TITLE_SPEC, profileTitleFont, profileTitleColor, scale);
+    const profileTaglineFont = await getSuitFont(PROFILE_TAGLINE_SPEC.font);
+    const profileTaglineColor = rgb(PROFILE_TAGLINE_SPEC.color[0], PROFILE_TAGLINE_SPEC.color[1], PROFILE_TAGLINE_SPEC.color[2]);
+    drawTextBox(profilePage1, PROFILE_TAGLINE_TEXT, PROFILE_TAGLINE_SPEC, profileTaglineFont, profileTaglineColor, scale);
+    if(photoDataUrl){
+      const resp = await fetch(photoDataUrl);
+      const photoBytes = await resp.arrayBuffer();
+      const isPng = photoDataUrl.startsWith('data:image/png');
+      const img = isPng ? await out.embedPng(photoBytes) : await out.embedJpg(photoBytes);
+      const boxWPt = PROFILE_PHOTO_SPEC.w * scale;
+      const boxHPt = PROFILE_PHOTO_SPEC.h * scale;
+      const dims = img.scaleToFit(boxWPt, boxHPt);
+      const x = PROFILE_PHOTO_SPEC.x * scale;
+      const y = PAGE_H - (PROFILE_PHOTO_SPEC.y * scale) - dims.height;
+      profilePage1.drawImage(img, { x, y, width:dims.width, height:dims.height });
+    }
+
+    // 3) 우리학원은 이렇게 다릅니다 (1P, 소개 문구·로고 삽입)
+    setStatus('우리학원은 이렇게 다릅니다 페이지를 만드는 중...');
+    const whyPage1 = await addImagePage(pageFile('why', 1));
     const sloganText = document.getElementById('f_slogan').value.trim();
-    if(selected.includes(3)){
-      const pageIdx = selected.indexOf(3);
-      const page = out.getPage(pageIdx);
-      const { width, height } = page.getSize();
-      const scale = width / 1075;
-      if(sloganText){
-        setStatus('학원명 문구를 배치하는 중...');
-        const sloganFont = await getSuitFont(PAGE3_SLOGAN_SPEC.font);
-        const sloganColor = rgb(PAGE3_SLOGAN_SPEC.color[0], PAGE3_SLOGAN_SPEC.color[1], PAGE3_SLOGAN_SPEC.color[2]);
-        drawTextBox(page, sloganText, PAGE3_SLOGAN_SPEC, sloganFont, sloganColor, scale);
-      }
-      if(logoDataUrl){
-        setStatus('로고 이미지를 합성하는 중...');
-        const resp = await fetch(logoDataUrl);
-        const logoBytes = await resp.arrayBuffer();
-        const isPng = logoDataUrl.startsWith('data:image/png');
-        const img = isPng ? await out.embedPng(logoBytes) : await out.embedJpg(logoBytes);
-        const boxWPt = PAGE3_LOGO_SPEC.w * scale;
-        const boxHPt = PAGE3_LOGO_SPEC.h * scale;
-        const dims = img.scaleToFit(boxWPt, boxHPt);
-        const x = (width - dims.width) / 2;
-        const y = PAGE3_LOGO_SPEC.marginBottom * scale;
-        page.drawImage(img, { x, y, width:dims.width, height:dims.height });
-      }
+    if(sloganText){
+      const sloganFont = await getSuitFont(WHY_TEXT_SPEC.font);
+      const sloganColor = rgb(WHY_TEXT_SPEC.color[0], WHY_TEXT_SPEC.color[1], WHY_TEXT_SPEC.color[2]);
+      drawTextBox(whyPage1, sloganText.replace(/\n+/g,' '), WHY_TEXT_SPEC, sloganFont, sloganColor, scale);
     }
+    if(logoDataUrl){
+      const resp = await fetch(logoDataUrl);
+      const logoBytes = await resp.arrayBuffer();
+      const isPng = logoDataUrl.startsWith('data:image/png');
+      const img = isPng ? await out.embedPng(logoBytes) : await out.embedJpg(logoBytes);
+      const boxWPt = WHY_LOGO_SPEC.w * scale;
+      const boxHPt = WHY_LOGO_SPEC.h * scale;
+      const dims = img.scaleToFit(boxWPt, boxHPt);
+      const x = (PAGE_W - dims.width) / 2;
+      const y = WHY_LOGO_SPEC.marginBottom * scale;
+      whyPage1.drawImage(img, { x, y, width:dims.width, height:dims.height });
+    }
+
+    // 4) 인사말 (2P, 문구·학원장님 프로필 사진은 첫 페이지에 배치)
+    setStatus('인사말 페이지를 만드는 중...');
+    const greetingPage1 = await addImagePage(pageFile('greeting', 1));
+    const greetingText = document.getElementById('f_greeting').value.trim();
+    if(greetingText){
+      const greetingFont = await getSuitFont(GREETING_TEXT_SPEC.font);
+      const greetingColor = rgb(GREETING_TEXT_SPEC.color[0], GREETING_TEXT_SPEC.color[1], GREETING_TEXT_SPEC.color[2]);
+      drawTextBox(greetingPage1, greetingText.replace(/\n+/g,' '), GREETING_TEXT_SPEC, greetingFont, greetingColor, scale);
+    }
+    if(photoDataUrl){
+      const resp = await fetch(photoDataUrl);
+      const photoBytes = await resp.arrayBuffer();
+      const isPng = photoDataUrl.startsWith('data:image/png');
+      const img = isPng ? await out.embedPng(photoBytes) : await out.embedJpg(photoBytes);
+      const boxWPt = GREETING_PHOTO_SPEC.w * scale;
+      const boxHPt = GREETING_PHOTO_SPEC.h * scale;
+      const dims = img.scaleToFit(boxWPt, boxHPt);
+      const x = GREETING_PHOTO_SPEC.x * scale;
+      const y = PAGE_H - (GREETING_PHOTO_SPEC.y * scale) - dims.height;
+      greetingPage1.drawImage(img, { x, y, width:dims.width, height:dims.height });
+    }
+    await addImagePage(pageFile('greeting', 2));
+
+    // 5) 좋은 수학학원 고르는 법
+    setStatus('좋은 수학학원 고르는 법 페이지를 만드는 중...');
+    for(let i=1;i<=7;i++){ await addImagePage(pageFile('guide', i)); }
+
+    // 6) 주제별 구성 (선택한 6개, 항상 1~12번 고정 순서)
+    const chosenTopics = TOPICS.filter(t=>selectedTopics.has(t.id));
+    for(const t of chosenTopics){
+      setStatus(`${t.label} 페이지를 만드는 중...`);
+      for(let i=1;i<=t.count;i++){ await addImagePage(pageFile(t.prefix, i)); }
+    }
+
+    // 7) 뒤표지 내지 · 뒷표지 (2P, 표지 세트의 마지막 두 장을 PDF 맨 끝에 붙입니다)
+    setStatus('뒷표지를 만드는 중...');
+    await addImagePage(selCover.backInside);
+    await addImagePage(selCover.back);
 
     setStatus('PDF를 마무리하는 중...');
     const bytes = await out.save();
@@ -1071,15 +1299,15 @@ async function buildPdf(){
     document.getElementById('previewFrame').src = url;
     document.getElementById('previewWrap').classList.add('show');
 
-    const academyName = document.getElementById('f_name').value.trim() || '학원맞춤키트';
-    const fileName = `${academyName}_학원맞춤키트.pdf`;
+    const academyName = document.getElementById('f_name').value.trim() || '우리학원브랜드북';
+    const fileName = `${academyName}_우리학원브랜드북.pdf`;
 
     lastPdfBase64 = arrayBufferToBase64(bytes);
     lastPdfFileName = fileName;
     document.getElementById('emailStatus').textContent = '';
     updateEmailUi();
 
-    setStatus(`완료되었습니다. 총 ${selected.length}페이지 (${(bytes.length/1024/1024).toFixed(1)}MB)`);
+    setStatus(`완료되었습니다. 총 ${out.getPageCount()}페이지 (${(bytes.length/1024/1024).toFixed(1)}MB)`);
   }catch(err){
     console.error(err);
     setStatus('오류가 발생했습니다: ' + err.message, true);
