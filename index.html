@@ -851,9 +851,12 @@ function findCover(id){ return COVERS.find(c=>c.id===id); }
 function renderCommonSections(){
   const el = document.getElementById('commonSectionsInline');
 
+  // 표지 원본 이미지는 인쇄용 고해상도(2150x1519px 급)라서, 브라우저가 작은 썸네일 박스로 한 번에
+  // 축소하면 문구가 뭉개져 보일 수 있습니다. data-src에 원본을 담아두고, sharpenCoverThumbs()에서
+  // 캔버스로 한 번 더 고품질 축소한 뒤 그 결과를 배경으로 바꿔 끼워 선명하게 보이도록 합니다.
   const coverThumbs = COVERS.map(c=>`
     <div class="cb-thumb ${c.id===themeState.selectedCoverId?'selected':''}" data-id="${c.id}">
-      <div class="thumb-img" style="background-image:url('${c.front}');">
+      <div class="thumb-img" data-src="${c.front}" style="background-image:url('${c.front}');">
         <span class="thumb-check">✓</span>
       </div>
       <div class="thumb-name">${c.name}</div>
@@ -892,6 +895,34 @@ function renderCommonSections(){
       themeState.selectedCoverId = thumb.dataset.id;
       renderCommonSections();
     };
+  });
+
+  sharpenCoverThumbs();
+}
+
+// 표지 썸네일을 캔버스로 한 번 더 고품질 축소해서(고해상도 원본 → 적당한 크기로 리샘플링)
+// 브라우저 기본 축소보다 글자가 또렷하게 보이도록 배경 이미지를 바꿔 끼웁니다.
+function sharpenCoverThumbs(){
+  const TARGET_W = 480; // 실제 표시 크기보다 넉넉히 크게(레티나 대비) 만든 뒤 CSS로 다시 줄여서 보여줍니다.
+  document.querySelectorAll('#commonSectionsInline .thumb-img[data-src]').forEach(el=>{
+    const src = el.dataset.src;
+    if(!src || el.dataset.sharpened) return;
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = ()=>{
+      try{
+        const targetH = Math.round(TARGET_W * img.naturalHeight / img.naturalWidth);
+        const canvas = document.createElement('canvas');
+        canvas.width = TARGET_W; canvas.height = targetH;
+        const ctx = canvas.getContext('2d');
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = 'high';
+        ctx.drawImage(img, 0, 0, TARGET_W, targetH);
+        el.style.backgroundImage = `url('${canvas.toDataURL('image/jpeg', 0.92)}')`;
+        el.dataset.sharpened = '1';
+      }catch(e){ /* 캔버스 처리 실패 시 원본 배경 이미지를 그대로 둡니다. */ }
+    };
+    img.src = src;
   });
 }
 
