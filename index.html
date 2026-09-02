@@ -120,7 +120,7 @@
   .chapter-head .meta{font-size:11.5px;color:var(--body);display:flex;align-items:center;gap:10px;}
   .lockbadge{font-size:10px;color:var(--seafoam);font-weight:700;border:1px solid var(--seafoam);border-radius:5px;padding:1px 6px;}
   .chapter-body{padding:14px 16px;display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:10px;border-radius:0 0 12px 12px;}
-  .topic-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;}
+  .topic-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(168px,1fr));gap:24px 20px;padding:4px;}
   .toggle-all{font-size:11px;color:var(--seafoam);cursor:pointer;text-decoration:underline;}
 
   /* 디자인 테마 모달 : 1) 컨셉 3안 선택 -> 2) 컨셉 내 디자인 2종 선택 */
@@ -160,14 +160,31 @@
   .cb-thumb.selected .thumb-check{display:flex;}
   .thumb-name{font-size:11px;font-weight:600;color:var(--body);margin-top:6px;}
 
-  /* 표지 썸네일은 글자가 작아 100% 화면에서 흐려 보일 수 있어, 마우스 오버 시 확대해서 보여줍니다. */
-  .cover-thumb .thumb-img{transition:transform .18s ease, box-shadow .18s ease, border-color .15s;transform-origin:center;}
-  .cover-thumb:hover{position:relative;z-index:6;}
-  .cover-thumb:hover .thumb-img{transform:scale(2.1);box-shadow:0 14px 32px rgba(9,20,22,.28);}
+  /* 썸네일은 글자가 작아 100% 화면에서 흐려 보일 수 있어, 마우스 오버 시 확대해서 보여줍니다.
+     표지/공통구성(프로필~가이드)/주제별구성 썸네일 전체에 공통 적용됩니다. */
+  .zoom-thumb .thumb-img{transition:transform .18s ease, box-shadow .18s ease, border-color .15s;transform-origin:center;}
+  .zoom-thumb:hover{position:relative;z-index:6;}
+  .zoom-thumb:hover .thumb-img{transform:scale(2.1);box-shadow:0 14px 32px rgba(9,20,22,.28);}
 
   /* 주제별 구성 추천 뱃지 */
   .topic-recommend{position:absolute;top:6px;right:6px;background:#F5A524;color:#fff;font-size:10px;font-weight:800;
     padding:3px 8px;border-radius:999px;letter-spacing:-.2px;box-shadow:0 2px 6px rgba(0,0,0,.18);z-index:1;}
+
+  /* 주제별 구성 : 선택한 주제의 전체 페이지 미리보기 확장 영역 (실제 페이지 이미지는 추후 assets/thumbs에 추가되면 자동 반영) */
+  .topic-expand{grid-column:1/-1;margin-top:8px;padding:18px 20px;background:var(--paleMint);border-radius:14px;
+    border:1px solid var(--lightMint);}
+  .topic-expand-head{font-weight:800;font-size:13.5px;color:var(--ink);margin-bottom:14px;}
+  .topic-expand-block{margin-bottom:16px;}
+  .topic-expand-block:last-child{margin-bottom:0;}
+  .topic-expand-title{font-weight:700;font-size:12.5px;color:var(--ink);margin-bottom:8px;}
+  .topic-expand-title .cnt{font-weight:600;color:var(--seafoam);font-size:11.5px;margin-left:4px;}
+  .topic-expand-strip{display:flex;flex-wrap:wrap;gap:10px;}
+  .topic-expand-page{position:relative;width:96px;aspect-ratio:1075/1519;border-radius:7px;overflow:hidden;
+    border:1px solid var(--line);background:#eef2f1;transition:transform .15s ease,box-shadow .15s ease;transform-origin:center;}
+  .topic-expand-page:hover{transform:scale(1.9);z-index:6;box-shadow:0 12px 26px rgba(9,20,22,.28);}
+  .topic-expand-page img{width:100%;height:100%;object-fit:cover;display:block;}
+  .topic-expand-fallback{display:none;position:absolute;inset:0;align-items:center;justify-content:center;
+    font-size:10.5px;color:var(--muted);background:#eef2f1;text-align:center;line-height:1.3;}
 
   .headline-block{margin:18px 0 22px;padding:14px 16px;background:#F7FAF9;border-radius:12px;}
   .headline-block .htitle{font-size:12px;font-weight:700;color:var(--body);margin-bottom:10px;}
@@ -230,8 +247,7 @@
   .template-mockup-fallback{display:none;position:absolute;inset:0;align-items:center;justify-content:center;
     color:var(--muted);font-size:11.5px;text-align:center;padding:10px;}
   .template-body{padding:14px 16px 16px;}
-  .template-name{font-weight:800;font-size:14px;margin-bottom:4px;}
-  .template-desc{font-size:11.5px;color:var(--muted);line-height:1.5;margin-bottom:12px;min-height:32px;}
+  .template-name{font-weight:800;font-size:14px;margin-bottom:12px;}
   .template-preview-btn{width:100%;border:1px solid var(--seafoam);background:#fff;color:var(--seafoam);
     font-weight:700;font-size:12px;padding:9px 0;border-radius:8px;cursor:pointer;}
   .template-preview-btn:hover{background:var(--paleMint);}
@@ -867,7 +883,7 @@ function renderCommonSections(){
   // 축소하면 문구가 뭉개져 보일 수 있습니다. data-src에 원본을 담아두고, sharpenCoverThumbs()에서
   // 캔버스로 한 번 더 고품질 축소한 뒤 그 결과를 배경으로 바꿔 끼워 선명하게 보이도록 합니다.
   const coverThumbs = COVERS.map(c=>`
-    <div class="cb-thumb cover-thumb ${c.id===themeState.selectedCoverId?'selected':''}" data-id="${c.id}">
+    <div class="cb-thumb cover-thumb zoom-thumb ${c.id===themeState.selectedCoverId?'selected':''}" data-id="${c.id}">
       <div class="thumb-img" data-src="${c.front}" style="background-image:url('${c.front}');">
         <span class="thumb-check">✓</span>
       </div>
@@ -886,7 +902,7 @@ function renderCommonSections(){
 
   const fixedSections = FIXED_INTRO.map(sec=>{
     const thumbs = Array.from({ length: sec.count }, (_, i) => i + 1).map(idx => `
-      <div class="cb-thumb preview">
+      <div class="cb-thumb preview zoom-thumb">
         <div class="thumb-img" style="background-image:url('${thumbFile(sec.prefix, idx)}');"></div>
       </div>
     `).join('');
@@ -946,10 +962,10 @@ renderCommonSections();
 //   HEYZINE 편집 화면 > Share/Embed > "Embed code"에 나오는 iframe의 src 값만 복사해서 넣어주세요.
 //   비워두면 "펼친면 미리보기 준비 중" 안내만 표시됩니다.
 const RECOMMENDED_TEMPLATES = [
-  { id:'a', name:'추천 템플릿 A형', desc:'설명 문구를 넣어주세요.',
+  { id:'a', name:'추천 템플릿 A형',
     mockup:'assets/templates/template-a.png',
     heyzineUrl:'https://heyzine.com/flip-book/f9ab55da26.html' },
-  { id:'b', name:'추천 템플릿 B형', desc:'설명 문구를 넣어주세요.',
+  { id:'b', name:'추천 템플릿 B형',
     mockup:'assets/templates/template-b.png',
     heyzineUrl:'https://heyzine.com/flip-book/4ccfaba863.html' },
 ];
@@ -964,7 +980,6 @@ function renderTemplateSection(){
       </div>
       <div class="template-body">
         <div class="template-name">${t.name}</div>
-        <div class="template-desc">${t.desc}</div>
         <button class="template-preview-btn" data-id="${t.id}">📖 펼친면 미리보기</button>
       </div>
     </div>
@@ -1005,14 +1020,40 @@ document.getElementById('spreadOverlay').addEventListener('click', (e)=>{
   if(e.target.id === 'spreadOverlay') closeSpreadPreview();
 });
 
+// 주제를 선택하면 해당 주제에 속한 페이지를 모두 모아 보여주는 확장 미리보기 영역입니다.
+// 지금은 각 주제당 썸네일이 1장만 있어 나머지는 "준비 중"으로 표시되고, 내일 assets/thumbs에
+// topic-XX-2.jpg, topic-XX-3.jpg ... 형식으로 파일을 추가하면 자동으로 채워집니다.
+function renderTopicExpandHtml(){
+  const chosen = TOPICS.filter(t=>selectedTopics.has(t.id));
+  if(chosen.length===0) return '';
+  return `
+  <div class="topic-expand">
+    <div class="topic-expand-head">선택한 주제 페이지 미리보기 (${chosen.length}개)</div>
+    ${chosen.map(t=>`
+      <div class="topic-expand-block">
+        <div class="topic-expand-title">${t.id}. ${t.label}<span class="cnt">${t.count}p</span></div>
+        <div class="topic-expand-strip">
+          ${Array.from({ length: t.count }, (_, i) => i + 1).map(idx => `
+            <div class="topic-expand-page">
+              <img src="${thumbFile(t.prefix, idx)}" alt="${t.label} ${idx}p"
+                   onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+              <span class="topic-expand-fallback">이미지<br>준비 중</span>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `).join('')}
+  </div>`;
+}
+
 function renderTopics(){
   const el = document.getElementById('chapters');
 
-  el.innerHTML = `<div class="topic-grid">${TOPICS.map(t=>{
+  const grid = `<div class="topic-grid">${TOPICS.map(t=>{
     const on = selectedTopics.has(t.id);
     const recommended = RECOMMENDED_TOPIC_IDS.has(t.id);
     return `
-    <div class="cb-thumb ${on?'selected':''}" data-id="${t.id}">
+    <div class="cb-thumb zoom-thumb ${on?'selected':''}" data-id="${t.id}">
       <div class="thumb-img" style="background-image:url('${thumbFile(t.prefix,1)}');">
         ${recommended ? '<span class="topic-recommend">추천</span>' : ''}
         <span class="thumb-check">✓</span>
@@ -1021,7 +1062,9 @@ function renderTopics(){
     </div>`;
   }).join('')}</div>`;
 
-  el.querySelectorAll('.cb-thumb').forEach(card=>{
+  el.innerHTML = grid + renderTopicExpandHtml();
+
+  el.querySelectorAll('.cb-thumb[data-id]').forEach(card=>{
     card.onclick = ()=>{
       const id = +card.dataset.id;
       if(selectedTopics.has(id)){
