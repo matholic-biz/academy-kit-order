@@ -903,7 +903,7 @@ function renderCommonSections(){
 // 표지 썸네일을 캔버스로 한 번 더 고품질 축소해서(고해상도 원본 → 적당한 크기로 리샘플링)
 // 브라우저 기본 축소보다 글자가 또렷하게 보이도록 배경 이미지를 바꿔 끼웁니다.
 function sharpenCoverThumbs(){
-  const TARGET_W = 480; // 실제 표시 크기보다 넉넉히 크게(레티나 대비) 만든 뒤 CSS로 다시 줄여서 보여줍니다.
+  const TARGET_W = 960; // 실제 표시 크기보다 훨씬 크게(레티나 대비) 만든 뒤 CSS로 다시 줄여서 보여줍니다.
   document.querySelectorAll('#commonSectionsInline .thumb-img[data-src]').forEach(el=>{
     const src = el.dataset.src;
     if(!src || el.dataset.sharpened) return;
@@ -918,7 +918,7 @@ function sharpenCoverThumbs(){
         ctx.imageSmoothingEnabled = true;
         ctx.imageSmoothingQuality = 'high';
         ctx.drawImage(img, 0, 0, TARGET_W, targetH);
-        el.style.backgroundImage = `url('${canvas.toDataURL('image/jpeg', 0.92)}')`;
+        el.style.backgroundImage = `url('${canvas.toDataURL('image/png')}')`;
         el.dataset.sharpened = '1';
       }catch(e){ /* 캔버스 처리 실패 시 원본 배경 이미지를 그대로 둡니다. */ }
     };
