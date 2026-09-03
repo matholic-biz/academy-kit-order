@@ -843,6 +843,9 @@ function coverFile(name){ return `assets/pages/${name}.png`; } // 표지 내지�
 function frontCoverFile(name){ return `assets/covers/${name}.jpg`; } // 앞표지 6종 실제 파일은 assets/covers 폴더에 jpg로 있습니다 (cover-1-front.jpg ~ cover-6-front.jpg).
 // 주제별 구성은 topic_{번호}_{페이지}.png (번호 앞에 0을 붙이지 않음) 형식으로 올라와 있어 화면 미리보기·PDF 조립 모두 이 함수로 통일합니다.
 function topicFile(topicId, idx){ return `assets/pages/topic_${topicId}_${idx}.png`; }
+// 주제별 구성 그리드의 작은 썸네일은 topic_{번호}_1.png(실제 1페이지)가 아니라, 별도의 대표 썸네일 파일
+// topic_{번호}.png(페이지 번호 없음)를 사용합니다. 실제 내지(1페이지~)는 모달·PDF 조립에서 topicFile()로 불러옵니다.
+function topicThumbFile(topicId){ return `assets/pages/topic_${topicId}.png`; }
 function totalSelectedPages(){
   const fixedTotal = FIXED_INTRO.reduce((s,sec)=>s+sec.count,0) + 4; // +4 표지 세트: 앞표지·앞표지내지(프로필)·뒤표지내지·뒷표지
   const topicTotal = TOPICS.filter(t=>selectedTopics.has(t.id)).reduce((s,t)=>s+t.count,0);
@@ -1137,7 +1140,7 @@ function renderTopics(){
     const recommended = RECOMMENDED_TOPIC_IDS.has(t.id);
     return `
     <div class="cb-thumb zoom-thumb ${on?'selected':''}" data-id="${t.id}">
-      <div class="thumb-img" data-topic-id="${t.id}" style="background-image:url('${topicFile(t.id,1)}');">
+      <div class="thumb-img" data-topic-id="${t.id}" style="background-image:url('${topicThumbFile(t.id)}');">
         ${recommended ? '<span class="topic-recommend">추천</span>' : ''}
         <span class="thumb-check">✓</span>
       </div>
