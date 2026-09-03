@@ -840,12 +840,13 @@ const selectedTopics = new Set();
 function pageFile(prefix, idx){ return `assets/pages/${prefix}_${idx}.png`; }
 function thumbFile(prefix, idx){ return `assets/thumbs/${prefix}-${idx}.jpg`; }
 function coverFile(name){ return `assets/pages/${name}.png`; } // 표지 내지·뒷표지(앞표지내지·뒤표지내지·뒷표지)는 assets/pages 폴더에서 가져옵니다.
-function frontCoverFile(name){ return `assets/covers/${name}.jpg`; } // 앞표지 6종 실제 파일은 assets/covers 폴더에 jpg로 있습니다 (cover-1-front.jpg ~ cover-6-front.jpg).
+function frontCoverFile(name){ return `assets/covers/${name}.jpg`; } // 앞표지 6종 실제 파일은 assets/covers 폴더에 jpg로 있습니다 (cover-1.jpg ~ cover-6.jpg).
 // 주제별 구성은 topic_{번호}_{페이지}.png (번호 앞에 0을 붙이지 않음) 형식으로 올라와 있어 화면 미리보기·PDF 조립 모두 이 함수로 통일합니다.
 function topicFile(topicId, idx){ return `assets/pages/topic_${topicId}_${idx}.png`; }
-// 주제별 구성 그리드의 작은 썸네일은 topic_{번호}_1.png(실제 1페이지)가 아니라, 별도의 대표 썸네일 파일
-// topic_{번호}.png(페이지 번호 없음)를 사용합니다. 실제 내지(1페이지~)는 모달·PDF 조립에서 topicFile()로 불러옵니다.
-function topicThumbFile(topicId){ return `assets/pages/topic_${topicId}.png`; }
+// 주제별 구성 그리드의 작은 썸네일은 topic_{번호}_1.png(실제 1페이지)가 아니라, assets/thumbs/ 폴더의
+// 별도 대표 썸네일 파일 topic_{번호}.png(페이지 번호 없음)를 사용합니다. 실제 내지(1페이지~)는 모달·PDF
+// 조립에서 topicFile()로 assets/pages/에서 불러옵니다. (확장자는 .png로 가정 — .jpg라면 알려주세요.)
+function topicThumbFile(topicId){ return `assets/thumbs/topic_${topicId}.png`; }
 function totalSelectedPages(){
   const fixedTotal = FIXED_INTRO.reduce((s,sec)=>s+sec.count,0) + 4; // +4 표지 세트: 앞표지·앞표지내지(프로필)·뒤표지내지·뒷표지
   const topicTotal = TOPICS.filter(t=>selectedTopics.has(t.id)).reduce((s,t)=>s+t.count,0);
@@ -859,17 +860,17 @@ function totalSelectedPages(){
 // title은 앞표지에 들어가는 학원명·슬로건 문구의 배치 스펙입니다 (1075x1519px 기준 좌표, color는 0~1 RGB).
 // ※ 정확한 문구 위치는 아직 임시값입니다. 미리보기를 캡처해 보내주시면 좌표를 맞춰드립니다.
 const COVERS = [
-  { id:'cover-1', name:'브랜드북 01', front:'cover-1-front', variant:'cover1',
+  { id:'cover-1', name:'브랜드북 01', front:'cover-1', variant:'cover1',
     title:{ w:800, h:120, x:137.5, y:520, font:'Medium', size:34, ls:-2, align:'left', color:[1,1,1] } },
-  { id:'cover-2', name:'브랜드북 02', front:'cover-2-front', variant:'shared',
+  { id:'cover-2', name:'브랜드북 02', front:'cover-2', variant:'shared',
     title:{ w:800, h:120, x:137.5, y:520, font:'Medium', size:34, ls:-2, align:'left', color:[1,1,1] } },
-  { id:'cover-3', name:'브랜드북 03', front:'cover-3-front', variant:'shared',
+  { id:'cover-3', name:'브랜드북 03', front:'cover-3', variant:'shared',
     title:{ w:800, h:120, x:137.5, y:520, font:'Medium', size:34, ls:-2, align:'left', color:[1,1,1] } },
-  { id:'cover-4', name:'브랜드북 04', front:'cover-4-front', variant:'shared',
+  { id:'cover-4', name:'브랜드북 04', front:'cover-4', variant:'shared',
     title:{ w:800, h:120, x:137.5, y:520, font:'Medium', size:34, ls:-2, align:'left', color:[1,1,1] } },
-  { id:'cover-5', name:'브랜드북 05', front:'cover-5-front', variant:'shared',
+  { id:'cover-5', name:'브랜드북 05', front:'cover-5', variant:'shared',
     title:{ w:800, h:120, x:137.5, y:520, font:'Medium', size:34, ls:-2, align:'left', color:[1,1,1] } },
-  { id:'cover-6', name:'브랜드북 06', front:'cover-6-front', variant:'shared',
+  { id:'cover-6', name:'브랜드북 06', front:'cover-6', variant:'shared',
     title:{ w:800, h:120, x:137.5, y:520, font:'Medium', size:34, ls:-2, align:'left', color:[1,1,1] } },
 ];
 
@@ -998,7 +999,23 @@ function renderCommonSections(){
       <div class="cb-grid">${coverThumbs}</div>
     </div>`;
 
-  // 앞표지내지(=원장님 프로필)·뒤표지내지·뒷표지는 화면에는 더 이상 별도 미리보기로 보여주지 않지만,
+  // 원장님 프로필(=앞표지 내지)은 실제 조립 시 COVERS/COVER_VARIANT_SETS의 표지 세트에서 자동으로 정해지지만,
+  // 화면에서 어떤 느낌인지 확인할 수 있도록 assets/thumbs/profile-1.jpg 대표 이미지로 미리보기 카드만 보여줍니다.
+  // (페이지 수에는 포함하지 않습니다 — 이미 표지 세트의 +4에 포함되어 있는 페이지입니다.)
+  const profileSection = `
+    <div class="cb-section">
+      <div class="cb-head">
+        <div class="cb-title">원장님 프로필</div>
+        <div class="cb-desc">공통 포함 구성<br>(1P, 앞표지 내지)</div>
+      </div>
+      <div class="cb-grid">
+        <div class="cb-thumb preview zoom-thumb">
+          <div class="thumb-img" style="background-image:url('${thumbFile('profile',1)}');"></div>
+        </div>
+      </div>
+    </div>`;
+
+  // 앞표지내지(=원장님 프로필)·뒤표지내지·뒷표지는 화면에는 더 이상 카드별 미리보기로 보여주지 않지만,
   // 선택한 표지 디자인의 variant(cover1/shared)에 따라 PDF 조립 시(buildPdf) 자동으로 정해져 포함됩니다.
   const fixedSections = FIXED_INTRO.map(sec=>{
     const thumbs = Array.from({ length: sec.count }, (_, i) => i + 1).map(idx => `
@@ -1016,7 +1033,7 @@ function renderCommonSections(){
     </div>`;
   }).join('');
 
-  el.innerHTML = coverSection + fixedSections;
+  el.innerHTML = coverSection + profileSection + fixedSections;
 
   el.querySelectorAll('.cb-thumb[data-id]').forEach(thumb=>{
     thumb.onclick = ()=>{
