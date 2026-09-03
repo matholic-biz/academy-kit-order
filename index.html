@@ -173,12 +173,17 @@
      비율을 강제로 맞추지 않고 실제 이미지(<img>) 원본 비율 그대로 보여줍니다(잘리거나 여백이 생기지 않음). */
   .cb-thumb.topic-thumb .thumb-img{aspect-ratio:auto;background:none;}
   .cb-thumb.topic-thumb .thumb-img img{display:block;width:100%;height:auto;border-radius:6px;}
-  /* 주제별 구성 썸네일 위 작은 돋보기 버튼 — 누르면 그 주제의 실제 페이지 미리보기 모달이 뜹니다.
+  /* 추천 주제 썸네일 코너에 붙는 뱃지 이미지 (assets/badges/recommend.png) */
+  .topic-recommend-badge{position:absolute;top:-8px;right:-8px;width:38px;height:38px;z-index:2;
+    filter:drop-shadow(0 3px 6px rgba(0,0,0,.28));pointer-events:none;}
+
+  /* 주제별 구성 썸네일 위 작은 "미리보기" 버튼 — 누르면 그 주제의 실제 페이지 미리보기 모달이 뜹니다.
      카드(이미지 포함) 자체를 누르면 선택/해제이고, 이 버튼만 별도로 미리보기를 엽니다. */
-  .topic-preview-btn{position:absolute;right:6px;bottom:6px;width:26px;height:26px;border-radius:50%;
-    border:none;background:rgba(20,30,30,.6);color:#fff;font-size:13px;line-height:1;display:flex;
-    align-items:center;justify-content:center;cursor:pointer;z-index:2;transition:background .15s,transform .15s;}
-  .topic-preview-btn:hover{background:rgba(20,30,30,.85);transform:scale(1.08);}
+  .topic-preview-btn{position:absolute;right:6px;bottom:6px;padding:5px 10px 5px 12px;border-radius:999px;
+    border:none;background:rgba(20,30,30,.65);color:#fff;font-size:11px;font-weight:700;letter-spacing:-.2px;
+    display:flex;align-items:center;gap:2px;cursor:pointer;z-index:2;transition:background .15s,transform .15s;}
+  .topic-preview-btn:hover{background:rgba(20,30,30,.85);transform:scale(1.04);}
+  .topic-preview-btn .tp-arrow{font-size:13px;font-weight:800;}
 
   .headline-block{margin:18px 0 22px;padding:14px 16px;background:#F7FAF9;border-radius:12px;}
   .headline-block .htitle{font-size:12px;font-weight:700;color:var(--body);margin-bottom:10px;}
@@ -819,6 +824,9 @@ updateTourBannerVisibility();
 // ===================== 새 구성 : 고정 섹션 + 주제별 구성(12개 중 6개 선택) =====================
 // prefix로 assets/pages/{prefix}_{n}.png (실제 조립용), assets/thumbs/{prefix}-{n}.jpg (미리보기용) 파일을 찾습니다.
 // (주제별 구성은 화면 미리보기도 assets/pages를 그대로 사용합니다 — topicFile() 참고)
+// 추천 뱃지를 붙일 주제 id: 진단(1)·유형분석(3)·문제풀이클리닉(5)·내신대비(7)·고등시험대비(8)·학습통합보고서(10)
+const RECOMMENDED_TOPIC_IDS = new Set([1,3,5,7,8,10]);
+
 const FIXED_INTRO = [
   { key:'why', label:'우리학원은 이렇게 다릅니다', count:1, prefix:'why' },
   { key:'greeting', label:'인사말', count:2, prefix:'greeting' },
@@ -1162,16 +1170,20 @@ document.getElementById('spreadOverlay').addEventListener('click', (e)=>{
 function renderTopics(){
   const el = document.getElementById('chapters');
 
-  // 대표 썸네일 이미지 자체에 이미 주제명·페이지수·추천 표시가 디자인되어 있어,
-  // 화면에 텍스트를 따로 덧붙이지 않고(중복 방지) 이미지를 실제 비율 그대로 <img>로 보여줍니다.
+  // 대표 썸네일 이미지 자체에 이미 주제명·페이지수가 디자인되어 있어, 화면에 텍스트를 따로
+  // 덧붙이지 않고(중복 방지) 이미지를 실제 비율 그대로 <img>로 보여줍니다. 추천 표시만은
+  // 이미지 안 표시가 잘 안 보인다는 의견에 따라 별도 뱃지 이미지(assets/badges/recommend.png)를
+  // 코너에 덧붙여서 눈에 띄게 합니다.
   el.innerHTML = `<div class="topic-grid">${TOPICS.map(t=>{
     const on = selectedTopics.has(t.id);
+    const recommended = RECOMMENDED_TOPIC_IDS.has(t.id);
     return `
     <div class="cb-thumb topic-thumb ${on?'selected':''}" data-id="${t.id}">
       <div class="thumb-img">
         <img src="${topicThumbFile(t.id)}" alt="${t.id}. ${t.label} (${t.count}p)" loading="lazy">
+        ${recommended ? '<img class="topic-recommend-badge" src="assets/badges/recommend.png" alt="추천">' : ''}
         <span class="thumb-check">✓</span>
-        <button type="button" class="topic-preview-btn" data-topic-id="${t.id}" aria-label="미리보기">🔍</button>
+        <button type="button" class="topic-preview-btn" data-topic-id="${t.id}" aria-label="미리보기">미리보기 <span class="tp-arrow">›</span></button>
       </div>
     </div>`;
   }).join('')}</div>`;
