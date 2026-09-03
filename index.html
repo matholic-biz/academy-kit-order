@@ -84,6 +84,9 @@
     font-size:14px;font-family:inherit;background:#fff;color:var(--ink);}
   .field textarea{resize:vertical;line-height:1.5;}
   .field input:focus,.field textarea:focus{outline:2px solid var(--mint);outline-offset:1px;}
+  .field input[readonly]{background:#F5F7F6;color:var(--muted);cursor:default;}
+  .char-count{text-align:right;font-size:11.5px;color:var(--muted);margin-top:4px;}
+  .char-count.over{color:#D64545;font-weight:700;}
   .row2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
   .logo-preview{width:100%;height:80px;border:1px dashed var(--line);border-radius:10px;display:flex;
     align-items:center;justify-content:center;font-size:11px;color:var(--muted);overflow:hidden;background:#fafefe;margin-top:8px;}
@@ -272,6 +275,20 @@
   .template-select-btn:hover{background:var(--mint);}
   .template-select-btn.is-selected{background:var(--ink);}
 
+  /* 주문시 안내 / 신청시 안내 — 제출 버튼 위 작은 링크, 누르면 안내 문구 모달이 뜹니다 */
+  .notice-links{display:flex;justify-content:center;gap:8px;margin:14px 0 4px;font-size:12.5px;}
+  .notice-link{border:none;background:none;color:var(--seafoam);font-weight:700;text-decoration:underline;
+    text-underline-offset:2px;cursor:pointer;padding:2px 0;}
+  .notice-link:hover{color:var(--mint);}
+  .notice-sep{color:var(--line);}
+  .notice-overlay{position:fixed;inset:0;z-index:220;background:rgba(9,20,22,.72);display:none;
+    align-items:center;justify-content:center;padding:24px;}
+  .notice-overlay.show{display:flex;}
+  .notice-box{position:relative;background:#fff;border-radius:16px;padding:24px 24px 22px;max-width:420px;width:100%;
+    max-height:80vh;overflow-y:auto;}
+  .notice-box-title{font-weight:800;font-size:16px;margin-bottom:14px;padding-right:24px;}
+  .notice-box-body{font-size:13.5px;line-height:1.7;color:var(--body);white-space:pre-line;}
+
   /* 펼친면 미리보기 라이트박스 (HEYZINE 플립북 임베드) */
   .spread-overlay{position:fixed;inset:0;z-index:210;background:rgba(9,20,22,.72);display:none;
     align-items:center;justify-content:center;padding:24px;}
@@ -310,7 +327,13 @@
     .row2{grid-template-columns:1fr;}
     .step{width:80px;}
     .step-line{max-width:40px;}
-    .tour-banner{right:12px;bottom:12px;left:12px;width:auto;}
+    /* 배너가 세로 공간을 너무 많이 차지해서 바로 아래 구성 선택 카드(추천 템플릿/맞춤형 구성)를
+       가려버리는 문제가 있어, 좁은 화면에서는 설명 문구·아이콘을 빼고 훨씬 낮은 높이로 보여줍니다. */
+    .tour-banner{right:12px;bottom:12px;left:12px;width:auto;padding:14px 40px 14px 16px;}
+    .tour-banner-icon,.tour-banner-desc{display:none;}
+    .tour-banner-title{font-size:14px;margin-bottom:10px;}
+    .tour-banner-cta{padding:10px 0;font-size:13.5px;}
+    .tour-banner-close{top:8px;right:10px;font-size:17px;}
     .template-grid{grid-template-columns:1fr;}
     .mode-grid{grid-template-columns:1fr;}
     .topic-page-view{aspect-ratio:1075/1519;}
@@ -423,30 +446,32 @@
     <div class="field-list">
       <div class="row2" id="fgBasicInfo1">
         <div class="field"><label>학원명</label><input id="f_name" placeholder="예: OO수학학원"></div>
-        <div class="field"><label>담당자</label><input id="f_manager" placeholder="담당자 성함"></div>
+        <div class="field"><label>원장명</label><input id="f_manager" placeholder="원장님 성함"></div>
       </div>
       <div class="row2">
         <div class="field"><label>연락처</label><input id="f_phone" placeholder="010-0000-0000"></div>
         <div class="field"><label>이메일</label><input id="f_email" placeholder="example@matholic.net"></div>
       </div>
       <div class="row2">
-        <div class="field"><label>희망 부수</label><input id="f_qty" placeholder="예: 100부"></div>
+        <div class="field"><label>희망 부수</label><input id="f_qty" value="50부" readonly></div>
         <div class="field"><label>배송 주소</label><input id="f_addr" placeholder="인쇄물을 받을 주소"></div>
       </div>
       <div id="fgTextContent">
         <div class="field"><label>표지 문구 (앞표지 학원명·슬로건, 비워두면 학원명이 대신 들어가요)</label><input id="f_cover" placeholder="예: THE FOCUS" data-autofilled="1"></div>
         <div class="field">
-          <label>우리학원은 이렇게 다릅니다 (1P) — 소개 문구를 직접 작성해주세요</label>
-          <textarea id="f_slogan" rows="4" placeholder="우리 학원만의 차별점을 자유롭게 작성해주세요."></textarea>
+          <label>우리학원은 이렇게 다릅니다 (1P) — 소개 문구를 직접 작성해주세요 (띄어쓰기 포함 <span id="f_slogan_max">100</span>자 이내)</label>
+          <textarea id="f_slogan" rows="4" maxlength="100" placeholder="우리 학원만의 차별점을 자유롭게 작성해주세요."></textarea>
+          <div class="char-count" id="f_slogan_count">0 / 100자</div>
         </div>
         <div class="field">
-          <label>인사말 (2P) — 학부모님께 전하는 인사말을 직접 작성해주세요</label>
-          <textarea id="f_greeting" rows="6" placeholder="안녕하세요, OO수학학원입니다. ..."></textarea>
+          <label>인사말 (2P) — 학부모님께 전하는 인사말을 직접 작성해주세요 (띄어쓰기 포함 <span id="f_greeting_max">300</span>자 이내)</label>
+          <textarea id="f_greeting" rows="6" maxlength="300" placeholder="안녕하세요, OO수학학원입니다. ..."></textarea>
+          <div class="char-count" id="f_greeting_count">0 / 300자</div>
         </div>
       </div>
       <div class="row2" id="fgUploads">
         <div class="field">
-          <label>학원장님 프로필 사진 (인사말 페이지에 삽입)</label>
+          <label>학원장님 프로필 사진 (프로필 페이지에 삽입)</label>
           <input type="file" id="f_photo" accept="image/png,image/jpeg">
           <div class="logo-preview" id="photoPreview">사진 미리보기</div>
         </div>
@@ -457,7 +482,7 @@
         </div>
       </div>
     </div>
-    <p class="note">※ 문구·사진·로고 배치 좌표는 예시값입니다. 생성된 PDF에서 위치가 다르면 알려주시면 조정해드립니다.</p>
+    <p class="note">※ 입력하신 표지 문구·소개 문구·인사말은 PDF 미리보기에는 자동으로 합성되지 않습니다(문구 배치는 별도로 수작업 진행 예정). 사진·로고는 미리보기에 그대로 들어갑니다.</p>
 
     <div class="nav">
       <button class="btn plain" data-prev="1">이전</button>
@@ -468,7 +493,13 @@
   <!-- STEP 3: 생성 · 발송 -->
   <section class="panel" data-panel="3">
     <h2>PDF를 생성하고 발송해주세요</h2>
-    <p class="desc">선택한 페이지를 실제 순서대로 이어붙이고, 표지 문구·로고를 합성합니다. 브라우저에서 직접 처리되며 서버에는 업로드되지 않습니다.</p>
+    <p class="desc">선택한 페이지를 실제 순서대로 이어붙이고, 사진·로고를 합성합니다(문구는 합성하지 않고 수작업으로 배치할 예정입니다). 브라우저에서 직접 처리되며 서버에는 업로드되지 않습니다.</p>
+
+    <div class="notice-links">
+      <button type="button" class="notice-link" data-notice="order">주문시 안내</button>
+      <span class="notice-sep">·</span>
+      <button type="button" class="notice-link" data-notice="apply">신청시 안내</button>
+    </div>
 
     <button class="btn primary" id="btnBuild" style="width:100%;">PDF 미리보기 생성하기</button>
     <div id="status"></div>
@@ -507,7 +538,7 @@
     <div class="field"><label>현판에 새길 문구 (학원명)</label><input id="sign_text" placeholder="예: OO수학학원"></div>
     <div class="row2">
       <div class="field"><label>수량</label><input id="sign_qty" placeholder="예: 1개"></div>
-      <div class="field"><label>담당자</label><input id="sign_manager" placeholder="담당자 성함"></div>
+      <div class="field"><label>원장명</label><input id="sign_manager" placeholder="원장님 성함"></div>
     </div>
     <div class="row2">
       <div class="field"><label>연락처</label><input id="sign_phone" placeholder="010-0000-0000"></div>
@@ -516,7 +547,13 @@
     <div class="field"><label>설치 · 배송 주소</label><input id="sign_addr" placeholder="현판을 받을 주소"></div>
   </div>
 
-  <button class="btn primary" id="btnSubmitSign" style="width:100%;margin-top:24px;">현판 신청하기</button>
+  <div class="notice-links">
+    <button type="button" class="notice-link" data-notice="order">주문시 안내</button>
+    <span class="notice-sep">·</span>
+    <button type="button" class="notice-link" data-notice="apply">신청시 안내</button>
+  </div>
+
+  <button class="btn primary" id="btnSubmitSign" style="width:100%;margin-top:10px;">현판 신청하기</button>
   <div id="signStatus" style="font-size:12.5px;color:var(--muted);margin-top:10px;white-space:pre-wrap;"></div>
   <button class="btn plain" id="btnRestartSign" style="width:100%;margin-top:10px;display:none;">처음으로</button>
 </div>
@@ -543,10 +580,25 @@
     <div class="field"><label>배송 주소</label><input id="wel_addr" placeholder="웰컴키트를 받을 주소"></div>
   </div>
 
-  <button class="btn primary" id="btnSubmitWelcome" style="width:100%;margin-top:24px;">웰컴키트 신청하기</button>
+  <div class="notice-links">
+    <button type="button" class="notice-link" data-notice="order">주문시 안내</button>
+    <span class="notice-sep">·</span>
+    <button type="button" class="notice-link" data-notice="apply">신청시 안내</button>
+  </div>
+
+  <button class="btn primary" id="btnSubmitWelcome" style="width:100%;margin-top:10px;">웰컴키트 신청하기</button>
   <div id="welcomeStatus" style="font-size:12.5px;color:var(--muted);margin-top:10px;white-space:pre-wrap;"></div>
   <button class="btn plain" id="btnRestartWelcome" style="width:100%;margin-top:10px;display:none;">처음으로</button>
 </div>
+</div>
+
+<!-- 주문시 안내 / 신청시 안내 모달 -->
+<div class="notice-overlay" id="noticeOverlay">
+  <div class="notice-box">
+    <button class="modal-close" id="noticeCloseBtn" style="position:absolute;top:14px;right:14px;">×</button>
+    <div class="notice-box-title" id="noticeTitle"></div>
+    <div class="notice-box-body" id="noticeBody"></div>
+  </div>
 </div>
 
 <!-- 신청 방법 둘러보기 : 우측 하단 배너 -->
@@ -674,10 +726,10 @@ const TOUR_STEPS = [
     title:'다음 단계로', desc:'표지와 주제를 20p 이상 선택했다면 [다음] 버튼을 눌러주세요.',
     mode:'click', clickTarget:'#step1NextBtn' },
   { panel:2, target:'#fgBasicInfo1',
-    title:'학원 정보 입력', desc:'학원명, 담당자, 연락처, 이메일, 희망 부수, 배송 주소를 입력해주세요.',
+    title:'학원 정보 입력', desc:'학원명, 원장명, 연락처, 이메일, 배송 주소를 입력해주세요. (희망 부수는 50부로 고정되어 있어요.)',
     mode:'info' },
   { panel:2, target:'#fgTextContent',
-    title:'표지·소개 문구 작성', desc:'표지 문구, "우리학원은 이렇게 다릅니다" 소개 문구, 인사말을 자유롭게 작성해주세요.',
+    title:'표지·소개 문구 작성', desc:'표지 문구, "우리학원은 이렇게 다릅니다" 소개 문구, 인사말을 글자수 제한 안에서 자유롭게 작성해주세요. (PDF 미리보기에는 문구가 자동으로 들어가지 않고, 별도로 배치할 예정이에요.)',
     mode:'info' },
   { panel:2, target:'#fgUploads',
     title:'사진·로고 업로드', desc:'학원장님 프로필 사진과 로고 이미지를 올려주세요.',
@@ -899,6 +951,12 @@ const COVER_VARIANT_SETS = {
   cover1: { frontInside:'cover_1_2a', backInside:'cover_1_3a', back:'cover_1_4a' },
   shared: { frontInside:'cover_(2~6)_2b', backInside:'cover_(2~6)_3b', back:'cover_(2~6)_4b' },
 };
+
+// PDF 미리보기 생성 시 표지 문구·프로필 제목/태그라인·다릅니다 소개문구·인사말 문구를 실제로
+// 합성할지 여부입니다. 현재는 문구 배치를 수작업으로 진행할 예정이라 false로 꺼두었습니다.
+// (사진·로고 삽입에는 영향 없음 — 아래 각 drawTextBox() 호출부만 이 값으로 감쌌습니다.)
+// 다시 자동 합성하고 싶으시면 이 값을 true로 바꿔주세요.
+const DRAW_TEXT_OVERLAY = false;
 
 // 원장님 프로필(1P, =앞표지 내지) 배치 스펙 - 임시값입니다.
 // title: "{학원명} BRANDBOOK" 형태로 자동 조합됩니다 (학원명은 주문정보의 학원명 입력값). 별도 입력칸 없음.
@@ -1168,6 +1226,31 @@ document.getElementById('spreadOverlay').addEventListener('click', (e)=>{
   if(e.target.id === 'spreadOverlay') closeSpreadPreview();
 });
 
+// ===================== 주문시 안내 / 신청시 안내 모달 =====================
+// 아래 두 문구는 아직 채워지지 않은 placeholder입니다. 결제방법 등 실제 안내 문구를
+// 알려주시면 이 자리에 그대로 넣어드립니다 (줄바꿈은 그대로 모달에 표시됩니다).
+const NOTICE_CONTENT = {
+  order: { title:'주문시 안내', body:'주문 시 안내 문구가 아직 입력되지 않았습니다.\n결제 방법 등 안내하실 내용을 알려주시면 이 자리에 반영해드립니다.' },
+  apply: { title:'신청시 안내', body:'신청 시 안내 문구가 아직 입력되지 않았습니다.\n안내하실 내용을 알려주시면 이 자리에 반영해드립니다.' },
+};
+function openNotice(type){
+  const n = NOTICE_CONTENT[type];
+  if(!n) return;
+  document.getElementById('noticeTitle').textContent = n.title;
+  document.getElementById('noticeBody').textContent = n.body;
+  document.getElementById('noticeOverlay').classList.add('show');
+}
+function closeNotice(){
+  document.getElementById('noticeOverlay').classList.remove('show');
+}
+document.querySelectorAll('.notice-link').forEach(btn=>{
+  btn.onclick = ()=> openNotice(btn.dataset.notice);
+});
+document.getElementById('noticeCloseBtn').onclick = closeNotice;
+document.getElementById('noticeOverlay').addEventListener('click', (e)=>{
+  if(e.target.id === 'noticeOverlay') closeNotice();
+});
+
 function renderTopics(){
   const el = document.getElementById('chapters');
 
@@ -1310,6 +1393,25 @@ document.getElementById('step1NextBtn').onclick = ()=>{
   }
   goStep(2);
 };
+
+// ===================== 소개 문구·인사말 글자수 제한 표시 =====================
+// 한글 기준 띄어쓰기 포함 글자수입니다. 제한값을 바꾸고 싶으시면 textarea의 maxlength와
+// 아래 각 span의 숫자, char-count 초기 표시(0 / N자)를 함께 바꿔주세요.
+function bindCharCount(textareaId, countId){
+  const ta = document.getElementById(textareaId);
+  const countEl = document.getElementById(countId);
+  if(!ta || !countEl) return;
+  const max = +ta.getAttribute('maxlength');
+  const update = ()=>{
+    const len = ta.value.length;
+    countEl.textContent = `${len} / ${max}자`;
+    countEl.classList.toggle('over', len >= max);
+  };
+  ta.addEventListener('input', update);
+  update();
+}
+bindCharCount('f_slogan', 'f_slogan_count');
+bindCharCount('f_greeting', 'f_greeting_count');
 
 // ===================== 로고 · 원장님 프로필 사진 미리보기 =====================
 let logoDataUrl = null;
@@ -1513,7 +1615,7 @@ async function buildPdf(){
     setStatus('표지를 만드는 중...');
     const frontPage = await addImagePage(frontCoverFile(selCover.front));
     const coverText = document.getElementById('f_cover').value.trim() || document.getElementById('f_name').value.trim();
-    if(coverText && selCover.title){
+    if(DRAW_TEXT_OVERLAY && coverText && selCover.title){
       const titleFont = await getSuitFont(selCover.title.font);
       const c = selCover.title.color || [1,1,1];
       drawTextBox(frontPage, coverText, selCover.title, titleFont, rgb(c[0],c[1],c[2]), scale);
@@ -1524,12 +1626,14 @@ async function buildPdf(){
     const profilePage1 = await addImagePage(coverFile(variantSet.frontInside));
     const profileAcademyName = document.getElementById('f_name').value.trim();
     const profileTitleText = `${profileAcademyName || '학원명'} BRANDBOOK`;
-    const profileTitleFont = await getSuitFont(PROFILE_TITLE_SPEC.font);
-    const profileTitleColor = rgb(PROFILE_TITLE_SPEC.color[0], PROFILE_TITLE_SPEC.color[1], PROFILE_TITLE_SPEC.color[2]);
-    drawTextBox(profilePage1, profileTitleText, PROFILE_TITLE_SPEC, profileTitleFont, profileTitleColor, scale);
-    const profileTaglineFont = await getSuitFont(PROFILE_TAGLINE_SPEC.font);
-    const profileTaglineColor = rgb(PROFILE_TAGLINE_SPEC.color[0], PROFILE_TAGLINE_SPEC.color[1], PROFILE_TAGLINE_SPEC.color[2]);
-    drawTextBox(profilePage1, PROFILE_TAGLINE_TEXT, PROFILE_TAGLINE_SPEC, profileTaglineFont, profileTaglineColor, scale);
+    if(DRAW_TEXT_OVERLAY){
+      const profileTitleFont = await getSuitFont(PROFILE_TITLE_SPEC.font);
+      const profileTitleColor = rgb(PROFILE_TITLE_SPEC.color[0], PROFILE_TITLE_SPEC.color[1], PROFILE_TITLE_SPEC.color[2]);
+      drawTextBox(profilePage1, profileTitleText, PROFILE_TITLE_SPEC, profileTitleFont, profileTitleColor, scale);
+      const profileTaglineFont = await getSuitFont(PROFILE_TAGLINE_SPEC.font);
+      const profileTaglineColor = rgb(PROFILE_TAGLINE_SPEC.color[0], PROFILE_TAGLINE_SPEC.color[1], PROFILE_TAGLINE_SPEC.color[2]);
+      drawTextBox(profilePage1, PROFILE_TAGLINE_TEXT, PROFILE_TAGLINE_SPEC, profileTaglineFont, profileTaglineColor, scale);
+    }
     if(photoDataUrl){
       const resp = await fetch(photoDataUrl);
       const photoBytes = await resp.arrayBuffer();
@@ -1547,7 +1651,7 @@ async function buildPdf(){
     setStatus('우리학원은 이렇게 다릅니다 페이지를 만드는 중...');
     const whyPage1 = await addImagePage(pageFile('why', 1));
     const sloganText = document.getElementById('f_slogan').value.trim();
-    if(sloganText){
+    if(DRAW_TEXT_OVERLAY && sloganText){
       const sloganFont = await getSuitFont(WHY_TEXT_SPEC.font);
       const sloganColor = rgb(WHY_TEXT_SPEC.color[0], WHY_TEXT_SPEC.color[1], WHY_TEXT_SPEC.color[2]);
       drawTextBox(whyPage1, sloganText.replace(/\n+/g,' '), WHY_TEXT_SPEC, sloganFont, sloganColor, scale);
@@ -1569,7 +1673,7 @@ async function buildPdf(){
     setStatus('인사말 페이지를 만드는 중...');
     const greetingPage1 = await addImagePage(pageFile('greeting', 1));
     const greetingText = document.getElementById('f_greeting').value.trim();
-    if(greetingText){
+    if(DRAW_TEXT_OVERLAY && greetingText){
       const greetingFont = await getSuitFont(GREETING_TEXT_SPEC.font);
       const greetingColor = rgb(GREETING_TEXT_SPEC.color[0], GREETING_TEXT_SPEC.color[1], GREETING_TEXT_SPEC.color[2]);
       drawTextBox(greetingPage1, greetingText.replace(/\n+/g,' '), GREETING_TEXT_SPEC, greetingFont, greetingColor, scale);
