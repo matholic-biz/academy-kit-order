@@ -12,7 +12,7 @@
     --line:#EAEFEE;
   }
   *{box-sizing:border-box;}
-  body{margin:0;font-family:"Pretendard","Malgun Gothic","Apple SD Gothic Neo",system-ui,sans-serif;color:var(--ink);background:#fff;line-height:1.55;}
+  body{margin:0;font-family:"Pretendard","Malgun Gothic","Apple SD Gothic Neo",system-ui,sans-serif;color:var(--ink);background:#fff;line-height:1.55;word-break:keep-all;overflow-wrap:break-word;}
   .topbar{border-bottom:1px solid var(--line);padding:18px 24px;display:flex;align-items:center;gap:12px;}
   .topbar .brand{font-weight:800;font-size:15px;letter-spacing:.02em;}
   .topbar .x{color:var(--muted);font-weight:400;}
@@ -148,6 +148,7 @@
   .cb-head .cb-title{font-weight:800;font-size:16px;line-height:1.3;margin-bottom:6px;}
   .cb-head .cb-desc{font-size:11px;color:var(--muted);line-height:1.4;}
   .cb-grid{flex:1;min-width:0;display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+  .cb-grid-cols-4{grid-template-columns:repeat(4,1fr);}
   .cb-thumb{cursor:pointer;text-align:center;}
   .cb-thumb.preview{cursor:default;}
   .cb-thumb .thumb-img{position:relative;width:100%;aspect-ratio:1075/1519;border-radius:8px;
@@ -169,22 +170,6 @@
   /* 주제별 구성 추천 뱃지 */
   .topic-recommend{position:absolute;top:6px;right:6px;background:#F5A524;color:#fff;font-size:10px;font-weight:800;
     padding:3px 8px;border-radius:999px;letter-spacing:-.2px;box-shadow:0 2px 6px rgba(0,0,0,.18);z-index:1;}
-
-  /* 주제별 구성 : 선택한 주제의 전체 페이지 미리보기 확장 영역 (실제 페이지 이미지는 추후 assets/thumbs에 추가되면 자동 반영) */
-  .topic-expand{grid-column:1/-1;margin-top:8px;padding:18px 20px;background:var(--paleMint);border-radius:14px;
-    border:1px solid var(--lightMint);}
-  .topic-expand-head{font-weight:800;font-size:13.5px;color:var(--ink);margin-bottom:14px;}
-  .topic-expand-block{margin-bottom:16px;}
-  .topic-expand-block:last-child{margin-bottom:0;}
-  .topic-expand-title{font-weight:700;font-size:12.5px;color:var(--ink);margin-bottom:8px;}
-  .topic-expand-title .cnt{font-weight:600;color:var(--seafoam);font-size:11.5px;margin-left:4px;}
-  .topic-expand-strip{display:flex;flex-wrap:wrap;gap:10px;}
-  .topic-expand-page{position:relative;width:96px;aspect-ratio:1075/1519;border-radius:7px;overflow:hidden;
-    border:1px solid var(--line);background:#eef2f1;transition:transform .15s ease,box-shadow .15s ease;transform-origin:center;}
-  .topic-expand-page:hover{transform:scale(1.9);z-index:6;box-shadow:0 12px 26px rgba(9,20,22,.28);}
-  .topic-expand-page img{width:100%;height:100%;object-fit:cover;display:block;}
-  .topic-expand-fallback{display:none;position:absolute;inset:0;align-items:center;justify-content:center;
-    font-size:10.5px;color:var(--muted);background:#eef2f1;text-align:center;line-height:1.3;}
 
   .headline-block{margin:18px 0 22px;padding:14px 16px;background:#F7FAF9;border-radius:12px;}
   .headline-block .htitle{font-size:12px;font-weight:700;color:var(--body);margin-bottom:10px;}
@@ -263,9 +248,37 @@
   .spread-empty{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
     text-align:center;padding:24px;color:var(--muted);font-size:12.5px;line-height:1.6;}
 
-  @media (max-width:600px){.row2{grid-template-columns:1fr;}.step{width:80px;}.step-line{max-width:40px;}
+  @media (max-width:600px){
+    .row2{grid-template-columns:1fr;}
+    .step{width:80px;}
+    .step-line{max-width:40px;}
     .tour-banner{right:12px;bottom:12px;left:12px;width:auto;}
-    .template-grid{grid-template-columns:1fr;}}
+    .template-grid{grid-template-columns:1fr;}
+
+    /* 좁은 화면에서는 헤더/여백을 줄이고, 제목 폰트를 살짝 낮춰 어색하게 줄바꿈되지 않도록 합니다. */
+    .topbar{padding:14px 16px;}
+    .cat-tabs{padding:16px 16px 0;gap:6px;}
+    .cat-tab{padding:8px 14px;font-size:12.5px;}
+    .wrap{padding:36px 16px 100px;}
+    h1.hero{font-size:23px;}
+    p.sub{margin-bottom:28px;}
+
+    /* 표지/공통구성 섹션: 제목을 그리드 위로 올려서 썸네일에 더 넓은 폭을 줍니다. */
+    .cb-section{flex-direction:column;gap:10px;}
+    .cb-head{flex:none;width:100%;}
+    .cb-head .cb-title{margin-bottom:2px;}
+    .cb-head .cb-desc br{display:none;}
+
+    /* 가이드(7장) 그리드는 4열이면 너무 작아지므로 2열로 줄입니다. */
+    .cb-grid-cols-4{grid-template-columns:repeat(2,1fr);}
+
+    /* 주제별 구성 썸네일도 화면 폭에 맞춰 한 줄에 2개 정도로 재배치합니다. */
+    .topic-grid{grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:16px 12px;}
+
+    /* 이전/다음 버튼을 꽉 채워서 탭하기 쉽게 합니다. */
+    .nav{gap:10px;}
+    .nav .btn{flex:1;}
+  }
 </style>
 </head>
 <body>
@@ -306,8 +319,8 @@
     <h2>브랜드북 <span class="accent">구성</span>을 선택해주세요</h2>
     <p class="desc">표지 디자인을 고르고, 브랜드북에 공통으로 포함되는 구성을 확인한 뒤, 12개 주제 중 전체 분량이 20p 이상 되도록 선택해주세요. 학원명·문구·로고는 다음 단계에서 입력합니다.</p>
 
-    <div id="commonSectionsInline"></div>
-    <p class="note">※ 실제 인쇄 시안 이미지입니다. 문구 위치는 예시이며, 다르게 보이면 알려주시면 조정해드립니다.</p>
+    <div id="commonSectionsInline" style="border-top:1px solid var(--line);"></div>
+    <p class="note">※ 샘플 인쇄 시안 이미지입니다. 문구 위치는 예시이며, 다르게 보이면 알려주시면 조정해드립니다.</p>
 
     <h3 class="subhead">주제별 구성 (12개 중 20p 이상 선택해주세요.)</h3>
     <div class="selection-summary">
@@ -542,10 +555,10 @@ document.getElementById('btnRestartWelcome').onclick = ()=> location.reload();
 // mode: 'click'(정확히 한 번의 실제 클릭으로 완료) / 'condition'(조건 충족 시 완료) / 'info'(설명만, [다음]으로 진행)
 const TOUR_STEPS = [
   { panel:1, target:'#commonSectionsInline .cb-section:nth-child(1)',
-    title:'표지 디자인 선택', desc:'마음에 드는 표지 디자인을 눌러 선택해보세요. 앞표지·앞표지 내지·뒷표지·뒤표지 내지 4장이 함께 정해져요.',
+    title:'표지 디자인 선택', desc:'마음에 드는 표지 디자인을 눌러 선택해보세요. 앞표지·앞표지 내지(원장님 프로필)·뒤표지 내지·뒷표지 4장이 함께 정해져요.',
     mode:'click', clickTarget:'#commonSectionsInline .cb-section:nth-child(1) .cb-thumb' },
   { panel:1, target:'#commonSectionsInline .cb-section:nth-child(2)',
-    title:'원장님 프로필 (확인)', desc:'모든 브랜드북에 공통으로 포함되는 1페이지예요. 학원명과 원장님 사진은 다음 단계에서 넣은 정보가 자동으로 들어가요.',
+    title:'앞표지 내지 · 뒷표지 (확인)', desc:'앞표지 내지(원장님 프로필)·뒤표지 내지·뒷표지는 선택한 표지 디자인에 맞춰 자동으로 정해져요. 학원명과 원장님 사진은 다음 단계에서 넣은 정보가 자동으로 들어가요.',
     mode:'info' },
   { panel:1, target:'#commonSectionsInline .cb-section:nth-child(3)',
     title:'우리학원은 이렇게 다릅니다 (확인)', desc:'모든 브랜드북에 공통으로 포함되는 1페이지예요. 학원 소개 문구는 다음 단계에서 직접 작성하실 수 있어요.',
@@ -714,12 +727,12 @@ updateTourBannerVisibility();
 // ===================== 새 구성 : 고정 섹션 + 주제별 구성(12개 중 6개 선택) =====================
 // prefix로 assets/pages/{prefix}-{n}.png (실제 조립용), assets/thumbs/{prefix}-{n}.jpg (미리보기용) 파일을 찾습니다.
 const FIXED_INTRO = [
-  { key:'profile', label:'원장님 프로필', count:1, prefix:'profile' },
   { key:'why', label:'우리학원은 이렇게 다릅니다', count:1, prefix:'why' },
   { key:'greeting', label:'인사말', count:2, prefix:'greeting' },
   { key:'guide', label:'좋은 수학학원 고르는 법', count:7, prefix:'guide', cols:4 }, // 7장을 2줄로 배치
 ];
-// 뒷표지·뒤표지 내지는 표지 디자인 세트 안에 포함되지만, 실제 페이지 배치에서는 맨 뒤로 이동합니다 (COVERS/buildPdf 참고).
+// 원장님 프로필(앞표지 내지)·뒤표지 내지·뒷표지는 FIXED_INTRO가 아니라 COVERS/COVER_VARIANT_SETS로 관리합니다.
+// 뒷표지·뒤표지 내지는 실제 페이지 배치에서는 맨 뒤로 이동합니다 (buildPdf 참고).
 
 // 추천 뱃지를 붙일 주제 id: 평가(1)·유형분석(3)·문제풀이클리닉(5)·내신시험대비(7)·고등부시험대비(8)·학습통합보고서(10)
 const RECOMMENDED_TOPIC_IDS = new Set([1,3,5,7,8,10]);
@@ -743,46 +756,41 @@ const selectedTopics = new Set();
 
 function pageFile(prefix, idx){ return `assets/pages/${prefix}-${idx}.png`; }
 function thumbFile(prefix, idx){ return `assets/thumbs/${prefix}-${idx}.jpg`; }
+function coverFile(name){ return `assets/pages/${name}.png`; } // 표지 세트(앞표지·앞표지내지·뒤표지내지·뒷표지)도 이제 assets/pages 폴더에서 가져옵니다.
 function totalSelectedPages(){
-  const fixedTotal = FIXED_INTRO.reduce((s,sec)=>s+sec.count,0) + 3; // +3 표지(앞표지·뒷표지·뒤표지내지). 앞표지내지는 "원장님 프로필"이 대신합니다.
+  const fixedTotal = FIXED_INTRO.reduce((s,sec)=>s+sec.count,0) + 4; // +4 표지 세트: 앞표지·앞표지내지(프로필)·뒤표지내지·뒷표지
   const topicTotal = TOPICS.filter(t=>selectedTopics.has(t.id)).reduce((s,t)=>s+t.count,0);
   return fixedTotal + topicTotal;
 }
 
-// ===================== 표지 디자인 6종 (앞표지·뒷표지·뒤표지 내지 총 3P 세트) =====================
-// front/back/backInside는 실제 이미지 경로입니다.
-// 실제 페이지 배치 순서: 앞표지(맨 앞) → 원장님 프로필(앞표지 내지 역할 대체) → ... 본문 ... → 뒤표지 내지 → 뒷표지(맨 뒤).
-// 즉 앞표지 내지는 별도 이미지가 필요 없고(원장님 프로필로 대체), 뒷표지·뒤표지 내지는 PDF의 맨 마지막 페이지로 붙습니다.
+// ===================== 표지 디자인 6종 (앞표지만 디자인별로 다르고, 나머지 3장은 초록(a)/검정(b) 2가지 버전을 공유) =====================
+// front: 디자인별 앞표지 파일명 (assets/pages/{front}.png). variant: 'a'(초록/민트 계열) 또는 'b'(검정 계열) — 앞표지내지(=원장님 프로필)·뒤표지내지·뒷표지를 어느 버전으로 쓸지 결정합니다.
+// 실제 페이지 배치 순서: 앞표지(맨 앞) → 앞표지 내지(=원장님 프로필) → ... 본문 ... → 뒤표지 내지 → 뒷표지(맨 뒤).
 // title은 앞표지에 들어가는 학원명·슬로건 문구의 배치 스펙입니다 (1075x1519px 기준 좌표, color는 0~1 RGB).
 // ※ 실제 디자인 파일과 정확한 문구 위치는 아직 임시값입니다. 파일을 넣어주시고 미리보기를 캡처해 보내주시면 좌표를 맞춰드립니다.
 const COVERS = [
-  { id:'cover-1', name:'브랜드북 01',
-    front:'assets/covers/cover-1-front.jpg',
-    back:'assets/covers/cover-1-back.png', backInside:'assets/covers/cover-1-back-inside.png',
+  { id:'cover-1', name:'브랜드북 01', front:'cover_1', variant:'b',
     title:{ w:800, h:120, x:137.5, y:520, font:'Medium', size:34, ls:-2, align:'left', color:[1,1,1] } },
-  { id:'cover-2', name:'브랜드북 02',
-    front:'assets/covers/cover-2-front.jpg',
-    back:'assets/covers/cover-2-back.png', backInside:'assets/covers/cover-2-back-inside.png',
+  { id:'cover-2', name:'브랜드북 02', front:'cover_2', variant:'a',
     title:{ w:800, h:120, x:137.5, y:520, font:'Medium', size:34, ls:-2, align:'left', color:[1,1,1] } },
-  { id:'cover-3', name:'브랜드북 03',
-    front:'assets/covers/cover-3-front.jpg',
-    back:'assets/covers/cover-3-back.png', backInside:'assets/covers/cover-3-back-inside.png',
+  { id:'cover-3', name:'브랜드북 03', front:'cover_3', variant:'a',
     title:{ w:800, h:120, x:137.5, y:520, font:'Medium', size:34, ls:-2, align:'left', color:[1,1,1] } },
-  { id:'cover-4', name:'브랜드북 04',
-    front:'assets/covers/cover-4-front.jpg',
-    back:'assets/covers/cover-4-back.png', backInside:'assets/covers/cover-4-back-inside.png',
+  { id:'cover-4', name:'브랜드북 04', front:'cover_4', variant:'a',
     title:{ w:800, h:120, x:137.5, y:520, font:'Medium', size:34, ls:-2, align:'left', color:[1,1,1] } },
-  { id:'cover-5', name:'브랜드북 05',
-    front:'assets/covers/cover-5-front.jpg',
-    back:'assets/covers/cover-5-back.png', backInside:'assets/covers/cover-5-back-inside.png',
+  { id:'cover-5', name:'브랜드북 05', front:'cover_5', variant:'a',
     title:{ w:800, h:120, x:137.5, y:520, font:'Medium', size:34, ls:-2, align:'left', color:[1,1,1] } },
-  { id:'cover-6', name:'브랜드북 06',
-    front:'assets/covers/cover-6-front.jpg',
-    back:'assets/covers/cover-6-back.png', backInside:'assets/covers/cover-6-back-inside.png',
+  { id:'cover-6', name:'브랜드북 06', front:'cover_6', variant:'a',
     title:{ w:800, h:120, x:137.5, y:520, font:'Medium', size:34, ls:-2, align:'left', color:[1,1,1] } },
 ];
 
-// 원장님 프로필(1P) 배치 스펙 - 임시값입니다.
+// 앞표지내지(=원장님 프로필)·뒤표지내지·뒷표지의 초록(a)/검정(b) 공용 버전 파일명 (assets/pages/{name}.png).
+// 표지 1(검정 디자인)은 b, 표지 2~6(민트/화이트 디자인)은 a를 사용합니다.
+const COVER_VARIANT_SETS = {
+  a: { frontInside:'cover_2a', backInside:'cover_3a', back:'cover_4a' },
+  b: { frontInside:'cover_2b', backInside:'cover_3b', back:'cover_4b' },
+};
+
+// 원장님 프로필(1P, =앞표지 내지) 배치 스펙 - 임시값입니다.
 // title: "{학원명} BRANDBOOK" 형태로 자동 조합됩니다 (학원명은 주문정보의 학원명 입력값). 별도 입력칸 없음.
 // tagline: 모든 학원 공통 고정 문구(PROFILE_TAGLINE_TEXT)가 들어갑니다. 학원별로 다르게 하려면 이 문구를 편집하거나 입력칸을 추가해주세요.
 // photo: 주문정보에서 올린 학원장님 프로필 사진(f_photo)을 그대로 재사용합니다.
@@ -884,7 +892,7 @@ function renderCommonSections(){
   // 캔버스로 한 번 더 고품질 축소한 뒤 그 결과를 배경으로 바꿔 끼워 선명하게 보이도록 합니다.
   const coverThumbs = COVERS.map(c=>`
     <div class="cb-thumb cover-thumb zoom-thumb ${c.id===themeState.selectedCoverId?'selected':''}" data-id="${c.id}">
-      <div class="thumb-img" data-src="${c.front}" style="background-image:url('${c.front}');">
+      <div class="thumb-img" data-src="${coverFile(c.front)}" style="background-image:url('${coverFile(c.front)}');">
         <span class="thumb-check">✓</span>
       </div>
       <div class="thumb-name">${c.name}</div>
@@ -895,9 +903,33 @@ function renderCommonSections(){
     <div class="cb-section">
       <div class="cb-head">
         <div class="cb-title">표지</div>
-        <div class="cb-desc">6종 중 선택<br>(3P)</div>
+        <div class="cb-desc">6종 중 선택</div>
       </div>
       <div class="cb-grid">${coverThumbs}</div>
+    </div>`;
+
+  // 앞표지내지(=원장님 프로필)·뒤표지내지·뒷표지는 선택한 표지 디자인의 variant(a/b)에 따라 자동으로 정해지는
+  // 미리보기 전용(선택 불가) 3장입니다. 표지를 바꿔 선택하면 이 미리보기도 함께 바뀝니다.
+  const selCoverForPreview = findCover(themeState.selectedCoverId) || COVERS[0];
+  const variantSet = COVER_VARIANT_SETS[selCoverForPreview.variant];
+  const insideThumbs = [
+    { label:'앞표지 내지 (원장님 프로필)', file: variantSet.frontInside },
+    { label:'뒤표지 내지', file: variantSet.backInside },
+    { label:'뒷표지', file: variantSet.back },
+  ].map(x=>`
+    <div class="cb-thumb preview zoom-thumb">
+      <div class="thumb-img" data-src="${coverFile(x.file)}" style="background-image:url('${coverFile(x.file)}');"></div>
+      <div class="thumb-name">${x.label}</div>
+    </div>
+  `).join('');
+
+  const insideSection = `
+    <div class="cb-section">
+      <div class="cb-head">
+        <div class="cb-title">표지 내지 · 뒷표지</div>
+        <div class="cb-desc">선택한 표지에<br>맞춰 자동 결정<br>(3P)</div>
+      </div>
+      <div class="cb-grid">${insideThumbs}</div>
     </div>`;
 
   const fixedSections = FIXED_INTRO.map(sec=>{
@@ -912,11 +944,11 @@ function renderCommonSections(){
         <div class="cb-title">${sec.label}</div>
         <div class="cb-desc">공통 포함 구성<br>(${sec.count}P)</div>
       </div>
-      <div class="cb-grid" style="grid-template-columns:repeat(${sec.cols || 3},1fr);">${thumbs}</div>
+      <div class="cb-grid${sec.cols ? ' cb-grid-cols-'+sec.cols : ''}">${thumbs}</div>
     </div>`;
   }).join('');
 
-  el.innerHTML = coverSection + fixedSections;
+  el.innerHTML = coverSection + insideSection + fixedSections;
 
   el.querySelectorAll('.cb-thumb[data-id]').forEach(thumb=>{
     thumb.onclick = ()=>{
@@ -1020,41 +1052,15 @@ document.getElementById('spreadOverlay').addEventListener('click', (e)=>{
   if(e.target.id === 'spreadOverlay') closeSpreadPreview();
 });
 
-// 주제를 선택하면 해당 주제에 속한 페이지를 모두 모아 보여주는 확장 미리보기 영역입니다.
-// 지금은 각 주제당 썸네일이 1장만 있어 나머지는 "준비 중"으로 표시되고, 내일 assets/thumbs에
-// topic-XX-2.jpg, topic-XX-3.jpg ... 형식으로 파일을 추가하면 자동으로 채워집니다.
-function renderTopicExpandHtml(){
-  const chosen = TOPICS.filter(t=>selectedTopics.has(t.id));
-  if(chosen.length===0) return '';
-  return `
-  <div class="topic-expand">
-    <div class="topic-expand-head">선택한 주제 페이지 미리보기 (${chosen.length}개)</div>
-    ${chosen.map(t=>`
-      <div class="topic-expand-block">
-        <div class="topic-expand-title">${t.id}. ${t.label}<span class="cnt">${t.count}p</span></div>
-        <div class="topic-expand-strip">
-          ${Array.from({ length: t.count }, (_, i) => i + 1).map(idx => `
-            <div class="topic-expand-page">
-              <img src="${thumbFile(t.prefix, idx)}" alt="${t.label} ${idx}p"
-                   onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
-              <span class="topic-expand-fallback">이미지<br>준비 중</span>
-            </div>
-          `).join('')}
-        </div>
-      </div>
-    `).join('')}
-  </div>`;
-}
-
 function renderTopics(){
   const el = document.getElementById('chapters');
 
-  const grid = `<div class="topic-grid">${TOPICS.map(t=>{
+  el.innerHTML = `<div class="topic-grid">${TOPICS.map(t=>{
     const on = selectedTopics.has(t.id);
     const recommended = RECOMMENDED_TOPIC_IDS.has(t.id);
     return `
     <div class="cb-thumb zoom-thumb ${on?'selected':''}" data-id="${t.id}">
-      <div class="thumb-img" style="background-image:url('${thumbFile(t.prefix,1)}');">
+      <div class="thumb-img" data-prefix="${t.prefix}" data-count="${t.count}" style="background-image:url('${thumbFile(t.prefix,1)}');">
         ${recommended ? '<span class="topic-recommend">추천</span>' : ''}
         <span class="thumb-check">✓</span>
       </div>
@@ -1062,7 +1068,27 @@ function renderTopics(){
     </div>`;
   }).join('')}</div>`;
 
-  el.innerHTML = grid + renderTopicExpandHtml();
+  // 주제 썸네일에 마우스를 올리면 해당 주제의 실제 페이지 이미지(topic-XX-1~count.jpg)를
+  // 빠르게 순환시켜 "촤르륵" 넘겨보는 느낌을 줍니다. 마우스를 떼면 1페이지로 되돌아갑니다.
+  el.querySelectorAll('.thumb-img[data-prefix]').forEach(thumb=>{
+    const prefix = thumb.dataset.prefix;
+    const count = +thumb.dataset.count;
+    if(count <= 1) return;
+    let timer = null;
+    let idx = 1;
+    thumb.addEventListener('mouseenter', ()=>{
+      idx = 1;
+      clearInterval(timer);
+      timer = setInterval(()=>{
+        idx = idx >= count ? 1 : idx + 1;
+        thumb.style.backgroundImage = `url('${thumbFile(prefix, idx)}')`;
+      }, 220);
+    });
+    thumb.addEventListener('mouseleave', ()=>{
+      clearInterval(timer);
+      thumb.style.backgroundImage = `url('${thumbFile(prefix, 1)}')`;
+    });
+  });
 
   el.querySelectorAll('.cb-thumb[data-id]').forEach(card=>{
     card.onclick = ()=>{
@@ -1292,11 +1318,12 @@ async function buildPdf(){
     }
 
     const selCover = findCover(themeState.selectedCoverId) || COVERS[0];
+    const variantSet = COVER_VARIANT_SETS[selCover.variant];
     const scale = PAGE_W / 1075;
 
-    // 1) 앞표지 (1P) — 앞표지 내지는 별도 이미지 없이 바로 다음의 "원장님 프로필"이 그 역할을 대신합니다.
+    // 1) 앞표지 (1P)
     setStatus('표지를 만드는 중...');
-    const frontPage = await addImagePage(selCover.front);
+    const frontPage = await addImagePage(coverFile(selCover.front));
     const coverText = document.getElementById('f_cover').value.trim() || document.getElementById('f_name').value.trim();
     if(coverText && selCover.title){
       const titleFont = await getSuitFont(selCover.title.font);
@@ -1304,9 +1331,9 @@ async function buildPdf(){
       drawTextBox(frontPage, coverText, selCover.title, titleFont, rgb(c[0],c[1],c[2]), scale);
     }
 
-    // 2) 원장님 프로필 (1P, 제목·태그라인·프로필 사진 삽입) — 앞표지 내지 자리를 대신합니다.
+    // 2) 앞표지 내지 = 원장님 프로필 (1P, 제목·태그라인·프로필 사진 삽입) — 선택한 표지의 variant(a/b)에 맞는 파일을 사용합니다.
     setStatus('원장님 프로필 페이지를 만드는 중...');
-    const profilePage1 = await addImagePage(pageFile('profile', 1));
+    const profilePage1 = await addImagePage(coverFile(variantSet.frontInside));
     const profileAcademyName = document.getElementById('f_name').value.trim();
     const profileTitleText = `${profileAcademyName || '학원명'} BRANDBOOK`;
     const profileTitleFont = await getSuitFont(PROFILE_TITLE_SPEC.font);
@@ -1384,10 +1411,10 @@ async function buildPdf(){
       for(let i=1;i<=t.count;i++){ await addImagePage(pageFile(t.prefix, i)); }
     }
 
-    // 7) 뒤표지 내지 · 뒷표지 (2P, 표지 세트의 마지막 두 장을 PDF 맨 끝에 붙입니다)
+    // 7) 뒤표지 내지 · 뒷표지 (2P, 선택한 표지의 variant(a/b)에 맞는 공용 파일을 PDF 맨 끝에 붙입니다)
     setStatus('뒷표지를 만드는 중...');
-    await addImagePage(selCover.backInside);
-    await addImagePage(selCover.back);
+    await addImagePage(coverFile(variantSet.backInside));
+    await addImagePage(coverFile(variantSet.back));
 
     setStatus('PDF를 마무리하는 중...');
     const bytes = await out.save();
