@@ -176,15 +176,11 @@
      비율을 강제로 맞추지 않고 실제 이미지(<img>) 원본 비율 그대로 보여줍니다(잘리거나 여백이 생기지 않음). */
   .cb-thumb.topic-thumb .thumb-img{aspect-ratio:auto;background:none;}
   .cb-thumb.topic-thumb .thumb-img img.topic-photo{display:block;width:100%;height:auto;border-radius:6px;}
-  /* 추천 주제 썸네일 코너에 붙는 작은 뱃지 이미지 (assets/badges/recommend.png).
-     .topic-photo와 별도 클래스로 분리해서, 위 img{width:100%} 규칙이 뱃지까지 늘려버리지 않도록 합니다. */
-  .topic-recommend-badge{position:absolute;top:-10px;right:-10px;width:25%;max-width:56px;min-width:32px;
-    height:auto;z-index:2;filter:drop-shadow(0 3px 6px rgba(0,0,0,.28));pointer-events:none;}
 
   /* 주제별 구성 썸네일 위 작은 "미리보기" 버튼 — 누르면 그 주제의 실제 페이지 미리보기 모달이 뜹니다.
      카드(이미지 포함) 자체를 누르면 선택/해제이고, 이 버튼만 별도로 미리보기를 엽니다. */
   .topic-preview-btn{position:absolute;right:6px;bottom:6px;padding:5px 10px 5px 12px;border-radius:999px;
-    border:none;background:rgba(20,30,30,.65);color:#fff;font-size:11px;font-weight:700;letter-spacing:-.2px;
+    border:none;background:rgba(20,30,30,.35);color:#fff;font-size:11px;font-weight:700;letter-spacing:-.2px;
     display:flex;align-items:center;gap:2px;cursor:pointer;z-index:2;transition:background .15s,transform .15s;}
   .topic-preview-btn:hover{background:rgba(20,30,30,.85);transform:scale(1.04);}
   .topic-preview-btn .tp-arrow{font-size:13px;font-weight:800;}
@@ -275,10 +271,13 @@
   .template-select-btn:hover{background:var(--mint);}
   .template-select-btn.is-selected{background:var(--ink);}
 
-  /* 주문시 안내 / 신청시 안내 — 제출 버튼 위 작은 링크, 누르면 안내 문구 모달이 뜹니다 */
-  .notice-links{display:flex;justify-content:center;gap:8px;margin:14px 0 4px;font-size:12.5px;}
+  /* 주문시 안내 / 신청시 안내 — 화면 우측 상단에 고정으로 떠 있는 작은 링크, 누르면 안내 문구 모달이 뜹니다.
+     스크롤해도 항상 같은 자리에 보이도록 position:fixed로 topbar와 별개로 띄웁니다. */
+  .notice-fixed{position:fixed;top:14px;right:16px;z-index:130;display:flex;align-items:center;gap:8px;
+    background:rgba(255,255,255,.94);backdrop-filter:blur(4px);border:1px solid var(--line);
+    border-radius:999px;padding:8px 14px;box-shadow:0 4px 14px rgba(9,20,22,.10);font-size:12px;}
   .notice-link{border:none;background:none;color:var(--seafoam);font-weight:700;text-decoration:underline;
-    text-underline-offset:2px;cursor:pointer;padding:2px 0;}
+    text-underline-offset:2px;cursor:pointer;padding:2px 0;font-size:inherit;white-space:nowrap;}
   .notice-link:hover{color:var(--mint);}
   .notice-sep{color:var(--line);}
   .notice-overlay{position:fixed;inset:0;z-index:220;background:rgba(9,20,22,.72);display:none;
@@ -340,17 +339,21 @@
 
     /* 좁은 화면에서는 헤더/여백을 줄이고, 제목 폰트를 살짝 낮춰 어색하게 줄바꿈되지 않도록 합니다. */
     .topbar{padding:14px 16px;}
+    .notice-fixed{top:10px;right:10px;padding:6px 10px;gap:6px;font-size:10.5px;}
     .cat-tabs{padding:16px 16px 0;gap:6px;}
     .cat-tab{padding:8px 14px;font-size:12.5px;}
     .wrap{padding:36px 16px 100px;}
     h1.hero{font-size:23px;}
     p.sub{margin-bottom:28px;}
 
-    /* 표지/공통구성 섹션: 제목을 그리드 위로 올려서 썸네일에 더 넓은 폭을 줍니다. */
-    .cb-section{flex-direction:column;gap:10px;}
+    /* 표지/공통구성 섹션: 제목을 그리드 위로 올려서 썸네일에 더 넓은 폭을 줍니다.
+       .cb-section의 align-items:flex-start가 세로(column) 배치에서는 폭을 내용 크기로 줄여버려서,
+       썸네일 그리드가 손톱만큼 쪼그라들어 이미지가 안 보이는 버그가 있었습니다 — 폭 100%를 명시해 고칩니다. */
+    .cb-section{flex-direction:column;gap:10px;align-items:stretch;}
     .cb-head{flex:none;width:100%;}
     .cb-head .cb-title{margin-bottom:2px;}
     .cb-head .cb-desc br{display:none;}
+    .cb-grid{flex:none;width:100%;}
 
     /* 가이드(7장) 그리드는 4열이면 너무 작아지므로 2열로 줄입니다. */
     .cb-grid-cols-4{grid-template-columns:repeat(2,1fr);}
@@ -365,6 +368,13 @@
 </style>
 </head>
 <body>
+
+<!-- 주문시 안내 / 신청시 안내 — 화면 우측 상단에 항상 고정으로 떠 있습니다 (탭과 무관하게 공통) -->
+<div class="notice-fixed">
+  <button type="button" class="notice-link" data-notice="order">주문시 안내</button>
+  <span class="notice-sep">·</span>
+  <button type="button" class="notice-link" data-notice="apply">신청시 안내</button>
+</div>
 
 <div class="topbar">
   <span id="goHomeBtn" style="display:flex;align-items:center;gap:12px;cursor:pointer;">
@@ -495,12 +505,6 @@
     <h2>PDF를 생성하고 발송해주세요</h2>
     <p class="desc">선택한 페이지를 실제 순서대로 이어붙이고, 사진·로고를 합성합니다(문구는 합성하지 않고 수작업으로 배치할 예정입니다). 브라우저에서 직접 처리되며 서버에는 업로드되지 않습니다.</p>
 
-    <div class="notice-links">
-      <button type="button" class="notice-link" data-notice="order">주문시 안내</button>
-      <span class="notice-sep">·</span>
-      <button type="button" class="notice-link" data-notice="apply">신청시 안내</button>
-    </div>
-
     <button class="btn primary" id="btnBuild" style="width:100%;">PDF 미리보기 생성하기</button>
     <div id="status"></div>
     <div id="previewWrap"><iframe id="previewFrame"></iframe></div>
@@ -547,13 +551,7 @@
     <div class="field"><label>설치 · 배송 주소</label><input id="sign_addr" placeholder="현판을 받을 주소"></div>
   </div>
 
-  <div class="notice-links">
-    <button type="button" class="notice-link" data-notice="order">주문시 안내</button>
-    <span class="notice-sep">·</span>
-    <button type="button" class="notice-link" data-notice="apply">신청시 안내</button>
-  </div>
-
-  <button class="btn primary" id="btnSubmitSign" style="width:100%;margin-top:10px;">현판 신청하기</button>
+  <button class="btn primary" id="btnSubmitSign" style="width:100%;margin-top:24px;">현판 신청하기</button>
   <div id="signStatus" style="font-size:12.5px;color:var(--muted);margin-top:10px;white-space:pre-wrap;"></div>
   <button class="btn plain" id="btnRestartSign" style="width:100%;margin-top:10px;display:none;">처음으로</button>
 </div>
@@ -580,13 +578,7 @@
     <div class="field"><label>배송 주소</label><input id="wel_addr" placeholder="웰컴키트를 받을 주소"></div>
   </div>
 
-  <div class="notice-links">
-    <button type="button" class="notice-link" data-notice="order">주문시 안내</button>
-    <span class="notice-sep">·</span>
-    <button type="button" class="notice-link" data-notice="apply">신청시 안내</button>
-  </div>
-
-  <button class="btn primary" id="btnSubmitWelcome" style="width:100%;margin-top:10px;">웰컴키트 신청하기</button>
+  <button class="btn primary" id="btnSubmitWelcome" style="width:100%;margin-top:24px;">웰컴키트 신청하기</button>
   <div id="welcomeStatus" style="font-size:12.5px;color:var(--muted);margin-top:10px;white-space:pre-wrap;"></div>
   <button class="btn plain" id="btnRestartWelcome" style="width:100%;margin-top:10px;display:none;">처음으로</button>
 </div>
@@ -700,10 +692,18 @@ document.getElementById('btnRestartWelcome').onclick = ()=> location.reload();
 
 // ===================== 신청 방법 온보딩 투어 (실제 화면 위 스포트라이트) =====================
 // mode: 'click'(정확히 한 번의 실제 클릭으로 완료) / 'condition'(조건 충족 시 완료) / 'info'(설명만, [다음]으로 진행)
+// next: 다음에 보여줄 스텝의 인덱스를 직접 정하고 싶을 때만 넣는 함수입니다 (없으면 그냥 다음 인덱스로 진행).
+// [맞춤형으로 직접 구성]/[추천 템플릿으로 빠르게 구성] 중 실제로 어떤 카드를 눌렀는지에 따라 서로 다른
+// 화면을 보여줘야 해서, 첫 스텝만 configMode 값을 보고 분기합니다.
 const TOUR_STEPS = [
   { panel:1, target:'#modeSelect',
-    title:'구성 방법 선택', desc:'추천 템플릿으로 빠르게 구성하거나, 맞춤형으로 직접 구성할 수 있어요. 여기서는 맞춤형 구성으로 안내해드릴게요. [맞춤형으로 직접 구성] 카드를 눌러주세요.',
-    mode:'click', clickTarget:'#modeSelect .mode-card[data-mode="custom"]' },
+    title:'구성 방법 선택', desc:'추천 템플릿으로 빠르게 구성하시거나, 표지·주제를 직접 골라 맞춤형으로 구성하실 수 있어요. 원하시는 카드를 눌러주세요.',
+    mode:'click', clickTarget:'#modeSelect .mode-card',
+    next: ()=> (configMode === 'template') ? 1 : 2 },
+  { panel:1, target:'.template-grid',
+    title:'추천 템플릿 선택', desc:'A형/B형 카드의 "펼친면 미리보기"로 실제 구성을 확인하고, 마음에 드는 템플릿의 [이 템플릿 선택] 버튼을 눌러주세요.',
+    mode:'click', clickTarget:'.template-select-btn',
+    next: ()=> 8 },
   { panel:1, target:'#commonSectionsInline .cb-section:nth-child(1)',
     title:'표지 디자인 선택', desc:'마음에 드는 표지 디자인을 눌러 선택해보세요. 앞표지·앞표지 내지(원장님 프로필)·뒤표지 내지·뒷표지 4장이 함께 정해져요.',
     mode:'click', clickTarget:'#commonSectionsInline .cb-section:nth-child(1) .cb-thumb' },
@@ -828,12 +828,24 @@ function showTourStep(i){
   attachTourStepListener(step);
 }
 
-function nextTourStep(){ showTourStep(tourIndex+1); }
-function prevTourStep(){ showTourStep(Math.max(0, tourIndex-1)); }
+// 추천 템플릿/맞춤형 구성 중 어느 쪽을 골랐는지에 따라 스텝이 갈라지므로, 단순히 인덱스를 -1/+1
+// 하는 게 아니라 실제로 지나온 경로를 기록해뒀다가 [이전]을 누르면 그 경로를 그대로 되짚어갑니다.
+let tourHistory = [];
+function nextTourStep(){
+  const step = TOUR_STEPS[tourIndex];
+  const nextIndex = (step && typeof step.next === 'function') ? step.next() : tourIndex+1;
+  tourHistory.push(tourIndex);
+  showTourStep(nextIndex);
+}
+function prevTourStep(){
+  const prevIndex = tourHistory.length ? tourHistory.pop() : Math.max(0, tourIndex-1);
+  showTourStep(prevIndex);
+}
 
 function startTour(){
   hideTourBanner();
   goCat('kit');
+  tourHistory = [];
   document.getElementById('tourOverlay').classList.add('show');
   showTourStep(0);
 }
@@ -877,9 +889,6 @@ updateTourBannerVisibility();
 // ===================== 새 구성 : 고정 섹션 + 주제별 구성(12개 중 6개 선택) =====================
 // prefix로 assets/pages/{prefix}_{n}.png (실제 조립용), assets/thumbs/{prefix}-{n}.jpg (미리보기용) 파일을 찾습니다.
 // (주제별 구성은 화면 미리보기도 assets/pages를 그대로 사용합니다 — topicFile() 참고)
-// 추천 뱃지를 붙일 주제 id: 진단(1)·유형분석(3)·문제풀이클리닉(5)·내신대비(7)·고등시험대비(8)·학습통합보고서(10)
-const RECOMMENDED_TOPIC_IDS = new Set([1,3,5,7,8,10]);
-
 const FIXED_INTRO = [
   { key:'why', label:'우리학원은 이렇게 다릅니다', count:1, prefix:'why' },
   { key:'greeting', label:'인사말', count:2, prefix:'greeting' },
@@ -1255,17 +1264,14 @@ function renderTopics(){
   const el = document.getElementById('chapters');
 
   // 대표 썸네일 이미지 자체에 이미 주제명·페이지수가 디자인되어 있어, 화면에 텍스트를 따로
-  // 덧붙이지 않고(중복 방지) 이미지를 실제 비율 그대로 <img>로 보여줍니다. 추천 표시만은
-  // 이미지 안 표시가 잘 안 보인다는 의견에 따라 별도 뱃지 이미지(assets/badges/recommend.png)를
-  // 코너에 덧붙여서 눈에 띄게 합니다.
+  // 덧붙이지 않고(중복 방지) 이미지를 실제 비율 그대로 <img>로 보여줍니다.
+  // (추천 뱃지 오버레이는 삭제했습니다 — 필요하면 assets/badges/recommend.png 파일은 남아있어 다시 붙일 수 있습니다.)
   el.innerHTML = `<div class="topic-grid">${TOPICS.map(t=>{
     const on = selectedTopics.has(t.id);
-    const recommended = RECOMMENDED_TOPIC_IDS.has(t.id);
     return `
     <div class="cb-thumb topic-thumb ${on?'selected':''}" data-id="${t.id}">
       <div class="thumb-img">
         <img class="topic-photo" src="${topicThumbFile(t.id)}" alt="${t.id}. ${t.label} (${t.count}p)" loading="lazy">
-        ${recommended ? '<img class="topic-recommend-badge" src="assets/badges/recommend.png" alt="추천">' : ''}
         <span class="thumb-check">✓</span>
         <button type="button" class="topic-preview-btn" data-topic-id="${t.id}" aria-label="미리보기">미리보기 <span class="tp-arrow">›</span></button>
       </div>
