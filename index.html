@@ -167,9 +167,15 @@
   .zoom-thumb:hover{position:relative;z-index:6;}
   .zoom-thumb:hover .thumb-img{transform:scale(2.1);box-shadow:0 14px 32px rgba(9,20,22,.28);}
 
-  /* 주제별 구성 추천 뱃지 */
-  .topic-recommend{position:absolute;top:6px;right:6px;background:#F5A524;color:#fff;font-size:10px;font-weight:800;
-    padding:3px 8px;border-radius:999px;letter-spacing:-.2px;box-shadow:0 2px 6px rgba(0,0,0,.18);z-index:1;}
+  /* 주제별 구성 썸네일은 대표 이미지 파일의 실제 비율이 표지/공통구성 페이지(1075:1519)와 다를 수 있어,
+     잘리지 않도록 contain으로 전체를 보여줍니다(빈 여백은 흰 배경으로 채움). */
+  .cb-thumb.topic-thumb .thumb-img{background-size:contain;background-color:#fff;}
+  /* 주제별 구성 썸네일 위 작은 돋보기 버튼 — 누르면 그 주제의 실제 페이지 미리보기 모달이 뜹니다.
+     카드(이미지 포함) 자체를 누르면 선택/해제이고, 이 버튼만 별도로 미리보기를 엽니다. */
+  .topic-preview-btn{position:absolute;right:6px;bottom:6px;width:26px;height:26px;border-radius:50%;
+    border:none;background:rgba(20,30,30,.6);color:#fff;font-size:13px;line-height:1;display:flex;
+    align-items:center;justify-content:center;cursor:pointer;z-index:2;transition:background .15s,transform .15s;}
+  .topic-preview-btn:hover{background:rgba(20,30,30,.85);transform:scale(1.08);}
 
   .headline-block{margin:18px 0 22px;padding:14px 16px;background:#F7FAF9;border-radius:12px;}
   .headline-block .htitle{font-size:12px;font-weight:700;color:var(--body);margin-bottom:10px;}
@@ -337,12 +343,12 @@
 </div>
 
 <div class="cat-tabs">
-  <button class="cat-tab active" data-cat="kit">우리학원브랜드북</button>
-  <button class="cat-tab" data-cat="sign">현판 주문</button>
+  <button class="cat-tab active" data-cat="sign">현판 주문</button>
+  <button class="cat-tab" data-cat="kit">우리학원브랜드북</button>
   <button class="cat-tab" data-cat="welcome">웰컴키트 주문</button>
 </div>
 
-<div class="cat-panel active" data-cat="kit">
+<div class="cat-panel" data-cat="kit">
 <div class="wrap">
   <div class="center">
     <span class="pill">MATHOLIC 가맹학원 전용</span>
@@ -475,7 +481,7 @@
 </div>
 
 <!-- 현판 주문 -->
-<div class="cat-panel" data-cat="sign">
+<div class="cat-panel active" data-cat="sign">
 <div class="wrap">
   <div class="center">
     <span class="pill">MATHOLIC 가맹학원 전용</span>
@@ -641,12 +647,15 @@ const TOUR_STEPS = [
     title:'표지 디자인 선택', desc:'마음에 드는 표지 디자인을 눌러 선택해보세요. 앞표지·앞표지 내지(원장님 프로필)·뒤표지 내지·뒷표지 4장이 함께 정해져요.',
     mode:'click', clickTarget:'#commonSectionsInline .cb-section:nth-child(1) .cb-thumb' },
   { panel:1, target:'#commonSectionsInline .cb-section:nth-child(2)',
-    title:'우리학원은 이렇게 다릅니다 (확인)', desc:'모든 브랜드북에 공통으로 포함되는 1페이지예요. 학원 소개 문구는 다음 단계에서 직접 작성하실 수 있어요.',
+    title:'원장님 프로필 (확인)', desc:'선택한 표지 디자인에 맞춰 자동으로 포함되는 1페이지예요(앞표지 내지). 사진은 다음 단계에서 넣을 수 있어요.',
     mode:'info' },
   { panel:1, target:'#commonSectionsInline .cb-section:nth-child(3)',
-    title:'인사말 (확인)', desc:'모든 브랜드북에 공통으로 포함되는 2페이지예요. 인사말 문구와 학원장님 사진도 다음 단계에서 넣을 수 있어요.',
+    title:'우리학원은 이렇게 다릅니다 (확인)', desc:'모든 브랜드북에 공통으로 포함되는 1페이지예요. 학원 소개 문구는 다음 단계에서 직접 작성하실 수 있어요.',
     mode:'info' },
   { panel:1, target:'#commonSectionsInline .cb-section:nth-child(4)',
+    title:'인사말 (확인)', desc:'모든 브랜드북에 공통으로 포함되는 2페이지예요. 인사말 문구와 학원장님 사진도 다음 단계에서 넣을 수 있어요.',
+    mode:'info' },
+  { panel:1, target:'#commonSectionsInline .cb-section:nth-child(5)',
     title:'좋은 수학학원 고르는 법 (확인)', desc:'모든 브랜드북에 공통으로 포함되는 7페이지 구성이에요. 별도로 선택하실 내용은 없어요.',
     mode:'info' },
   { panel:1, target:'#chapters',
@@ -815,8 +824,6 @@ const FIXED_INTRO = [
 // 원장님 프로필(앞표지 내지)·뒤표지 내지·뒷표지는 FIXED_INTRO가 아니라 COVERS/COVER_VARIANT_SETS로 관리합니다.
 // 뒷표지·뒤표지 내지는 실제 페이지 배치에서는 맨 뒤로 이동합니다 (buildPdf 참고).
 
-// 추천 뱃지를 붙일 주제 id: 진단(1)·유형분석(3)·문제풀이클리닉(5)·내신대비(7)·고등시험대비(8)·학습통합보고서(10)
-const RECOMMENDED_TOPIC_IDS = new Set([1,3,5,7,8,10]);
 
 // desc: 미리보기 모달 하단에 보여줄 주제 설명 문구입니다 (줄바꿈은 그대로 반영됩니다 — .topic-desc의 white-space:pre-line 참고).
 const TOPICS = [
@@ -1154,23 +1161,22 @@ function renderTopics(){
 
   el.innerHTML = `<div class="topic-grid">${TOPICS.map(t=>{
     const on = selectedTopics.has(t.id);
-    const recommended = RECOMMENDED_TOPIC_IDS.has(t.id);
     return `
-    <div class="cb-thumb zoom-thumb ${on?'selected':''}" data-id="${t.id}">
-      <div class="thumb-img" data-topic-id="${t.id}" style="background-image:url('${topicThumbFile(t.id)}');">
-        ${recommended ? '<span class="topic-recommend">추천</span>' : ''}
+    <div class="cb-thumb topic-thumb zoom-thumb ${on?'selected':''}" data-id="${t.id}">
+      <div class="thumb-img" style="background-image:url('${topicThumbFile(t.id)}');">
         <span class="thumb-check">✓</span>
+        <button type="button" class="topic-preview-btn" data-topic-id="${t.id}" aria-label="미리보기">🔍</button>
       </div>
-      <div class="thumb-name">${recommended ? '⭐ ' : ''}${t.id}. ${t.label} (${t.count}p)</div>
+      <div class="thumb-name">${t.id}. ${t.label} (${t.count}p)</div>
     </div>`;
   }).join('')}</div>`;
 
-  // 썸네일(이미지) 클릭 → 그 주제의 주제명·페이지수·내지(전체 페이지)·내용을 모달로 보여줍니다 (openTopicPreview).
-  // 카드 선택(체크)과는 별도 동작이라, 여기서 이벤트 전파를 막아 카드 클릭(선택/해제)으로 번지지 않게 합니다.
-  el.querySelectorAll('.thumb-img[data-topic-id]').forEach(thumb=>{
-    thumb.addEventListener('click', (e)=>{
+  // 카드(이미지 포함) 클릭 → 선택/해제. 이미지 자체를 눌러도 선택되도록, 미리보기는
+  // 이미지 위 작은 돋보기 버튼(.topic-preview-btn)만의 별도 동작으로 분리했습니다.
+  el.querySelectorAll('.topic-preview-btn').forEach(btn=>{
+    btn.addEventListener('click', (e)=>{
       e.stopPropagation();
-      openTopicPreview(+thumb.dataset.topicId);
+      openTopicPreview(+btn.dataset.topicId);
     });
   });
 
@@ -1212,8 +1218,7 @@ function closeTopicPreview(){
 function renderTopicPreview(){
   const t = TOPICS.find(x=>x.id===topicPreviewId);
   if(!t) return;
-  const recommended = RECOMMENDED_TOPIC_IDS.has(t.id);
-  document.getElementById('topicPreviewTitle').textContent = `${recommended ? '⭐ ' : ''}${t.id}. ${t.label}`;
+  document.getElementById('topicPreviewTitle').textContent = `${t.id}. ${t.label}`;
   document.getElementById('topicPreviewSub').textContent = `전체 ${t.count}페이지 중 ${topicPreviewPage}페이지`;
   document.getElementById('topicPreviewImg').style.backgroundImage = `url('${topicFile(t.id, topicPreviewPage)}')`;
   document.getElementById('topicPrevBtn').disabled = topicPreviewPage <= 1;
@@ -1248,7 +1253,9 @@ var configMode = null; // 'template' | 'custom'
 
 document.querySelectorAll('#modeSelect .mode-card').forEach(card=>{
   card.onclick = ()=>{
-    configMode = card.dataset.mode;
+    // 이미 선택된 카드를 다시 누르면 선택이 해제되어 처음(구성 방법 선택 전) 상태로 돌아갑니다.
+    const clickedMode = card.dataset.mode;
+    configMode = (configMode === clickedMode) ? null : clickedMode;
     document.querySelectorAll('#modeSelect .mode-card').forEach(c=>{
       c.classList.toggle('selected', c.dataset.mode === configMode);
     });
