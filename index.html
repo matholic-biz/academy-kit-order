@@ -532,7 +532,7 @@
         </div>
       </div>
     </div>
-    <p class="note">※ 입력하신 표지 문구·소개 문구·인사말은 PDF 미리보기에는 자동으로 합성되지 않습니다(문구 배치는 별도로 수작업 진행 예정). 사진·로고는 미리보기에 그대로 들어갑니다.</p>
+    <p class="note">※ 입력하신 표지 문구·소개 문구·인사말, 그리고 프로필 사진·로고는 PDF 미리보기에는 자동으로 합성되지 않고 페이지 구성(샘플 이미지)만 보여드립니다. 실제 문구·사진·로고 배치는 별도로 수작업 진행할 예정입니다. 아래에서 올리신 사진·로고는 이 화면의 미리보기 박스에서만 확인할 수 있습니다.</p>
 
     <div class="nav">
       <button class="btn plain" data-prev="1">이전</button>
@@ -543,7 +543,7 @@
   <!-- STEP 3: 생성 · 발송 -->
   <section class="panel" data-panel="3">
     <h2>PDF를 생성하고 발송해주세요</h2>
-    <p class="desc">선택한 페이지를 실제 순서대로 이어붙이고, 사진·로고를 합성합니다(문구는 합성하지 않고 수작업으로 배치할 예정입니다).</p>
+    <p class="desc">선택한 페이지를 실제 순서대로 이어붙여 페이지 구성을 보여드립니다(문구·사진·로고는 합성하지 않고 수작업으로 배치할 예정입니다).</p>
 
     <div class="order-summary-box" id="orderSummaryBox">
       <div class="order-summary-title">신청 내용 확인 (발송 전 확인해주세요)</div>
@@ -1084,9 +1084,13 @@ const COVER_VARIANT_SETS = {
 
 // PDF 미리보기 생성 시 표지 문구·프로필 제목/태그라인·다릅니다 소개문구·인사말 문구를 실제로
 // 합성할지 여부입니다. 현재는 문구 배치를 수작업으로 진행할 예정이라 false로 꺼두었습니다.
-// (사진·로고 삽입에는 영향 없음 — 아래 각 drawTextBox() 호출부만 이 값으로 감쌌습니다.)
 // 다시 자동 합성하고 싶으시면 이 값을 true로 바꿔주세요.
 const DRAW_TEXT_OVERLAY = false;
+// PDF 미리보기에 학원장님 프로필 사진·로고 이미지를 합성할지 여부입니다. 좌표(PROFILE_PHOTO_SPEC/
+// WHY_LOGO_SPEC/GREETING_PHOTO_SPEC)가 사진 비율에 따라 위치가 어긋나 보이는 문제가 있어 false로
+// 꺼뒤, 미리보기에는 페이지 구성(샘플 이미지)만 보이고 사진·로고는 합성하지 않습니다.
+// 좌표를 다시 맞춘 뒤 true로 바꾸면 다시 합성됩니다.
+const DRAW_IMAGE_OVERLAY = false;
 
 // 원장님 프로필(1P, =앞표지 내지) 배치 스펙 - 임시값입니다.
 // title: "{학원명} BRANDBOOK" 형태로 자동 조합됩니다 (학원명은 주문정보의 학원명 입력값). 별도 입력칸 없음.
@@ -1862,7 +1866,7 @@ async function buildPdf(){
       const profileTaglineColor = rgb(PROFILE_TAGLINE_SPEC.color[0], PROFILE_TAGLINE_SPEC.color[1], PROFILE_TAGLINE_SPEC.color[2]);
       drawTextBox(profilePage1, PROFILE_TAGLINE_TEXT, PROFILE_TAGLINE_SPEC, profileTaglineFont, profileTaglineColor, scale);
     }
-    if(photoDataUrl){
+    if(DRAW_IMAGE_OVERLAY && photoDataUrl){
       const resp = await fetch(photoDataUrl);
       const photoBytes = await resp.arrayBuffer();
       const isPng = photoDataUrl.startsWith('data:image/png');
@@ -1884,7 +1888,7 @@ async function buildPdf(){
       const sloganColor = rgb(WHY_TEXT_SPEC.color[0], WHY_TEXT_SPEC.color[1], WHY_TEXT_SPEC.color[2]);
       drawTextBox(whyPage1, sloganText.replace(/\n+/g,' '), WHY_TEXT_SPEC, sloganFont, sloganColor, scale);
     }
-    if(logoDataUrl){
+    if(DRAW_IMAGE_OVERLAY && logoDataUrl){
       const resp = await fetch(logoDataUrl);
       const logoBytes = await resp.arrayBuffer();
       const isPng = logoDataUrl.startsWith('data:image/png');
@@ -1906,7 +1910,7 @@ async function buildPdf(){
       const greetingColor = rgb(GREETING_TEXT_SPEC.color[0], GREETING_TEXT_SPEC.color[1], GREETING_TEXT_SPEC.color[2]);
       drawTextBox(greetingPage1, greetingText.replace(/\n+/g,' '), GREETING_TEXT_SPEC, greetingFont, greetingColor, scale);
     }
-    if(photoDataUrl){
+    if(DRAW_IMAGE_OVERLAY && photoDataUrl){
       const resp = await fetch(photoDataUrl);
       const photoBytes = await resp.arrayBuffer();
       const isPng = photoDataUrl.startsWith('data:image/png');
