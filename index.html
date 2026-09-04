@@ -497,7 +497,13 @@
       </div>
       <div class="field"><label>희망 부수</label><input id="f_qty" value="50부" readonly></div>
       <div class="row2">
-        <div class="field"><label>우편번호</label><input id="f_zip" placeholder="12345" maxlength="5" inputmode="numeric"></div>
+        <div class="field">
+          <label>우편번호</label>
+          <div style="display:flex;gap:8px;">
+            <input id="f_zip" placeholder="12345" maxlength="5" inputmode="numeric" style="flex:1;min-width:0;">
+            <button type="button" class="btn plain" id="f_zipSearchBtn" style="width:auto;padding:0 14px;white-space:nowrap;">검색</button>
+          </div>
+        </div>
         <div class="field"><label>배송 주소</label><input id="f_addr" placeholder="인쇄물을 받을 주소"></div>
       </div>
       <div id="fgTextContent">
@@ -588,7 +594,13 @@
       <div class="field"><label>이메일</label><input id="sign_email" placeholder="example@matholic.net"></div>
     </div>
     <div class="row2">
-      <div class="field"><label>우편번호</label><input id="sign_zip" placeholder="12345" maxlength="5" inputmode="numeric"></div>
+      <div class="field">
+        <label>우편번호</label>
+        <div style="display:flex;gap:8px;">
+          <input id="sign_zip" placeholder="12345" maxlength="5" inputmode="numeric" style="flex:1;min-width:0;">
+          <button type="button" class="btn plain" id="sign_zipSearchBtn" style="width:auto;padding:0 14px;white-space:nowrap;">검색</button>
+        </div>
+      </div>
       <div class="field"><label>설치 · 배송 주소</label><input id="sign_addr" placeholder="현판을 받을 주소"></div>
     </div>
   </div>
@@ -618,7 +630,13 @@
       <div class="field"><label>이메일</label><input id="wel_email" placeholder="example@matholic.net"></div>
     </div>
     <div class="row2">
-      <div class="field"><label>우편번호</label><input id="wel_zip" placeholder="12345" maxlength="5" inputmode="numeric"></div>
+      <div class="field">
+        <label>우편번호</label>
+        <div style="display:flex;gap:8px;">
+          <input id="wel_zip" placeholder="12345" maxlength="5" inputmode="numeric" style="flex:1;min-width:0;">
+          <button type="button" class="btn plain" id="wel_zipSearchBtn" style="width:auto;padding:0 14px;white-space:nowrap;">검색</button>
+        </div>
+      </div>
       <div class="field"><label>배송 주소</label><input id="wel_addr" placeholder="웰컴키트를 받을 주소"></div>
     </div>
   </div>
@@ -741,6 +759,8 @@
 
 <script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@pdf-lib/fontkit@1.1.1/dist/fontkit.umd.min.js"></script>
+<!-- 다음(카카오) 우편번호 검색 — 우편번호를 모르는 고객도 주소만 검색하면 우편번호+주소가 자동으로 채워집니다. -->
+<script src="//ssl.daumcdn.net/dmaps/map_js_init/postcode.v2.js"></script>
 <script>
 // ===================== 스텝 내비게이션 =====================
 function goStep(n){
@@ -1600,6 +1620,26 @@ function isValidZip(v){
 function isValidAddress(v){
   return !!(v && v.trim().replace(/\s+/g, '').length >= 5);
 }
+
+// ===================== 우편번호를 모르는 고객을 위한 주소 검색(다음 우편번호 서비스) =====================
+// "검색" 버튼을 누르면 팝업이 열리고, 주소만 검색하면 우편번호·도로명주소가 자동으로 채워집니다.
+// 우편번호를 이미 알고 계신 분은 계속 직접 입력하셔도 됩니다 (검색은 선택사항입니다).
+function openZipSearch(zipId, addrId){
+  if(typeof daum === 'undefined' || !daum.Postcode){
+    alert('주소 검색 기능을 불러오지 못했습니다. 우편번호를 직접 입력해주세요.');
+    return;
+  }
+  new daum.Postcode({
+    oncomplete: function(data){
+      document.getElementById(zipId).value = data.zonecode;
+      document.getElementById(addrId).value = data.roadAddress || data.address;
+      document.getElementById(addrId).focus();
+    }
+  }).open();
+}
+document.getElementById('f_zipSearchBtn').onclick = ()=> openZipSearch('f_zip', 'f_addr');
+document.getElementById('sign_zipSearchBtn').onclick = ()=> openZipSearch('sign_zip', 'sign_addr');
+document.getElementById('wel_zipSearchBtn').onclick = ()=> openZipSearch('wel_zip', 'wel_addr');
 
 async function sendToVendor(){
   const btn = document.getElementById('btnSendEmail');
