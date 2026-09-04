@@ -802,24 +802,29 @@ document.getElementById('btnRestartWelcome').onclick = ()=> location.reload();
 
 // ===================== 신청 방법 온보딩 투어 (실제 화면 위 스포트라이트) =====================
 // mode: 'click'(정확히 한 번의 실제 클릭으로 완료) / 'condition'(조건 충족 시 완료) / 'info'(설명만, [다음]으로 진행)
-// next: 다음에 보여줄 스텝의 인덱스를 직접 정하고 싶을 때만 넣는 함수입니다 (없으면 그냥 다음 인덱스로 진행).
-// [맞춤형으로 직접 구성]/[추천 템플릿으로 빠르게 구성] 중 실제로 어떤 카드를 눌렀는지에 따라 서로 다른
-// 화면을 보여줘야 해서, 첫 스텝만 configMode 값을 보고 분기합니다.
+// onEnter: 그 스텝이 화면에 뜰 때 실행할 부수효과(주로 setConfigMode로 모드를 데모용으로 자동 전환).
+// 실제 사용자가 어떤 카드를 눌렀는지와 무관하게, 투어는 항상 [1] 추천 템플릿으로 빠르게 구성하는 방법을
+// 먼저 보여주고 → [2] 맞춤형으로 직접 구성할 때의 화면(표지·공통구성·주제별 구성)을 이어서 보여준 뒤 →
+// [3] 마지막에 실제로 어떤 방식을 쓸지 사용자가 직접 카드를 눌러 선택하게 합니다 (그래야 진짜 신청이 진행돼요).
 const TOUR_STEPS = [
   { panel:1, target:'#modeSelect',
-    title:'구성 방법 선택', desc:'추천 템플릿으로 빠르게 구성하시거나, 표지·주제를 직접 골라 맞춤형으로 구성하실 수 있어요. 원하시는 카드를 눌러주세요.',
-    mode:'click', clickTarget:'#modeSelect .mode-card',
-    next: ()=> (configMode === 'template') ? 1 : 3 },
+    title:'구성 방법 선택', desc:'추천 템플릿으로 빠르게 구성하거나, 표지·주제를 직접 골라 맞춤형으로 구성할 수 있어요. 두 가지 방법을 순서대로 보여드릴게요. 먼저 추천 템플릿부터 볼게요.',
+    mode:'info', onEnter: ()=> setConfigMode(null) },
+  { panel:1, target:'#modeSelect .mode-card[data-mode="template"]',
+    title:'추천 템플릿으로 빠르게 구성', desc:'이 카드를 누르면 미리 준비된 템플릿의 펼친면을 확인하고 바로 선택할 수 있는 화면으로 바뀌어요.',
+    mode:'info', onEnter: ()=> setConfigMode('template') },
   { panel:1, target:'.template-grid',
     title:'추천 템플릿 A형·B형 확인', desc:'A형·B형 두 가지 추천 템플릿이 준비되어 있어요. 각 카드의 [펼친면 미리보기] 버튼을 누르면 실제 구성을 책장 넘기듯 확인할 수 있어요.',
     mode:'info' },
   { panel:1, target:'.template-grid',
-    title:'템플릿 선택', desc:'마음에 드는 템플릿을 정하셨다면 해당 카드의 [이 템플릿 선택] 버튼을 눌러주세요.',
-    mode:'click', clickTarget:'.template-select-btn',
-    next: ()=> 9 },
+    title:'템플릿 선택', desc:'마음에 드는 템플릿을 정하셨다면 해당 카드의 [이 템플릿 선택] 버튼을 눌러 고르시면 됩니다.',
+    mode:'info' },
+  { panel:1, target:'#modeSelect .mode-card[data-mode="custom"]',
+    title:'맞춤형으로 직접 구성', desc:'이번엔 표지 디자인과 주제를 직접 골라 구성하는 맞춤형 화면을 보여드릴게요. 이 카드를 누르면 화면이 바뀌어요.',
+    mode:'info', onEnter: ()=> setConfigMode('custom') },
   { panel:1, target:'#commonSectionsInline .cb-section:nth-child(1)',
-    title:'표지 디자인 선택', desc:'마음에 드는 표지 디자인을 눌러 선택해보세요. 앞표지·앞표지 내지(원장님 프로필)·뒤표지 내지·뒷표지 4장이 함께 정해져요.',
-    mode:'click', clickTarget:'#commonSectionsInline .cb-section:nth-child(1) .cb-thumb' },
+    title:'표지 디자인 선택', desc:'마음에 드는 표지 디자인을 눌러 선택할 수 있어요. 앞표지·앞표지 내지(원장님 프로필)·뒤표지 내지·뒷표지 4장이 함께 정해져요.',
+    mode:'info' },
   { panel:1, target:'#commonSectionsInline .cb-section:nth-child(2)',
     title:'원장님 프로필 (확인)', desc:'선택한 표지 디자인에 맞춰 자동으로 포함되는 1페이지예요(앞표지 내지). 사진은 다음 단계에서 넣을 수 있어요.',
     mode:'info' },
@@ -833,10 +838,13 @@ const TOUR_STEPS = [
     title:'좋은 수학학원 고르는 법 (확인)', desc:'모든 브랜드북에 공통으로 포함되는 7페이지 구성이에요. 별도로 선택하실 내용은 없어요.',
     mode:'info' },
   { panel:1, target:'#chapters',
-    title:'주제별 구성 선택', desc:'12개 주제 중 마음에 드는 것을 전체 내지 분량이 32p 이상 될 때까지 눌러 선택해보세요. 썸네일 이미지를 누르면 그 주제의 실제 페이지를 모달로 미리 볼 수 있어요.',
-    mode:'condition', clickTarget:'#chapters', check: ()=> totalSelectedPages() >= MIN_TOTAL_PAGES },
+    title:'주제별 구성 선택', desc:'12개 주제 중 마음에 드는 것을 전체 내지 분량이 32p 이상 되도록 골라 선택할 수 있어요. 썸네일 이미지를 누르면 그 주제의 실제 페이지를 모달로 미리 볼 수 있어요.',
+    mode:'info' },
+  { panel:1, target:'#modeSelect',
+    title:'원하시는 방식을 선택해주세요', desc:'지금까지 살펴본 추천 템플릿 또는 맞춤형 구성 중, 실제로 진행하실 방식의 카드를 눌러주세요.',
+    mode:'click', clickTarget:'#modeSelect .mode-card', onEnter: ()=> setConfigMode(null) },
   { panel:1, target:'#step1NextBtn',
-    title:'다음 단계로', desc:'표지와 주제를 32p 이상 선택했다면 [다음] 버튼을 눌러주세요.',
+    title:'다음 단계로', desc:'원하시는 구성(표지+주제 32p 이상, 또는 템플릿)을 다 고르셨다면 [다음] 버튼을 눌러주세요.',
     mode:'click', clickTarget:'#step1NextBtn' },
   { panel:2, target:'#fgBasicInfo1',
     title:'학원 정보 입력', desc:'학원명, 원장명, 연락처(010-0000-0000 형식), 이메일, 우편번호, 배송 주소를 입력해주세요. (희망 부수는 50부로 고정되어 있어요.)',
@@ -924,6 +932,8 @@ function showTourStep(i){
   tourIndex = i;
   const step = TOUR_STEPS[i];
   if(currentPanel() !== step.panel) goStep(step.panel);
+  // onEnter: 실제 클릭 여부와 무관하게 추천 템플릿 → 맞춤형 구성 화면을 순서대로 자동으로 보여주기 위한 부수효과.
+  if(typeof step.onEnter === 'function') step.onEnter();
 
   document.getElementById('tourStepBadge').textContent = `STEP ${i+1}/${TOUR_STEPS.length}`;
   document.getElementById('tourTitle').textContent = step.title;
@@ -941,24 +951,18 @@ function showTourStep(i){
   attachTourStepListener(step);
 }
 
-// 추천 템플릿/맞춤형 구성 중 어느 쪽을 골랐는지에 따라 스텝이 갈라지므로, 단순히 인덱스를 -1/+1
-// 하는 게 아니라 실제로 지나온 경로를 기록해뒀다가 [이전]을 누르면 그 경로를 그대로 되짚어갑니다.
-let tourHistory = [];
+// 이제 투어가 실제 클릭에 따라 갈라지지 않고 항상 같은 순서(추천 템플릿 → 맞춤형 구성 → 실제 선택)로
+// 진행되므로, 단순히 인덱스를 +1/-1 하면 됩니다.
 function nextTourStep(){
-  const step = TOUR_STEPS[tourIndex];
-  const nextIndex = (step && typeof step.next === 'function') ? step.next() : tourIndex+1;
-  tourHistory.push(tourIndex);
-  showTourStep(nextIndex);
+  showTourStep(tourIndex + 1);
 }
 function prevTourStep(){
-  const prevIndex = tourHistory.length ? tourHistory.pop() : Math.max(0, tourIndex-1);
-  showTourStep(prevIndex);
+  showTourStep(Math.max(0, tourIndex - 1));
 }
 
 function startTour(){
   hideTourBanner();
   goCat('kit');
-  tourHistory = [];
   document.getElementById('tourOverlay').classList.add('show');
   showTourStep(0);
 }
@@ -1476,17 +1480,23 @@ updateSummary();
 // updateStep1NextState()를 통해 configMode를 참조해도 오류가 나지 않도록 합니다.
 var configMode = null; // 'template' | 'custom'
 
+// 카드를 실제로 누르는 것과 온보딩 투어가 데모용으로 자동 전환하는 것 모두 이 함수 하나로 처리합니다.
+// mode를 null로 넘기면 두 카드 모두 선택 해제된 처음 상태로 돌아갑니다.
+function setConfigMode(mode){
+  configMode = mode;
+  document.querySelectorAll('#modeSelect .mode-card').forEach(c=>{
+    c.classList.toggle('selected', c.dataset.mode === configMode);
+  });
+  document.getElementById('templateModeBlock').style.display = configMode === 'template' ? '' : 'none';
+  document.getElementById('customModeBlock').style.display = configMode === 'custom' ? '' : 'none';
+  updateStep1NextState();
+}
+
 document.querySelectorAll('#modeSelect .mode-card').forEach(card=>{
   card.onclick = ()=>{
     // 이미 선택된 카드를 다시 누르면 선택이 해제되어 처음(구성 방법 선택 전) 상태로 돌아갑니다.
     const clickedMode = card.dataset.mode;
-    configMode = (configMode === clickedMode) ? null : clickedMode;
-    document.querySelectorAll('#modeSelect .mode-card').forEach(c=>{
-      c.classList.toggle('selected', c.dataset.mode === configMode);
-    });
-    document.getElementById('templateModeBlock').style.display = configMode === 'template' ? '' : 'none';
-    document.getElementById('customModeBlock').style.display = configMode === 'custom' ? '' : 'none';
-    updateStep1NextState();
+    setConfigMode(configMode === clickedMode ? null : clickedMode);
   };
 });
 
