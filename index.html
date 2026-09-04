@@ -109,6 +109,34 @@
   .warnbox{background:var(--warnBg);color:var(--warn);border-radius:10px;padding:12px 16px;font-size:12.5px;margin-top:16px;}
   .note{font-size:12px;color:var(--muted);margin-top:10px;}
 
+  /* 발송 전 확인할 수 있는 신청 내용(구성 방식·표지·주제별 구성) 요약 카드 */
+  .order-summary-box{background:var(--paleMint);border:1px solid var(--lightMint);border-radius:12px;
+    padding:16px 18px;margin-bottom:16px;}
+  .order-summary-title{font-weight:800;font-size:13.5px;margin-bottom:10px;color:var(--ink);}
+  .order-summary-row{display:flex;gap:10px;font-size:12.5px;line-height:1.6;padding:4px 0;}
+  .order-summary-row .k{flex:0 0 auto;color:var(--muted);font-weight:700;white-space:nowrap;}
+  .order-summary-row .v{color:var(--body);}
+
+  /* 자주 묻는 질문 (하단 FAQ 아코디언) */
+  .faq-section{padding:70px 20px 90px;border-top:1px solid var(--line);margin-top:40px;}
+  .faq-title{font-size:28px;font-weight:800;text-align:center;margin:0 0 10px;}
+  .faq-sub{font-size:14.5px;color:var(--muted);text-align:center;margin:0 0 28px;}
+  .faq-tabs{display:flex;justify-content:center;align-items:center;gap:14px;flex-wrap:wrap;
+    border:1px solid var(--line);border-radius:999px;padding:14px 24px;max-width:520px;margin:0 auto 40px;}
+  .faq-tab{border:none;background:none;color:var(--muted);font-weight:700;font-size:14px;cursor:pointer;padding:4px 2px;}
+  .faq-tab.active{color:var(--seafoam);}
+  .faq-tab-sep{color:var(--line);}
+  .faq-cat-panel{display:none;max-width:820px;margin:0 auto;}
+  .faq-cat-panel.active{display:block;}
+  .faq-cat-title{font-size:20px;font-weight:800;margin:0 0 16px;}
+  .faq-item{border-bottom:1px solid var(--line);}
+  .faq-q{width:100%;background:none;border:none;display:flex;justify-content:space-between;align-items:center;
+    padding:17px 2px;font-size:14.5px;font-weight:700;color:var(--ink);cursor:pointer;text-align:left;gap:12px;}
+  .faq-chev{transition:transform .2s;color:var(--muted);font-size:13px;flex:0 0 auto;}
+  .faq-item.open .faq-chev{transform:rotate(180deg);}
+  .faq-a{display:none;padding:0 2px 17px;color:var(--body);font-size:13.5px;line-height:1.65;white-space:pre-line;}
+  .faq-item.open .faq-a{display:block;}
+
   /* modal gallery */
   .modal-overlay{position:fixed;inset:0;background:rgba(16,40,43,.55);display:none;align-items:center;
     justify-content:center;z-index:50;padding:24px;}
@@ -262,7 +290,8 @@
   .template-mockup-fallback{display:none;position:absolute;inset:0;align-items:center;justify-content:center;
     color:var(--muted);font-size:11.5px;text-align:center;padding:10px;}
   .template-body{padding:14px 16px 16px;}
-  .template-name{font-weight:800;font-size:14px;margin-bottom:12px;}
+  .template-name{font-weight:800;font-size:14px;margin-bottom:4px;}
+  .template-recommend{font-size:12px;color:var(--body);line-height:1.5;margin-bottom:12px;}
   .template-actions{display:flex;flex-direction:column;gap:8px;}
   .template-preview-btn{width:100%;border:1px solid var(--seafoam);background:#fff;color:var(--seafoam);
     font-weight:700;font-size:12px;padding:9px 0;border-radius:8px;cursor:pointer;}
@@ -272,22 +301,20 @@
   .template-select-btn:hover{background:var(--mint);}
   .template-select-btn.is-selected{background:var(--ink);}
 
-  /* 주문시 안내 / 신청시 안내 — 화면 우측 상단에 고정으로 떠 있는 작은 링크, 누르면 안내 문구 모달이 뜹니다.
+  /* 안내 주의사항 — 화면 우측 상단에 고정으로 떠 있는 색 버튼. 누르면 하단 FAQ 섹션으로 이동합니다.
      스크롤해도 항상 같은 자리에 보이도록 position:fixed로 topbar와 별개로 띄웁니다. */
-  .notice-fixed{position:fixed;top:14px;right:16px;z-index:130;display:flex;align-items:center;gap:8px;
-    background:rgba(255,255,255,.94);backdrop-filter:blur(4px);border:1px solid var(--line);
-    border-radius:999px;padding:8px 14px;box-shadow:0 4px 14px rgba(9,20,22,.10);font-size:12px;}
-  .notice-link{border:none;background:none;color:#FF2D55;font-weight:700;text-decoration:underline;
-    text-underline-offset:2px;cursor:pointer;padding:2px 0;font-size:inherit;white-space:nowrap;}
-  .notice-link:hover{color:#E0264A;}
-  .notice-sep{color:var(--line);}
+  .notice-fixed{position:fixed;top:14px;right:16px;z-index:130;}
+  .notice-btn{border:none;background:#FF2D55;color:#fff;font-weight:800;font-size:12.5px;
+    padding:10px 16px;border-radius:999px;cursor:pointer;box-shadow:0 4px 14px rgba(9,20,22,.15);white-space:nowrap;}
+  .notice-btn:hover{background:#E0264A;}
+  /* 신청 완료 모달 (기존 안내 모달 스타일을 재사용) */
   .notice-overlay{position:fixed;inset:0;z-index:220;background:rgba(9,20,22,.72);display:none;
     align-items:center;justify-content:center;padding:24px;}
   .notice-overlay.show{display:flex;}
   .notice-box{position:relative;background:#fff;border-radius:16px;padding:24px 24px 22px;max-width:420px;width:100%;
-    max-height:80vh;overflow-y:auto;}
-  .notice-box-title{font-weight:800;font-size:16px;margin-bottom:14px;padding-right:24px;}
-  .notice-box-body{font-size:13.5px;line-height:1.7;color:var(--body);white-space:pre-line;}
+    max-height:80vh;overflow-y:auto;text-align:center;}
+  .notice-box-title{font-weight:800;font-size:18px;margin-bottom:10px;}
+  .notice-box-body{font-size:13.5px;line-height:1.7;color:var(--body);white-space:pre-line;margin-bottom:18px;}
 
   /* 펼친면 미리보기 라이트박스 (HEYZINE 플립북 임베드) */
   .spread-overlay{position:fixed;inset:0;z-index:210;background:rgba(9,20,22,.72);display:none;
@@ -340,7 +367,14 @@
 
     /* 좁은 화면에서는 헤더/여백을 줄이고, 제목 폰트를 살짝 낮춰 어색하게 줄바꿈되지 않도록 합니다. */
     .topbar{padding:14px 16px;}
-    .notice-fixed{top:10px;right:10px;padding:6px 10px;gap:6px;font-size:10.5px;}
+    .notice-fixed{top:10px;right:10px;}
+    .notice-btn{padding:8px 12px;font-size:11px;}
+    .faq-section{padding:48px 16px 64px;}
+    .faq-title{font-size:22px;}
+    .faq-tabs{padding:12px 16px;gap:10px;max-width:100%;}
+    .faq-tab{font-size:12.5px;}
+    .faq-cat-title{font-size:17px;}
+    .faq-q{font-size:13.5px;padding:14px 2px;}
     .cat-tabs{padding:16px 16px 0;gap:6px;}
     .cat-tab{padding:8px 14px;font-size:12.5px;}
     .wrap{padding:36px 16px 100px;}
@@ -370,13 +404,9 @@
 </head>
 <body>
 
-<!-- 주문시 안내 / 신청시 안내 — 화면 우측 상단에 항상 고정으로 떠 있습니다 (탭과 무관하게 공통) -->
+<!-- 안내 주의사항 — 화면 우측 상단에 항상 고정으로 떠 있습니다 (탭과 무관하게 공통). 누르면 하단 자주 묻는 질문으로 이동합니다. -->
 <div class="notice-fixed">
-  <button type="button" class="notice-link" data-notice="order">주문시 안내</button>
-  <span class="notice-sep">·</span>
-  <button type="button" class="notice-link" data-notice="apply">신청시 안내</button>
-  <span class="notice-sep">·</span>
-  <button type="button" class="notice-link" data-notice="payment">결제시 안내</button>
+  <button type="button" class="notice-btn" id="noticeJumpBtn">안내 주의사항</button>
 </div>
 
 <div class="topbar">
@@ -437,10 +467,10 @@
       <div id="commonSectionsInline" style="border-top:1px solid var(--line);"></div>
       <p class="note">※ 샘플 인쇄 시안 이미지입니다. 문구 위치는 예시이며, 다르게 보이면 알려주시면 조정해드립니다.</p>
 
-      <h3 class="subhead">주제별 구성 (12개 중 20p 이상 선택해주세요.)</h3>
+      <h3 class="subhead">주제별 구성 (12개 중, 전체 내지 분량이 32p 이상 되도록 선택해주세요.)</h3>
       <p class="note" style="margin-top:0;">썸네일 이미지를 누르면 그 주제의 페이지수·내지·내용을 모달로 미리 볼 수 있어요.</p>
       <div class="selection-summary">
-        <div id="totalPages">0개 선택 (총 14p), 최소 20p 이상 골라주세요.</div>
+        <div id="totalPages">0개 선택 (총 12p), 최소 32p 이상 골라주세요.</div>
       </div>
       <div id="chapters"></div>
     </div>
@@ -506,7 +536,12 @@
   <!-- STEP 3: 생성 · 발송 -->
   <section class="panel" data-panel="3">
     <h2>PDF를 생성하고 발송해주세요</h2>
-    <p class="desc">선택한 페이지를 실제 순서대로 이어붙이고, 사진·로고를 합성합니다(문구는 합성하지 않고 수작업으로 배치할 예정입니다). 브라우저에서 직접 처리되며 서버에는 업로드되지 않습니다.</p>
+    <p class="desc">선택한 페이지를 실제 순서대로 이어붙이고, 사진·로고를 합성합니다(문구는 합성하지 않고 수작업으로 배치할 예정입니다).</p>
+
+    <div class="order-summary-box" id="orderSummaryBox">
+      <div class="order-summary-title">신청 내용 확인 (발송 전 확인해주세요)</div>
+      <div id="orderSummaryBody"></div>
+    </div>
 
     <button class="btn primary" id="btnBuild" style="width:100%;">PDF 미리보기 생성하기</button>
     <div id="status"></div>
@@ -537,9 +572,9 @@
   </div>
 
   <div class="sign-preview">
-    <img src="assets/signboard/sign-luxury-gold.png" alt="현판 디자인 (고급형 럭셔리골드 + 아크릴마감)">
+    <img src="assets/signboard/sign-luxury-gold.png" alt="현판 디자인 (고급형 럭셔리골드)">
   </div>
-  <p class="note center" style="text-align:center;">고급형 · 럭셔리골드 + 아크릴마감(띄움형)</p>
+  <p class="note center" style="text-align:center;">고급형 · 럭셔리골드</p>
 
   <div class="field-list" style="margin-top:24px;">
     <div class="field"><label>현판에 새길 문구 (학원명)</label><input id="sign_text" placeholder="예: OO수학학원"></div>
@@ -587,14 +622,55 @@
 </div>
 </div>
 
-<!-- 주문시 안내 / 신청시 안내 모달 -->
-<div class="notice-overlay" id="noticeOverlay">
+<!-- 신청/발송 완료 모달 -->
+<div class="notice-overlay" id="doneOverlay">
   <div class="notice-box">
-    <button class="modal-close" id="noticeCloseBtn" style="position:absolute;top:14px;right:14px;">×</button>
-    <div class="notice-box-title" id="noticeTitle"></div>
-    <div class="notice-box-body" id="noticeBody"></div>
+    <div class="notice-box-title" id="doneTitle">신청이 완료됐습니다!</div>
+    <div class="notice-box-body" id="doneBody">확인 후 순차적으로 진행해드릴게요.</div>
+    <button class="btn primary" id="doneCloseBtn" style="width:100%;">확인</button>
   </div>
 </div>
+
+<!-- 자주 묻는 질문 (탭과 무관하게 화면 맨 아래 항상 표시) -->
+<section class="faq-section" id="faqSection">
+  <div class="wrap" style="padding:0;">
+    <h2 class="faq-title">자주 묻는 질문</h2>
+    <p class="faq-sub">학원맞춤키트 신청에 대해 궁금한 점을 빠르게 해결하세요</p>
+    <div class="faq-tabs">
+      <button type="button" class="faq-tab active" data-faq-cat="order">주문 관련</button>
+      <span class="faq-tab-sep">/</span>
+      <button type="button" class="faq-tab" data-faq-cat="pricing">이용 요금 관련</button>
+    </div>
+
+    <div class="faq-cat-panel active" data-faq-cat="order">
+      <h3 class="faq-cat-title">주문 관련</h3>
+      <div class="faq-item">
+        <button type="button" class="faq-q"><span>Q. 언제까지 주문해야 하나요?</span><span class="faq-chev">⌄</span></button>
+        <div class="faq-a">A. 주문은 매월 25일에 마감됩니다. 일정에 맞춰 미리 신청해 주시기 바랍니다.</div>
+      </div>
+      <div class="faq-item">
+        <button type="button" class="faq-q"><span>Q. 주문 후 교재는 언제 받아볼 수 있나요?</span><span class="faq-chev">⌄</span></button>
+        <div class="faq-a">A. 익월 초 일괄 발주가 진행되며, 발주 후 영업일 기준 7일 이내에 배송받으실 수 있습니다.</div>
+      </div>
+      <div class="faq-item">
+        <button type="button" class="faq-q"><span>Q. 최소 제작 페이지 수(32페이지) 제한이 있나요?</span><span class="faq-chev">⌄</span></button>
+        <div class="faq-a">A. 무선제본 특성상 32페이지 이상부터 제본 제작이 가능합니다.</div>
+      </div>
+    </div>
+
+    <div class="faq-cat-panel" data-faq-cat="pricing">
+      <h3 class="faq-cat-title">이용 요금 관련</h3>
+      <div class="faq-item">
+        <button type="button" class="faq-q"><span>Q. 첫 주문 시 이용 요금은 얼마인가요?</span><span class="faq-chev">⌄</span></button>
+        <div class="faq-a">A. 첫 주문 혜택가로 50부 기준 10,000원입니다. (배송비 별도)</div>
+      </div>
+      <div class="faq-item">
+        <button type="button" class="faq-q"><span>Q. 추가 주문 시 이용 요금은 어떻게 되나요?</span><span class="faq-chev">⌄</span></button>
+        <div class="faq-a">A. 추가 주문 시 50부 기준 100,000원입니다. (배송비 별도)</div>
+      </div>
+    </div>
+  </div>
+</section>
 
 <!-- 신청 방법 둘러보기 : 우측 하단 배너 -->
 <div class="tour-banner" id="tourBanner">
@@ -667,6 +743,8 @@ function goStep(n){
     s.classList.toggle('active', sn===n);
     s.classList.toggle('done', sn<n);
   });
+  // STEP3(생성·발송)에 들어올 때마다 선택한 구성을 최신 상태로 다시 보여줍니다.
+  if(n === 3 && typeof renderOrderSummary === 'function') renderOrderSummary();
   window.scrollTo({top:0, behavior:'smooth'});
 }
 document.querySelectorAll('[data-next]').forEach(b=> b.onclick = ()=> goStep(+b.dataset.next));
@@ -726,10 +804,10 @@ const TOUR_STEPS = [
     title:'좋은 수학학원 고르는 법 (확인)', desc:'모든 브랜드북에 공통으로 포함되는 7페이지 구성이에요. 별도로 선택하실 내용은 없어요.',
     mode:'info' },
   { panel:1, target:'#chapters',
-    title:'주제별 구성 선택', desc:'12개 주제 중 마음에 드는 것을 전체 분량이 20p 이상 될 때까지 눌러 선택해보세요. 썸네일 이미지를 누르면 그 주제의 실제 페이지를 모달로 미리 볼 수 있어요.',
+    title:'주제별 구성 선택', desc:'12개 주제 중 마음에 드는 것을 전체 내지 분량이 32p 이상 될 때까지 눌러 선택해보세요. 썸네일 이미지를 누르면 그 주제의 실제 페이지를 모달로 미리 볼 수 있어요.',
     mode:'condition', clickTarget:'#chapters', check: ()=> totalSelectedPages() >= MIN_TOTAL_PAGES },
   { panel:1, target:'#step1NextBtn',
-    title:'다음 단계로', desc:'표지와 주제를 20p 이상 선택했다면 [다음] 버튼을 눌러주세요.',
+    title:'다음 단계로', desc:'표지와 주제를 32p 이상 선택했다면 [다음] 버튼을 눌러주세요.',
     mode:'click', clickTarget:'#step1NextBtn' },
   { panel:2, target:'#fgBasicInfo1',
     title:'학원 정보 입력', desc:'학원명, 원장명, 연락처, 이메일, 배송 주소를 입력해주세요. (희망 부수는 50부로 고정되어 있어요.)',
@@ -919,7 +997,9 @@ const TOPICS = [
   { id:11, label:'모바일보고서', count:3, desc:'• 학부모님에게 학습현황을 실시간으로 확인하나요.\n• 매일 학습을 카카오톡으로 공유하나요.\n• 모바일로 실시간 공유하나요.\n• 학습량, 정답률, AI코멘트를 활용하고 있나요.' },
   { id:12, label:'수학경시대회', count:4, desc:'• 전국단위평가를 진행하고 있나요.\n• TOMA를 활용하고 있나요.\n• 평가보고서를 활용하여 상담이 이루어지나요.\n• TOMA를 홍보하고, 학원자체평가로 진행되나요.' },
 ];
-const MIN_TOTAL_PAGES = 20; // 전체 페이지(표지+공통구성+주제별)가 최소 20p 이상 되도록 선택 (주제 개수 상한 없음, 최대 12개)
+// 무선제본 최소 제작 페이지 수(내지 기준) = 32p. 공통 내지 12p(프로필1·뒤표지내지1·다릅니다1·인사말2·가이드7)
+// + 주제별 구성 내지 최소 20p. 앞표지·뒷표지(표지 자체, 별도 용지)는 이 페이지수 계산에 포함하지 않습니다.
+const MIN_TOTAL_PAGES = 32; // 주제 개수 상한 없음, 최대 12개
 const selectedTopics = new Set();
 
 // 실제 업로드된 파일이 guide_1.png, greeting_1.png처럼 언더스코어로 되어있어 pageFile()도 언더스코어를 씁니다.
@@ -934,7 +1014,9 @@ function topicFile(topicId, idx){ return `assets/pages/topic_${topicId}_${idx}.p
 // 조립에서 topicFile()로 assets/pages/에서 불러옵니다. (확장자는 .png로 가정 — .jpg라면 알려주세요.)
 function topicThumbFile(topicId){ return `assets/thumbs/topic_${topicId}.png`; }
 function totalSelectedPages(){
-  const fixedTotal = FIXED_INTRO.reduce((s,sec)=>s+sec.count,0) + 4; // +4 표지 세트: 앞표지·앞표지내지(프로필)·뒤표지내지·뒷표지
+  // 최소 제작 페이지수(32p) 계산은 "내지" 기준이라 앞표지·뒷표지(표지 자체, 별도 용지)는 빼고
+  // 앞표지내지(프로필)·뒤표지내지 2장만 더합니다. (실제 PDF 조립에는 앞표지·뒷표지도 그대로 포함됩니다 — buildPdf 참고)
+  const fixedTotal = FIXED_INTRO.reduce((s,sec)=>s+sec.count,0) + 2; // +2 내지: 앞표지내지(프로필)·뒤표지내지
   const topicTotal = TOPICS.filter(t=>selectedTopics.has(t.id)).reduce((s,t)=>s+t.count,0);
   return fixedTotal + topicTotal;
 }
@@ -1172,9 +1254,11 @@ renderCommonSections();
 //   비워두면 "펼친면 미리보기 준비 중" 안내만 표시됩니다.
 const RECOMMENDED_TEMPLATES = [
   { id:'a', name:'추천 템플릿 A형',
+    recommendFor:'교재중심수업과 중고등 내신대비 집중형 학원 추천',
     mockup:'assets/templates/template-a.png',
     heyzineUrl:'https://heyzine.com/flip-book/f9ab55da26.html' },
   { id:'b', name:'추천 템플릿 B형',
+    recommendFor:'동영상 추가 관리와 수학경시대회(TOMA) 사용학원 추천',
     mockup:'assets/templates/template-b.png',
     heyzineUrl:'https://heyzine.com/flip-book/4ccfaba863.html' },
 ];
@@ -1191,6 +1275,7 @@ function renderTemplateSection(){
       </div>
       <div class="template-body">
         <div class="template-name">${t.name}</div>
+        ${t.recommendFor ? `<div class="template-recommend">${t.recommendFor}</div>` : ''}
         <div class="template-actions">
           <button class="template-preview-btn" data-id="${t.id}">📖 펼친면 미리보기</button>
           <button class="template-select-btn ${selectedTemplateId===t.id?'is-selected':''}" data-id="${t.id}">${selectedTemplateId===t.id ? '✓ 선택됨' : '이 템플릿 선택'}</button>
@@ -1241,31 +1326,28 @@ document.getElementById('spreadOverlay').addEventListener('click', (e)=>{
   if(e.target.id === 'spreadOverlay') closeSpreadPreview();
 });
 
-// ===================== 주문시 안내 / 신청시 안내 모달 =====================
-// 아래 두 문구는 아직 채워지지 않은 placeholder입니다. 결제방법 등 실제 안내 문구를
-// 알려주시면 이 자리에 그대로 넣어드립니다 (줄바꿈은 그대로 모달에 표시됩니다).
-const NOTICE_CONTENT = {
-  order: { title:'주문시 안내', body:'주문 시 안내 문구가 아직 입력되지 않았습니다.\n결제 방법 등 안내하실 내용을 알려주시면 이 자리에 반영해드립니다.' },
-  apply: { title:'신청시 안내', body:'신청 시 안내 문구가 아직 입력되지 않았습니다.\n안내하실 내용을 알려주시면 이 자리에 반영해드립니다.' },
-  payment: { title:'결제시 안내', body:'결제 시 안내 문구가 아직 입력되지 않았습니다.\n결제 수단, 계좌 정보, 결제 시점 등 안내하실 내용을 알려주시면 이 자리에 반영해드립니다.' },
+// ===================== 안내 주의사항 버튼 → 하단 FAQ로 이동 =====================
+document.getElementById('noticeJumpBtn').onclick = ()=>{
+  document.getElementById('faqSection').scrollIntoView({ behavior:'smooth', block:'start' });
 };
-function openNotice(type){
-  const n = NOTICE_CONTENT[type];
-  if(!n) return;
-  document.getElementById('noticeTitle').textContent = n.title;
-  document.getElementById('noticeBody').textContent = n.body;
-  document.getElementById('noticeOverlay').classList.add('show');
-}
-function closeNotice(){
-  document.getElementById('noticeOverlay').classList.remove('show');
-}
-document.querySelectorAll('.notice-link').forEach(btn=>{
-  btn.onclick = ()=> openNotice(btn.dataset.notice);
+
+// ===================== 자주 묻는 질문 (카테고리 탭 + 아코디언) =====================
+document.querySelectorAll('.faq-tab').forEach(tab=>{
+  tab.onclick = ()=>{
+    document.querySelectorAll('.faq-tab').forEach(t=> t.classList.toggle('active', t===tab));
+    document.querySelectorAll('.faq-cat-panel').forEach(p=> p.classList.toggle('active', p.dataset.faqCat === tab.dataset.faqCat));
+  };
 });
-document.getElementById('noticeCloseBtn').onclick = closeNotice;
-document.getElementById('noticeOverlay').addEventListener('click', (e)=>{
-  if(e.target.id === 'noticeOverlay') closeNotice();
+document.querySelectorAll('.faq-q').forEach(q=>{
+  q.onclick = ()=> q.closest('.faq-item').classList.toggle('open');
 });
+
+// ===================== 신청/발송 완료 모달 =====================
+function showDoneModal(message){
+  document.getElementById('doneBody').textContent = message || '확인 후 순차적으로 진행해드릴게요.';
+  document.getElementById('doneOverlay').classList.add('show');
+}
+document.getElementById('doneCloseBtn').onclick = ()=> document.getElementById('doneOverlay').classList.remove('show');
 
 function renderTopics(){
   const el = document.getElementById('chapters');
@@ -1381,7 +1463,7 @@ document.querySelectorAll('#modeSelect .mode-card').forEach(card=>{
 
 // 모드/선택 상태에 따라 [다음] 버튼 활성화 여부를 갱신합니다.
 // - 추천 템플릿 모드: 템플릿 A/B형 중 하나를 선택해야 다음으로 진행 가능
-// - 맞춤형 구성 모드: 전체 분량이 최소 20p 이상이어야 다음으로 진행 가능
+// - 맞춤형 구성 모드: 전체 내지 분량이 최소 32p 이상이어야 다음으로 진행 가능
 function updateStep1NextState(){
   const btn = document.getElementById('step1NextBtn');
   if(!btn) return;
@@ -1406,6 +1488,33 @@ document.getElementById('step1NextBtn').onclick = ()=>{
   }
   goStep(2);
 };
+
+// ===================== 발송 전 신청 내용 확인(주제별 구성 포함) =====================
+// STEP3(생성·발송)에 들어올 때마다 goStep()에서 호출합니다 — 이메일 발송 버튼을 누르기 전에
+// 고객이 실제로 어떤 구성(템플릿 또는 표지+주제별 구성)을 선택했는지 다시 확인할 수 있습니다.
+// getConfigSummaryLines()는 화면 요약(renderOrderSummary)과 실제 발송 이메일 본문(sendToVendor)에
+// 공통으로 쓰는 "구성 방식/표지/주제별 구성" 텍스트를 만들어줍니다.
+function getConfigSummaryLines(){
+  if(configMode === 'template'){
+    const t = RECOMMENDED_TEMPLATES.find(x=>x.id===selectedTemplateId);
+    return [ ['구성 방식', '추천 템플릿'], ['선택한 템플릿', t ? t.name : '선택 안 됨'] ];
+  }
+  const cover = COVERS.find(c=>c.id===themeState.selectedCoverId);
+  const topics = TOPICS.filter(t=>selectedTopics.has(t.id));
+  return [
+    ['구성 방식', '맞춤형 구성'],
+    ['표지 디자인', cover ? cover.name : '선택 안 됨'],
+    [`주제별 구성 (${topics.length}개)`, topics.length ? topics.map(t=>t.label).join(', ') : '선택 안 됨'],
+    ['총 페이지', `${totalSelectedPages()}p`],
+  ];
+}
+function renderOrderSummary(){
+  const body = document.getElementById('orderSummaryBody');
+  if(!body) return;
+  body.innerHTML = getConfigSummaryLines()
+    .map(([k,v])=> `<div class="order-summary-row"><span class="k">${k}</span><span class="v">${v}</span></div>`)
+    .join('');
+}
 
 // ===================== 소개 문구·인사말 글자수 제한 표시 =====================
 // 한글 기준 띄어쓰기 포함 글자수입니다. 제한값을 바꾸고 싶으시면 textarea의 maxlength와
@@ -1469,26 +1578,46 @@ function updateEmailUi(){
   document.getElementById('emailWarnbox').style.display = configured ? 'none' : 'block';
 }
 
+// ===================== 연락처 / 배송 주소 유효성검사 =====================
+// 연락처: 숫자만 뽑아서 0으로 시작하는 9~11자리인지 확인 (010-0000-0000, 02-000-0000 등 다양한 표기를 허용).
+// 배송 주소: 공백을 뺀 실제 글자 수가 너무 짧으면(5자 미만) 주소로 보기 어려워 다시 입력을 요청합니다.
+function isValidPhone(v){
+  const digits = (v || '').replace(/[^0-9]/g, '');
+  return /^0\d{8,10}$/.test(digits);
+}
+function isValidAddress(v){
+  return !!(v && v.trim().replace(/\s+/g, '').length >= 5);
+}
+
 async function sendToVendor(){
   const btn = document.getElementById('btnSendEmail');
   const statusEl = document.getElementById('emailStatus');
   if(!lastPdfBase64){ statusEl.textContent = '먼저 PDF를 생성해주세요.'; return; }
   if(!GAS_WEBHOOK_URL){ statusEl.textContent = '이메일 발송이 아직 설정되지 않았습니다. 관리자에게 문의해주세요.'; return; }
+  if(!isValidPhone(document.getElementById('f_phone').value)){
+    statusEl.textContent = '연락처를 정확히 입력해주세요. (예: 010-0000-0000)'; return;
+  }
+  if(!isValidAddress(document.getElementById('f_addr').value)){
+    statusEl.textContent = '배송 주소를 정확히 입력해주세요.'; return;
+  }
 
   btn.disabled = true;
-  statusEl.textContent = '이메일을 발송하는 중... (파일 용량에 따라 시간이 걸릴 수 있어요)';
+  statusEl.textContent = '이메일을 발송하는 중...';
   try{
+    // PDF 미리보기(샘플 이미지로 조립한 파일)는 화면에서만 확인하는 용도이고, 인쇄업체로 실제 발송되는
+    // 이메일에는 PDF를 첨부하지 않고 주문 내용(텍스트)만 보냅니다. configSummary에 구성 방식·표지·
+    // 주제별 구성을 한 줄씩 정리해 넣습니다. (구글 앱스 스크립트 Code.gs도 함께 반영해주셔야 합니다 — README 참고)
+    const configSummary = getConfigSummaryLines().map(([k,v])=> `${k}: ${v}`).join('\n');
     const payload = {
       secret: GAS_SHARED_SECRET,
       orderType: 'kit',
-      fileName: lastPdfFileName,
-      pdfBase64: lastPdfBase64,
       academyName: document.getElementById('f_name').value.trim(),
       manager: document.getElementById('f_manager').value.trim(),
       phone: document.getElementById('f_phone').value.trim(),
       email: document.getElementById('f_email').value.trim(),
       qty: document.getElementById('f_qty').value.trim(),
       address: document.getElementById('f_addr').value.trim(),
+      configSummary,
     };
     const res = await fetch(GAS_WEBHOOK_URL, {
       method: 'POST',
@@ -1499,6 +1628,7 @@ async function sendToVendor(){
     if(data.status === 'ok'){
       statusEl.textContent = '인쇄업체로 이메일이 발송되었습니다. 신청해주셔서 감사합니다.';
       document.getElementById('btnRestartKit').style.display = 'block';
+      showDoneModal('학원맞춤키트 신청이 완료됐습니다. 확인 후 순차적으로 제작·발송해드릴게요.');
     } else {
       statusEl.textContent = '발송 중 문제가 발생했습니다: ' + (data.message || '알 수 없는 오류') + ' 잠시 후 다시 시도해주세요.';
     }
@@ -1523,6 +1653,12 @@ async function submitSimpleOrder(orderType, fieldIds, btn, statusEl, requiredFie
   const reqKey = requiredField || 'text';
   const reqLabel = { text:'문구(학원명)', phone:'연락처' }[reqKey] || reqKey;
   if(!values[reqKey]){ statusEl.textContent = `${reqLabel}를 입력해주세요.`; return; }
+  if('phone' in values && !isValidPhone(values.phone)){
+    statusEl.textContent = '연락처를 정확히 입력해주세요. (예: 010-0000-0000)'; return;
+  }
+  if('address' in values && !isValidAddress(values.address)){
+    statusEl.textContent = '배송 주소를 정확히 입력해주세요.'; return;
+  }
 
   btn.disabled = true;
   statusEl.textContent = '신청을 접수하는 중...';
@@ -1538,6 +1674,7 @@ async function submitSimpleOrder(orderType, fieldIds, btn, statusEl, requiredFie
       statusEl.textContent = '신청이 접수되었습니다. 담당자가 확인 후 연락드릴게요.';
       const restartId = orderType === 'sign' ? 'btnRestartSign' : 'btnRestartWelcome';
       document.getElementById(restartId).style.display = 'block';
+      showDoneModal((orderType === 'sign' ? '현판' : '웰컴키트') + ' 신청이 완료됐습니다. 담당자가 확인 후 연락드릴게요.');
     } else {
       statusEl.textContent = '접수 중 문제가 발생했습니다: ' + (data.message || '알 수 없는 오류');
     }
