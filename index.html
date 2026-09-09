@@ -1709,7 +1709,7 @@ async function sendToVendor(){
     }
   }catch(err){
     console.error(err);
-    statusEl.textContent = '발송에 실패했습니다: ' + err.message + ' (다운로드한 PDF를 직접 첨부해서 보내주세요.)';
+    statusEl.textContent = '발송에 실패했습니다: ' + err.message + ' 잠시 후 다시 시도하시거나 관리자에게 문의해주세요.';
   }finally{
     btn.disabled = false;
   }
@@ -1945,7 +1945,9 @@ async function buildPdf(){
     const blob = new Blob([bytes], { type:'application/pdf' });
     const url = URL.createObjectURL(blob);
 
-    document.getElementById('previewFrame').src = url;
+    // 다운로드 없이 미리보기만 가능하도록: 브라우저 내장 PDF 뷰어의 툴바(다운로드/인쇄 버튼)를 최대한 숨깁니다.
+    // 참고: 이는 UI상 버튼을 숨기는 것일 뿐, 완전한 다운로드 차단은 아닙니다(브라우저 자체 단축키·우클릭 저장 등은 막을 수 없음).
+    document.getElementById('previewFrame').src = url + '#toolbar=0&navpanes=0&scrollbar=0';
     document.getElementById('previewWrap').classList.add('show');
 
     const academyName = document.getElementById('f_name').value.trim() || '우리학원브랜드북';

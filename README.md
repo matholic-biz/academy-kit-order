@@ -30,6 +30,7 @@ academy-kit-order/
   - **PDF 미리보기에는 입력하신 문구(표지 문구·소개 문구·인사말)와 프로필 사진·로고가 자동으로 합성되지 않고, 페이지 구성(샘플 이미지)만 보여드립니다.** 사진·로고 좌표가 사진 비율에 따라 위치가 어긋나 보이는 문제가 있어 꺼두었습니다. 문구는 `index.html`의 `DRAW_TEXT_OVERLAY`를, 사진·로고는 `DRAW_IMAGE_OVERLAY`를 각각 `true`로 바꾸면 다시 합성됩니다 (좌표는 그대로 남아있으니, 좌표를 다시 맞춰드린 뒤 켜는 것을 권장합니다).
   - 3단계(생성·발송)에 들어가면 "신청 내용 확인" 카드에 선택한 구성(추천 템플릿, 또는 표지 디자인+주제별 구성 목록+총 페이지)이 요약되어 [인쇄업체로 이메일 발송하기] 버튼 위에 표시됩니다 — 발송 전에 다시 확인할 수 있습니다.
   - **PDF 미리보기 화면(iframe)에는 계속 `assets/pages` 샘플 이미지로 조립한 PDF가 보이지만, 실제로 인쇄업체에 발송되는 이메일에는 이 PDF 파일을 첨부하지 않고 주문 정보 + 선택한 구성 요약을 텍스트로만 보냅니다.** ⚠️ 이 부분은 `google-apps-script/Code.gs`도 함께 고쳐야 동작합니다 — 아래 "이메일 자동 발송 + 신청내역 시트 기록 설정" 안내를 꼭 확인해주세요.
+  - **PDF 미리보기는 다운로드 없이 화면 확인만 가능하도록** 브라우저 내장 PDF 뷰어의 툴바(다운로드·인쇄 버튼)를 숨겼습니다(`previewFrame`의 `src`에 `#toolbar=0&navpanes=0&scrollbar=0`을 붙임). 다만 이는 브라우저가 기본 제공하는 버튼만 숨기는 것으로, 완전한 다운로드 차단은 아닙니다(브라우저별 단축키·개발자도구 등으로는 여전히 저장이 가능할 수 있습니다) — 참고로 알아주세요.
   - 연락처·우편번호·배송 주소에 형식 검증이 추가되었습니다. **연락처는 `010-0000-0000` 형식(휴대폰, 010+8자리 총 11자리)만 허용**하고, **우편번호는 5자리 숫자**만 허용하며, 주소는 공백을 뺀 글자수가 5자 이상인지 확인합니다. 형식이 안 맞으면 발송 전에 안내 문구가 뜨고 전송되지 않습니다 (현판·웰컴키트 신청도 동일하게 검증됩니다). 우편번호는 별도 항목 대신 배송 주소 앞에 `(12345) 실제주소` 형태로 합쳐서 전송되어, `Code.gs`를 추가로 수정하지 않아도 이메일 본문·신청내역 시트에 그대로 반영됩니다.
   - **우편번호를 모르는 고객을 위해 "검색" 버튼을 추가했습니다.** 우편번호 입력칸 옆 [검색] 버튼을 누르면 다음(카카오) 우편번호 검색 팝업이 열리고, 주소만 검색하면 우편번호+도로명주소가 자동으로 입력됩니다 (외부 API 키·가입 없이 무료로 쓸 수 있는 표준 서비스입니다). 우편번호를 이미 알고 있으면 검색 없이 직접 입력해도 됩니다.
 - **현판 주문 / 웰컴키트 주문**: 디자인 확인 후 문구·원장명 정보만 입력하면 PDF 없이 바로 접수 이메일 발송 (연락처·우편번호·배송 주소는 위와 동일하게 형식 검증됩니다). **현판 수량은 1개로 고정**되어 있습니다 (입력칸이 아니라 고정 표시입니다).
@@ -184,12 +185,26 @@ FAQ의 "최소 32페이지"는 공통 내지 12p(원장님 프로필1·뒤표지
 
 **이미 배포한 적이 있다면**: "새 배포"를 또 만들면 URL이 바뀝니다. 대신 "배포 관리"에서 기존 배포를 선택하고 연필(수정) 아이콘 → 버전을 "새 버전"으로 바꾸고 배포하면, URL은 그대로 유지된 채 코드만 최신화됩니다.
 
-### ⚠️ 학원맞춤키트 이메일 발송 방식 변경 — Code.gs 직접 수정 필요
-이번 라운드부터 `index.html`은 학원맞춤키트 신청 시 더 이상 `pdfBase64`(PDF 파일)를 보내지 않고, 주문 정보 + 선택한 구성 요약(`configSummary`)만 텍스트로 보냅니다.
-그런데 기존 `Code.gs`의 `handleKitOrder` 함수는 `pdfBase64`가 없으면 곧바로 "PDF 데이터가 없습니다" 오류를 내고 발송을 중단하도록 되어 있어서,
-**`Code.gs`도 아래처럼 함께 고쳐주셔야 학원맞춤키트 이메일 발송이 계속 정상 동작합니다** (현판·웰컴키트는 원래 PDF를 쓰지 않아 영향이 없습니다).
+### ⚠️ 학원맞춤키트 이메일 발송 방식 변경 + 신청 알림 이메일(hdseo@matholic.net, ms.lee@matholic.net) 추가 — Code.gs 직접 수정 필요
+아래 두 가지 변경 사항을 반영한 **최종본**입니다 (이전에 "PDF 미첨부" 변경분을 이미 반영하셨어도, 아래 내용으로 다시 통째로 덮어써주시면 됩니다).
+1. `index.html`은 학원맞춤키트 신청 시 더 이상 `pdfBase64`(PDF 파일)를 보내지 않고, 주문 정보 + 선택한 구성 요약(`configSummary`)만 텍스트로 보냅니다. 기존 `Code.gs`의 `handleKitOrder`는 `pdfBase64`가 없으면 "PDF 데이터가 없습니다" 오류를 내므로 아래처럼 고쳐야 합니다 (현판·웰컴키트는 원래 PDF를 쓰지 않아 영향 없습니다).
+2. 신청(학원맞춤키트·현판·웰컴키트 전부)이 들어올 때마다 **`hdseo@matholic.net`, `ms.lee@matholic.net`에게도 항상 참조(cc)로 알림 메일이 가도록** `NOTIFY_EMAILS` 목록을 추가합니다. 신청자 본인 이메일(cc)은 기존처럼 함께 유지됩니다.
 
-`Code.gs`에서 `handleKitOrder` 함수 전체를 찾아 아래 내용으로 통째로 바꿔주세요:
+**1) 코드 맨 위, `var PRINT_VENDOR_EMAIL = ...` 줄 바로 아래에 추가:**
+```js
+var NOTIFY_EMAILS = ['hdseo@matholic.net', 'ms.lee@matholic.net']; // 신청이 들어올 때마다 항상 참조로 받을 내부 담당자 이메일
+
+// 신청자 이메일(있으면) + NOTIFY_EMAILS를 합쳐 cc 문자열을 만듭니다.
+function buildCcList(applicantEmail) {
+  var list = NOTIFY_EMAILS.slice();
+  if (applicantEmail && /.+@.+\..+/.test(applicantEmail)) {
+    list.push(applicantEmail);
+  }
+  return list.join(',');
+}
+```
+
+**2) `handleKitOrder` 함수 전체를 찾아 아래 내용으로 통째로 교체:**
 ```js
 // ===================== 학원맞춤키트 (PDF 미첨부, 주문 내용만 발송) =====================
 function handleKitOrder(data) {
@@ -213,17 +228,47 @@ function handleKitOrder(data) {
     to: PRINT_VENDOR_EMAIL,
     subject: subject,
     body: bodyLines.join('\n'),
+    cc: buildCcList(data.email),
     name: 'MATHOLIC 학원맞춤키트',
   };
-  if (data.email && /.+@.+\..+/.test(data.email)) {
-    mailOptions.cc = data.email;
-  }
 
   MailApp.sendEmail(mailOptions);
   return jsonOutput({ status: 'ok' });
 }
 ```
-바꾼 뒤 저장 → "배포 관리"에서 기존 배포를 "새 버전"으로 재배포하면 됩니다 (URL은 그대로 유지됩니다). PDF는 신청 고객이 3단계에서 직접 화면으로 미리 보고 확인하는 용도로만 쓰이고, 실제 인쇄 작업은 이메일 본문의 텍스트 정보를 바탕으로 진행하시면 됩니다.
+
+**3) `handleSimpleOrder` 함수 전체를 찾아 아래 내용으로 통째로 교체 (현판·웰컴키트용, cc만 추가된 것 외 나머지는 동일):**
+```js
+// ===================== 현판 / 웰컴키트 (PDF 없이 바로 접수) =====================
+function handleSimpleOrder(orderType, data) {
+  var label = orderType === 'sign' ? '현판' : '웰컴키트';
+  var academyName = data.text || '(학원명 미입력)';
+  var subject = '[' + label + ' 신청] ' + academyName;
+  var bodyLines = [
+    label + ' 신청이 접수되었습니다.',
+    '',
+    '문구(학원명): ' + (data.text || ''),
+    '수량: ' + (data.qty || ''),
+    '담당자: ' + (data.manager || ''),
+    '연락처: ' + (data.phone || ''),
+    '신청자 이메일: ' + (data.email || ''),
+    '배송/설치 주소: ' + (data.address || ''),
+  ];
+
+  var mailOptions = {
+    to: PRINT_VENDOR_EMAIL,
+    subject: subject,
+    body: bodyLines.join('\n'),
+    cc: buildCcList(data.email),
+    name: 'MATHOLIC ' + label + ' 신청',
+  };
+
+  MailApp.sendEmail(mailOptions);
+  return jsonOutput({ status: 'ok' });
+}
+```
+
+셋 다 바꾼 뒤 저장 → "배포 관리"에서 기존 배포를 "새 버전"으로 재배포하면 됩니다 (URL은 그대로 유지됩니다). PDF는 신청 고객이 3단계에서 직접 화면으로 미리 보고 확인하는 용도로만 쓰이고, 실제 인쇄 작업은 이메일 본문의 텍스트 정보를 바탕으로 진행하시면 됩니다.
 
 ### 신청내역 시트 만들기
 1. https://sheets.google.com 에서 새 스프레드시트를 만듭니다 (이름은 자유).
@@ -248,7 +293,7 @@ function handleKitOrder(data) {
 4. **인쇄 제본 여백 자동 조정** — 무선제본 특성상 페이지가 홀수/짝수 위치에 따라 안쪽 여백이 달라져야
    할 수 있습니다. 인쇄업체에 확인 후 필요하면 자동 조정 로직을 추가할 수 있습니다.
 5. **`assets/thumbs/profile-1.jpg`를 이용한 "원장님 프로필" 미리보기 카드** — 표지 섹션 바로 아래에 미리보기 카드로 추가했습니다(선택 항목 아님, 페이지 수에 포함 안 됨). 의도와 다르면 말씀해주세요 — 위치를 바꾸거나, 삭제하거나, 실제 PDF에 이 이미지를 그대로 쓰도록(현재는 표지 세트의 `cover_1_2a.png`/`cover_(2~6)_2b.png`를 그대로 씀) 바꿀 수 있습니다.
-6. **`Code.gs`의 `handleKitOrder` 수정 반영 필요** — 위 "학원맞춤키트 이메일 발송 방식 변경" 안내대로 `Code.gs`를 직접 고쳐서 재배포해주셔야, `index.html`이 더 이상 `pdfBase64`를 보내지 않는 것과 짝이 맞습니다. 반영 전까지는 학원맞춤키트 이메일 발송이 "PDF 데이터가 없습니다" 오류로 실패합니다.
+6. **`Code.gs` 수정 반영 필요** — 위 "학원맞춤키트 이메일 발송 방식 변경 + 신청 알림 이메일 추가" 안내대로 `Code.gs`를 직접 고쳐서 재배포해주셔야 합니다. (1) `handleKitOrder` 반영 전까지는 학원맞춤키트 이메일 발송이 "PDF 데이터가 없습니다" 오류로 실패하고, (2) `NOTIFY_EMAILS`/`buildCcList` 반영 전까지는 hdseo@matholic.net·ms.lee@matholic.net에게 신청 알림이 가지 않습니다.
 7. **소개 문구·인사말 글자수 제한(100자/300자)이 적당한지 확인 필요** — 임의로 정한 값이라, 인쇄 레이아웃에 맞춰 원하시는 글자수로 조정해드릴 수 있습니다.
 
 ## 깃허브 페이지로 배포하는 방법
