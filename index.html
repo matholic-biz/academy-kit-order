@@ -1554,7 +1554,19 @@ function getConfigSummaryLines(){
 function renderOrderSummary(){
   const body = document.getElementById('orderSummaryBody');
   if(!body) return;
-  body.innerHTML = getConfigSummaryLines()
+  // 구성 방식/표지/주제별 구성 요약에 이어서, 실제로 인쇄업체 이메일에 함께 전달되는
+  // 표지 문구·소개 문구·인사말·프로필 사진·로고 첨부 여부도 발송 전에 확인할 수 있도록 보여줍니다.
+  const coverEl = document.getElementById('f_cover');
+  const sloganEl = document.getElementById('f_slogan');
+  const greetingEl = document.getElementById('f_greeting');
+  const extraLines = [
+    ['표지 문구', (coverEl && coverEl.value.trim()) || '(입력 안 함 — 학원명 사용)'],
+    ['소개 문구(우리학원은 이렇게 다릅니다)', (sloganEl && sloganEl.value.trim()) || '(입력 안 함)'],
+    ['인사말', (greetingEl && greetingEl.value.trim()) || '(입력 안 함)'],
+    ['원장님 프로필 사진', photoDataUrl ? '첨부됨' : '업로드 안 함'],
+    ['로고', logoDataUrl ? '첨부됨' : '업로드 안 함'],
+  ];
+  body.innerHTML = getConfigSummaryLines().concat(extraLines)
     .map(([k,v])=> `<div class="order-summary-row"><span class="k">${k}</span><span class="v">${v}</span></div>`)
     .join('');
 }
@@ -1683,6 +1695,11 @@ async function sendToVendor(){
     // 추가로 수정하지 않아도 이메일 본문·시트 기록에 그대로 반영됩니다.
     const zip = document.getElementById('f_zip').value.trim();
     const addr = document.getElementById('f_addr').value.trim();
+    // 표지 문구·소개 문구·인사말과 업로드한 프로필 사진·로고는 PDF 미리보기에는 합성되지 않으므로,
+    // 인쇄업체가 실제로 확인할 수 있도록 이메일 본문(텍스트)과 첨부파일(사진·로고 원본)로 함께 보냅니다.
+    const coverText = document.getElementById('f_cover').value.trim();
+    const whyText = document.getElementById('f_slogan').value.trim();
+    const greetingText = document.getElementById('f_greeting').value.trim();
     const payload = {
       secret: GAS_SHARED_SECRET,
       orderType: 'kit',
@@ -1693,6 +1710,13 @@ async function sendToVendor(){
       qty: document.getElementById('f_qty').value.trim(),
       address: `(${zip}) ${addr}`,
       configSummary,
+      coverText,
+      whyText,
+      greetingText,
+      photoBase64: photoDataUrl ? photoDataUrl.split(',')[1] : '',
+      photoMime: photoDataUrl ? photoDataUrl.split(';')[0].replace('data:', '') : '',
+      logoBase64: logoDataUrl ? logoDataUrl.split(',')[1] : '',
+      logoMime: logoDataUrl ? logoDataUrl.split(';')[0].replace('data:', '') : '',
     };
     const res = await fetch(GAS_WEBHOOK_URL, {
       method: 'POST',
