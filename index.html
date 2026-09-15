@@ -542,8 +542,8 @@
 
   <!-- STEP 3: 생성 · 발송 -->
   <section class="panel" data-panel="3">
-    <h2>PDF를 생성하고 발송해주세요</h2>
-    <p class="desc">선택한 페이지를 실제 순서대로 이어붙여 페이지 구성을 보여드립니다(문구·사진·로고는 합성하지 않고 수작업으로 배치할 예정입니다).</p>
+    <h2 id="step3Title">PDF를 생성하고 발송해주세요</h2>
+    <p class="desc" id="step3Desc">선택한 페이지를 실제 순서대로 이어붙여 페이지 구성을 보여드립니다(문구·사진·로고는 합성하지 않고 수작업으로 배치할 예정입니다).</p>
 
     <div class="order-summary-box" id="orderSummaryBox">
       <div class="order-summary-title">신청 내용 확인 (발송 전 확인해주세요)</div>
@@ -773,7 +773,10 @@ function goStep(n){
     s.classList.toggle('done', sn<n);
   });
   // STEP3(생성·발송)에 들어올 때마다 선택한 구성을 최신 상태로 다시 보여줍니다.
-  if(n === 3 && typeof renderOrderSummary === 'function') renderOrderSummary();
+  if(n === 3){
+    if(typeof renderOrderSummary === 'function') renderOrderSummary();
+    if(typeof updateStep3ModeUi === 'function') updateStep3ModeUi();
+  }
   window.scrollTo({top:0, behavior:'smooth'});
 }
 document.querySelectorAll('[data-next]').forEach(b=> b.onclick = ()=> goStep(+b.dataset.next));
@@ -1628,9 +1631,27 @@ let lastPdfFileName = null;
 
 function updateEmailUi(){
   const configured = !!GAS_WEBHOOK_URL;
-  const hasPdf = !!lastPdfBase64;
+  // 추천 템플릿은 이미 확정된 실제 구성을 그대로 쓰는 것이라 PDF 미리보기 생성 없이도 바로 발송할 수 있습니다.
+  const hasPdf = !!lastPdfBase64 || configMode === 'template';
   document.getElementById('btnSendEmail').style.display = (configured && hasPdf) ? 'block' : 'none';
   document.getElementById('emailWarnbox').style.display = configured ? 'none' : 'block';
+}
+
+// STEP3 화면을 구성 방식에 맞게 바꿉니다: 추천 템플릿은 PDF 미리보기 없이 바로 발송 버튼만 보여주고,
+// 맞춤형 구성은 기존처럼 "PDF 미리보기 생성하기" 버튼과 미리보기 화면을 그대로 보여줍니다.
+function updateStep3ModeUi(){
+  const isTemplate = configMode === 'template';
+  const title = document.getElementById('step3Title');
+  const desc = document.getElementById('step3Desc');
+  const buildBtn = document.getElementById('btnBuild');
+  const previewWrap = document.getElementById('previewWrap');
+  if(title) title.textContent = isTemplate ? '신청 내용을 확인하고 발송해주세요' : 'PDF를 생성하고 발송해주세요';
+  if(desc) desc.textContent = isTemplate
+    ? '추천 템플릿은 이미 구성된 실제 내용을 그대로 인쇄하므로, 별도 PDF 미리보기 없이 바로 신청하실 수 있어요.'
+    : '선택한 페이지를 실제 순서대로 이어붙여 페이지 구성을 보여드립니다(문구·사진·로고는 합성하지 않고 수작업으로 배치할 예정입니다).';
+  if(buildBtn) buildBtn.style.display = isTemplate ? 'none' : '';
+  if(previewWrap) previewWrap.style.display = isTemplate ? 'none' : '';
+  updateEmailUi();
 }
 
 // ===================== 연락처 / 우편번호 / 배송 주소 유효성검사 =====================
@@ -1672,7 +1693,8 @@ document.getElementById('wel_zipSearchBtn').onclick = ()=> openZipSearch('wel_zi
 async function sendToVendor(){
   const btn = document.getElementById('btnSendEmail');
   const statusEl = document.getElementById('emailStatus');
-  if(!lastPdfBase64){ statusEl.textContent = '먼저 PDF를 생성해주세요.'; return; }
+  // 추천 템플릿은 PDF 미리보기를 만들지 않으므로 이 조건을 건너뜁니다.
+  if(configMode !== 'template' && !lastPdfBase64){ statusEl.textContent = '먼저 PDF를 생성해주세요.'; return; }
   if(!GAS_WEBHOOK_URL){ statusEl.textContent = '이메일 발송이 아직 설정되지 않았습니다. 관리자에게 문의해주세요.'; return; }
   if(!isValidPhone(document.getElementById('f_phone').value)){
     statusEl.textContent = '연락처를 010-0000-0000 형식으로 정확히 입력해주세요.'; return;
