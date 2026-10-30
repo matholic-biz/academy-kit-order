@@ -1,0 +1,1726 @@
+{
+  "version": "v5.1",
+  "source": "브랜드북_페이지ID_v1.xlsx",
+  "generated": "2026-10-27",
+  "page": {
+    "widthMm": 182,
+    "heightMm": 257,
+    "ppi": 150,
+    "widthPx": 1075,
+    "heightPx": 1518
+  },
+  "assembly": [
+    "1. 고정 페이지(type=fixed, 3~12p)는 항상 포함",
+    "2. 선택한 주제(topics)의 페이지를 모두 모음",
+    "3. 선택된 주제가 하나라도 있는 섹션은 간지(type=divider) 1장을 자동 추가",
+    "4. 모은 페이지를 page(원본 페이지 번호) 오름차순으로 정렬",
+    "5. 3p부터 번호를 다시 매김: 홀수=R(오른쪽), 짝수=L(왼쪽). 각 페이지는 새 쪽에 맞는 files의 L/R 이미지 사용",
+    "6. 내지 마지막 페이지가 홀수면 흰 페이지 1장 추가 (내지는 항상 짝수)",
+    "7. 띠·푸터는 index 규격으로 새 번호·쪽(L/R)에 맞춰 그림. 간지에도 푸터 필수",
+    "8. 표지: 선택값의 covers 세트 사용. 미리보기 순서 = 표1 → 표2 → 내지 → 표3 → 표4",
+    "9. 세네카: spine 표에서 내지 페이지 수로 찾음 (인쇄 파일용, 미리보기에는 책등 제외)"
+  ],
+  "pages": [
+    {
+      "id": "INTRO-01",
+      "page": 3,
+      "type": "fixed",
+      "section": "INTRO",
+      "topic": null,
+      "seq": 1,
+      "title": "우리 학원은 이렇게 다릅니다",
+      "master": "[없음]",
+      "variable": "[소개 문구] 소개문구_1~3 / 점선_1~3 / 로고 / 학원명_텍스트",
+      "files": {
+        "R": "pages/p003_R.png"
+      }
+    },
+    {
+      "id": "INTRO-02",
+      "page": 4,
+      "type": "fixed",
+      "section": "INTRO",
+      "topic": null,
+      "seq": 2,
+      "title": "#PROLOGUE 인사말 첫 문장",
+      "master": "[없음]",
+      "variable": "[인사말 첫 문장]",
+      "files": {
+        "L": "pages/p004_L.png"
+      }
+    },
+    {
+      "id": "INTRO-03",
+      "page": 5,
+      "type": "fixed",
+      "section": "INTRO",
+      "topic": null,
+      "seq": 3,
+      "title": "#PROLOGUE 인사말 본문(2단)",
+      "master": "[없음]",
+      "variable": "[인사말 본문]",
+      "files": {
+        "R": "pages/p005_R.png"
+      }
+    },
+    {
+      "id": "INTRO-04",
+      "page": 6,
+      "type": "fixed",
+      "section": "INTRO",
+      "topic": null,
+      "seq": 4,
+      "title": "#PROLOGUE (책상 이미지)",
+      "master": "[없음]",
+      "variable": null,
+      "files": {
+        "L": "pages/p006_L.png"
+      }
+    },
+    {
+      "id": "INTRO-05",
+      "page": 7,
+      "type": "fixed",
+      "section": "INTRO",
+      "topic": null,
+      "seq": 5,
+      "title": "우리 아이에게, 좋은 수학 학원이란?",
+      "master": "[없음]",
+      "variable": null,
+      "files": {
+        "R": "pages/p007_R.png"
+      }
+    },
+    {
+      "id": "INTRO-06",
+      "page": 8,
+      "type": "fixed",
+      "section": "INTRO",
+      "topic": null,
+      "seq": 6,
+      "title": "ATTITUDE",
+      "master": "A-마스터_INTRO",
+      "variable": null,
+      "files": {
+        "L": "pages/p008_L.png"
+      }
+    },
+    {
+      "id": "INTRO-07",
+      "page": 9,
+      "type": "fixed",
+      "section": "INTRO",
+      "topic": null,
+      "seq": 7,
+      "title": "CURRICULUM",
+      "master": "A-마스터_INTRO",
+      "variable": null,
+      "files": {
+        "R": "pages/p009_R.png"
+      }
+    },
+    {
+      "id": "INTRO-08",
+      "page": 10,
+      "type": "fixed",
+      "section": "INTRO",
+      "topic": null,
+      "seq": 8,
+      "title": "STRATEGY",
+      "master": "A-마스터_INTRO",
+      "variable": null,
+      "files": {
+        "L": "pages/p010_L.png"
+      }
+    },
+    {
+      "id": "INTRO-09",
+      "page": 11,
+      "type": "fixed",
+      "section": "INTRO",
+      "topic": null,
+      "seq": 9,
+      "title": "ANALYSIS",
+      "master": "A-마스터_INTRO",
+      "variable": null,
+      "files": {
+        "R": "pages/p011_R.png"
+      }
+    },
+    {
+      "id": "INTRO-10",
+      "page": 12,
+      "type": "fixed",
+      "section": "INTRO",
+      "topic": null,
+      "seq": 10,
+      "title": "VISION",
+      "master": "A-마스터_INTRO",
+      "variable": null,
+      "files": {
+        "L": "pages/p012_L.png"
+      }
+    },
+    {
+      "id": "DIAG-DIV",
+      "page": 13,
+      "type": "divider",
+      "section": "DIAG",
+      "topic": null,
+      "seq": null,
+      "title": "#진단 간지",
+      "master": "B2-간지_#진단",
+      "variable": null,
+      "files": {
+        "L": "pages/p013_L.png",
+        "R": "pages/p013_R.png"
+      }
+    },
+    {
+      "id": "DIAG-T01-1",
+      "page": 14,
+      "type": "body",
+      "section": "DIAG",
+      "topic": "T01",
+      "seq": 1,
+      "title": "평가를 통해서는 우리 아이에 대한 종합적인 진단을 확인해야 합니다.",
+      "master": "B-마스터_본문_#진단",
+      "variable": null,
+      "files": {
+        "L": "pages/p014_L.png",
+        "R": "pages/p014_R.png"
+      }
+    },
+    {
+      "id": "DIAG-T01-2",
+      "page": 15,
+      "type": "body",
+      "section": "DIAG",
+      "topic": "T01",
+      "seq": 2,
+      "title": "만약, 지금 수능을 본다면? (단원별 이해도·재학습단원)",
+      "master": "B-마스터_본문_#진단",
+      "variable": null,
+      "files": {
+        "L": "pages/p015_L.png",
+        "R": "pages/p015_R.png"
+      }
+    },
+    {
+      "id": "DIAG-T01-3",
+      "page": 16,
+      "type": "body",
+      "section": "DIAG",
+      "topic": "T01",
+      "seq": 3,
+      "title": "우리 아이가 다니는 학교에 대해서 가장 잘 아는 학원이 중요합니다.",
+      "master": "B-마스터_본문_#진단",
+      "variable": null,
+      "files": {
+        "L": "pages/p016_L.png",
+        "R": "pages/p016_R.png"
+      }
+    },
+    {
+      "id": "DIAG-T01-4",
+      "page": 17,
+      "type": "body",
+      "section": "DIAG",
+      "topic": "T01",
+      "seq": 4,
+      "title": "이 학교는 쉬운 학교일까요? (기출 난이도 분석)",
+      "master": "B-마스터_본문_#진단",
+      "variable": null,
+      "files": {
+        "L": "pages/p017_L.png",
+        "R": "pages/p017_R.png"
+      }
+    },
+    {
+      "id": "DIAG-T02-1",
+      "page": 18,
+      "type": "body",
+      "section": "DIAG",
+      "topic": "T02",
+      "seq": 1,
+      "title": "지금까지 풀었던 문제집, 제대로 학습을 한 건지 확인해보아야 합니다.",
+      "master": "B-마스터_본문_#진단",
+      "variable": null,
+      "files": {
+        "L": "pages/p018_L.png",
+        "R": "pages/p018_R.png"
+      }
+    },
+    {
+      "id": "DIAG-T02-2",
+      "page": 19,
+      "type": "body",
+      "section": "DIAG",
+      "topic": "T02",
+      "seq": 2,
+      "title": "문제집을 풀었다가 아니라… (과정별 유형 이해도)",
+      "master": "B-마스터_본문_#진단",
+      "variable": null,
+      "files": {
+        "L": "pages/p019_L.png",
+        "R": "pages/p019_R.png"
+      }
+    },
+    {
+      "id": "ANLS-DIV",
+      "page": 20,
+      "type": "divider",
+      "section": "ANLS",
+      "topic": null,
+      "seq": null,
+      "title": "#분석 간지",
+      "master": "C2-간지_#분석",
+      "variable": null,
+      "files": {
+        "L": "pages/p020_L.png",
+        "R": "pages/p020_R.png"
+      }
+    },
+    {
+      "id": "ANLS-T03-1",
+      "page": 21,
+      "type": "body",
+      "section": "ANLS",
+      "topic": "T03",
+      "seq": 1,
+      "title": "AI를 통해서 100문제를… 10문제로도 예측할 수 있습니다.",
+      "master": "C-마스터_본문_#분석",
+      "variable": null,
+      "files": {
+        "L": "pages/p021_L.png",
+        "R": "pages/p021_R.png"
+      }
+    },
+    {
+      "id": "ANLS-T03-2",
+      "page": 22,
+      "type": "body",
+      "section": "ANLS",
+      "topic": "T03",
+      "seq": 2,
+      "title": "이전에 많은 학생들이 학습한 이력이 데이터화 되어 분석합니다.",
+      "master": "C-마스터_본문_#분석",
+      "variable": null,
+      "files": {
+        "L": "pages/p022_L.png",
+        "R": "pages/p022_R.png"
+      }
+    },
+    {
+      "id": "ANLS-T03-3",
+      "page": 23,
+      "type": "body",
+      "section": "ANLS",
+      "topic": "T03",
+      "seq": 3,
+      "title": "많은 학습데이터를 활용해서 진짜 약점을 찾습니다.",
+      "master": "C-마스터_본문_#분석",
+      "variable": null,
+      "files": {
+        "L": "pages/p023_L.png",
+        "R": "pages/p023_R.png"
+      }
+    },
+    {
+      "id": "ANLS-T03-4",
+      "page": 24,
+      "type": "body",
+      "section": "ANLS",
+      "topic": "T03",
+      "seq": 4,
+      "title": "학습과정 전체에 대한 이해도를 분석하고 예측해줍니다.",
+      "master": "C-마스터_본문_#분석",
+      "variable": null,
+      "files": {
+        "L": "pages/p024_L.png",
+        "R": "pages/p024_R.png"
+      }
+    },
+    {
+      "id": "PRSC-DIV",
+      "page": 25,
+      "type": "divider",
+      "section": "PRSC",
+      "topic": null,
+      "seq": null,
+      "title": "#처방 간지 (HOW TO?)",
+      "master": "D2-간지_#처방",
+      "variable": null,
+      "files": {
+        "L": "pages/p025_L.png",
+        "R": "pages/p025_R.png"
+      }
+    },
+    {
+      "id": "PRSC-T04-1",
+      "page": 26,
+      "type": "body",
+      "section": "PRSC",
+      "topic": "T04",
+      "seq": 1,
+      "title": "Q. 구멍난 부분은 어떻게 채워지나요? (영상 클리닉)",
+      "master": "D-마스터_본문_#처방",
+      "variable": null,
+      "files": {
+        "L": "pages/p026_L.png",
+        "R": "pages/p026_R.png"
+      }
+    },
+    {
+      "id": "PRSC-T04-2",
+      "page": 27,
+      "type": "body",
+      "section": "PRSC",
+      "topic": "T04",
+      "seq": 2,
+      "title": "Q. 문제도 풀 수 없을 때는 어떻게 클리닉이 진행되나요?",
+      "master": "D-마스터_본문_#처방",
+      "variable": null,
+      "files": {
+        "L": "pages/p027_L.png",
+        "R": "pages/p027_R.png"
+      }
+    },
+    {
+      "id": "PRSC-T04-3",
+      "page": 28,
+      "type": "body",
+      "section": "PRSC",
+      "topic": "T04",
+      "seq": 3,
+      "title": "시험대비때는 무엇을 공부하나요?",
+      "master": "D-마스터_본문_#처방",
+      "variable": null,
+      "files": {
+        "L": "pages/p028_L.png",
+        "R": "pages/p028_R.png"
+      }
+    },
+    {
+      "id": "PRSC-T04-4",
+      "page": 29,
+      "type": "body",
+      "section": "PRSC",
+      "topic": "T04",
+      "seq": 4,
+      "title": "시험대비 때는 클리닉을 어떻게 해요?",
+      "master": "D-마스터_본문_#처방",
+      "variable": null,
+      "files": {
+        "L": "pages/p029_L.png",
+        "R": "pages/p029_R.png"
+      }
+    },
+    {
+      "id": "PRSC-T05-1",
+      "page": 30,
+      "type": "body",
+      "section": "PRSC",
+      "topic": "T05",
+      "seq": 1,
+      "title": "Q. 구멍난 부분은 어떻게 채워지나요? (개념보강)",
+      "master": "D-마스터_본문_#처방",
+      "variable": null,
+      "files": {
+        "L": "pages/p030_L.png",
+        "R": "pages/p030_R.png"
+      }
+    },
+    {
+      "id": "PRSC-T05-2",
+      "page": 31,
+      "type": "body",
+      "section": "PRSC",
+      "topic": "T05",
+      "seq": 2,
+      "title": "Q. 문제도 풀 수 없을 때는 어떻게 클리닉이 진행되나요? (개념부터 다시)",
+      "master": "D-마스터_본문_#처방",
+      "variable": null,
+      "files": {
+        "L": "pages/p031_L.png",
+        "R": "pages/p031_R.png"
+      }
+    },
+    {
+      "id": "PRSC-T05-3",
+      "page": 32,
+      "type": "body",
+      "section": "PRSC",
+      "topic": "T05",
+      "seq": 3,
+      "title": "Q. 1:1 학습관리 - 오답은 어떻게 관리되나요?",
+      "master": "D-마스터_본문_#처방",
+      "variable": null,
+      "files": {
+        "L": "pages/p032_L.png",
+        "R": "pages/p032_R.png"
+      }
+    },
+    {
+      "id": "PRSC-T05-4",
+      "page": 33,
+      "type": "body",
+      "section": "PRSC",
+      "topic": "T05",
+      "seq": 4,
+      "title": "Q. 1:1 처방 - 약점관리를 어떻게 하나요?",
+      "master": "D-마스터_본문_#처방",
+      "variable": null,
+      "files": {
+        "L": "pages/p033_L.png",
+        "R": "pages/p033_R.png"
+      }
+    },
+    {
+      "id": "PRSC-T09-1",
+      "page": 34,
+      "type": "body",
+      "section": "PRSC",
+      "topic": "T09",
+      "seq": 1,
+      "title": "스스로 학습할 수 있도록 막히지 않는 학습을 지원합니다.",
+      "master": "D-마스터_본문_#처방",
+      "variable": null,
+      "files": {
+        "L": "pages/p034_L.png",
+        "R": "pages/p034_R.png"
+      }
+    },
+    {
+      "id": "PRSC-T09-2",
+      "page": 35,
+      "type": "body",
+      "section": "PRSC",
+      "topic": "T09",
+      "seq": 2,
+      "title": "과정 중심 평가? 어떻게 대비해야 하지…",
+      "master": "D-마스터_본문_#처방",
+      "variable": null,
+      "files": {
+        "L": "pages/p035_L.png",
+        "R": "pages/p035_R.png"
+      }
+    },
+    {
+      "id": "PRSC-T09-3",
+      "page": 36,
+      "type": "body",
+      "section": "PRSC",
+      "topic": "T09",
+      "seq": 3,
+      "title": "내학습을 언제나 스스로 관리할 수 있습니다.",
+      "master": "D-마스터_본문_#처방",
+      "variable": null,
+      "files": {
+        "L": "pages/p036_L.png",
+        "R": "pages/p036_R.png"
+      }
+    },
+    {
+      "id": "PRSC-T09-4",
+      "page": 37,
+      "type": "body",
+      "section": "PRSC",
+      "topic": "T09",
+      "seq": 4,
+      "title": "모든 학습이 색이 입혀지고 있어요. (1:1 처방 완료!)",
+      "master": "D-마스터_본문_#처방",
+      "variable": null,
+      "files": {
+        "L": "pages/p037_L.png",
+        "R": "pages/p037_R.png"
+      }
+    },
+    {
+      "id": "EXAM-DIV",
+      "page": 38,
+      "type": "divider",
+      "section": "EXAM",
+      "topic": null,
+      "seq": null,
+      "title": "#시험대비 간지",
+      "master": "E2-간지_#시험대비",
+      "variable": null,
+      "files": {
+        "L": "pages/p038_L.png",
+        "R": "pages/p038_R.png"
+      }
+    },
+    {
+      "id": "EXAM-T06-1",
+      "page": 39,
+      "type": "body",
+      "section": "EXAM",
+      "topic": "T06",
+      "seq": 1,
+      "title": "학생별 학습현황판·시험대비 전략설계",
+      "master": "E-마스터_본문_#시험대비",
+      "variable": null,
+      "files": {
+        "L": "pages/p039_L.png",
+        "R": "pages/p039_R.png"
+      }
+    },
+    {
+      "id": "EXAM-T06-2",
+      "page": 40,
+      "type": "body",
+      "section": "EXAM",
+      "topic": "T06",
+      "seq": 2,
+      "title": "목표기반으로 학생별 맞춤 시험대비를 만들어가요. (01·02)",
+      "master": "E-마스터_본문_#시험대비",
+      "variable": null,
+      "files": {
+        "L": "pages/p040_L.png",
+        "R": "pages/p040_R.png"
+      }
+    },
+    {
+      "id": "EXAM-T06-3",
+      "page": 41,
+      "type": "body",
+      "section": "EXAM",
+      "topic": "T06",
+      "seq": 3,
+      "title": "AI 분석으로 성적을 예측하고… (03·04)",
+      "master": "E-마스터_본문_#시험대비",
+      "variable": null,
+      "files": {
+        "L": "pages/p041_L.png",
+        "R": "pages/p041_R.png"
+      }
+    },
+    {
+      "id": "EXAM-T07-1",
+      "page": 42,
+      "type": "body",
+      "section": "EXAM",
+      "topic": "T07",
+      "seq": 1,
+      "title": "시험대비때는 무엇을 공부하나요?",
+      "master": "E-마스터_본문_#시험대비",
+      "variable": null,
+      "files": {
+        "L": "pages/p042_L.png",
+        "R": "pages/p042_R.png"
+      }
+    },
+    {
+      "id": "EXAM-T07-2",
+      "page": 43,
+      "type": "body",
+      "section": "EXAM",
+      "topic": "T07",
+      "seq": 2,
+      "title": "시험대비 때는 클리닉을 어떻게 해요?",
+      "master": "E-마스터_본문_#시험대비",
+      "variable": null,
+      "files": {
+        "L": "pages/p043_L.png",
+        "R": "pages/p043_R.png"
+      }
+    },
+    {
+      "id": "EXAM-T07-3",
+      "page": 44,
+      "type": "body",
+      "section": "EXAM",
+      "topic": "T07",
+      "seq": 3,
+      "title": "학교 시험 만점 받기 문제가 따로 있어요.",
+      "master": "E-마스터_본문_#시험대비",
+      "variable": null,
+      "files": {
+        "L": "pages/p044_L.png",
+        "R": "pages/p044_R.png"
+      }
+    },
+    {
+      "id": "EXAM-T07-4",
+      "page": 45,
+      "type": "body",
+      "section": "EXAM",
+      "topic": "T07",
+      "seq": 4,
+      "title": "학생별 학교 시험대비 어떻게?",
+      "master": "E-마스터_본문_#시험대비",
+      "variable": null,
+      "files": {
+        "L": "pages/p045_L.png",
+        "R": "pages/p045_R.png"
+      }
+    },
+    {
+      "id": "EXAM-T07-5",
+      "page": 46,
+      "type": "body",
+      "section": "EXAM",
+      "topic": "T07",
+      "seq": 5,
+      "title": "시험대비 때 보는 교재가 있어요?",
+      "master": "E-마스터_본문_#시험대비",
+      "variable": null,
+      "files": {
+        "L": "pages/p046_L.png",
+        "R": "pages/p046_R.png"
+      }
+    },
+    {
+      "id": "EXAM-T07-6",
+      "page": 47,
+      "type": "body",
+      "section": "EXAM",
+      "topic": "T07",
+      "seq": 6,
+      "title": "시험대비를 위한 유형서",
+      "master": "E-마스터_본문_#시험대비",
+      "variable": null,
+      "files": {
+        "L": "pages/p047_L.png",
+        "R": "pages/p047_R.png"
+      }
+    },
+    {
+      "id": "EXAM-T08-1",
+      "page": 48,
+      "type": "body",
+      "section": "EXAM",
+      "topic": "T08",
+      "seq": 1,
+      "title": "고등부 만점 시험대비 전략은, 모의고사 기출 연계학습에서 좌우됩니다.",
+      "master": "E-마스터_본문_#시험대비",
+      "variable": null,
+      "files": {
+        "L": "pages/p048_L.png",
+        "R": "pages/p048_R.png"
+      }
+    },
+    {
+      "id": "EXAM-T08-2",
+      "page": 49,
+      "type": "body",
+      "section": "EXAM",
+      "topic": "T08",
+      "seq": 2,
+      "title": "상위권 준비를 위한 수능올케어",
+      "master": "E-마스터_본문_#시험대비",
+      "variable": null,
+      "files": {
+        "L": "pages/p049_L.png",
+        "R": "pages/p049_R.png"
+      }
+    },
+    {
+      "id": "SHARE-DIV",
+      "page": 50,
+      "type": "divider",
+      "section": "SHARE",
+      "topic": null,
+      "seq": null,
+      "title": "#나눔 간지",
+      "master": "F2-간지_#나눔",
+      "variable": null,
+      "files": {
+        "L": "pages/p050_L.png",
+        "R": "pages/p050_R.png"
+      }
+    },
+    {
+      "id": "SHARE-T11-1",
+      "page": 51,
+      "type": "body",
+      "section": "SHARE",
+      "topic": "T11",
+      "seq": 1,
+      "title": "우리 아이가 직접 자신의 학습을 들여다볼 수 있으면 좋겠어요.",
+      "master": "F-마스터_본문_#나눔",
+      "variable": null,
+      "files": {
+        "L": "pages/p051_L.png",
+        "R": "pages/p051_R.png"
+      }
+    },
+    {
+      "id": "SHARE-T10-1",
+      "page": 52,
+      "type": "body",
+      "section": "SHARE",
+      "topic": "T10",
+      "seq": 1,
+      "title": "학원에 무슨 공부를, 얼마만큼 하고 있는지 궁금하기만 했는데…",
+      "master": "F-마스터_본문_#나눔",
+      "variable": null,
+      "files": {
+        "L": "pages/p052_L.png",
+        "R": "pages/p052_R.png"
+      }
+    },
+    {
+      "id": "SHARE-T10-2",
+      "page": 53,
+      "type": "body",
+      "section": "SHARE",
+      "topic": "T10",
+      "seq": 2,
+      "title": "학습 성취 요약·행동 영역별 분석",
+      "master": "F-마스터_본문_#나눔",
+      "variable": null,
+      "files": {
+        "L": "pages/p053_L.png",
+        "R": "pages/p053_R.png"
+      }
+    },
+    {
+      "id": "SHARE-T11-2",
+      "page": 54,
+      "type": "body",
+      "section": "SHARE",
+      "topic": "T11",
+      "seq": 2,
+      "title": "매일매일 봐도봐도 질리지 않는 우리 아이 공부한 내용",
+      "master": "F-마스터_본문_#나눔",
+      "variable": null,
+      "files": {
+        "L": "pages/p054_L.png",
+        "R": "pages/p054_R.png"
+      }
+    },
+    {
+      "id": "SHARE-T11-3",
+      "page": 55,
+      "type": "body",
+      "section": "SHARE",
+      "topic": "T11",
+      "seq": 3,
+      "title": "오늘도 담임샘한테 편지가 왔네요:)",
+      "master": "F-마스터_본문_#나눔",
+      "variable": null,
+      "files": {
+        "L": "pages/p055_L.png",
+        "R": "pages/p055_R.png"
+      }
+    },
+    {
+      "id": "CONTEST-DIV",
+      "page": 56,
+      "type": "divider",
+      "section": "CONTEST",
+      "topic": null,
+      "seq": null,
+      "title": "#경시대회 간지 (#전국평가 수학경시대회)",
+      "master": "G2-간지_#경시대회",
+      "variable": null,
+      "files": {
+        "L": "pages/p056_L.png",
+        "R": "pages/p056_R.png"
+      }
+    },
+    {
+      "id": "CONTEST-T12-1",
+      "page": 57,
+      "type": "body",
+      "section": "CONTEST",
+      "topic": "T12",
+      "seq": 1,
+      "title": "시험이 없는 초, 중등 학생들의 실력 점검, 어떻게 하면 좋을까?",
+      "master": "G-마스터_본문_#경시대회",
+      "variable": null,
+      "files": {
+        "L": "pages/p057_L.png",
+        "R": "pages/p057_R.png"
+      }
+    },
+    {
+      "id": "CONTEST-T12-2",
+      "page": 58,
+      "type": "body",
+      "section": "CONTEST",
+      "topic": "T12",
+      "seq": 2,
+      "title": "중요한 것은 전국대회 연습과정입니다.",
+      "master": "G-마스터_본문_#경시대회",
+      "variable": null,
+      "files": {
+        "L": "pages/p058_L.png",
+        "R": "pages/p058_R.png"
+      }
+    },
+    {
+      "id": "CONTEST-T12-3",
+      "page": 59,
+      "type": "body",
+      "section": "CONTEST",
+      "topic": "T12",
+      "seq": 3,
+      "title": "시험에 대한 평가는 객관적으로!",
+      "master": "G-마스터_본문_#경시대회",
+      "variable": null,
+      "files": {
+        "L": "pages/p059_L.png",
+        "R": "pages/p059_R.png"
+      }
+    }
+  ],
+  "topics": [
+    {
+      "code": "T01",
+      "name": "진단",
+      "section": "DIAG",
+      "pages": [
+        14,
+        15,
+        16,
+        17
+      ]
+    },
+    {
+      "code": "T02",
+      "name": "교재채점 진단",
+      "section": "DIAG",
+      "pages": [
+        18,
+        19
+      ]
+    },
+    {
+      "code": "T03",
+      "name": "유형분석",
+      "section": "ANLS",
+      "pages": [
+        21,
+        22,
+        23,
+        24
+      ]
+    },
+    {
+      "code": "T04",
+      "name": "동영상 클리닉",
+      "section": "PRSC",
+      "pages": [
+        26,
+        27,
+        28,
+        29
+      ]
+    },
+    {
+      "code": "T05",
+      "name": "문제풀이 클리닉",
+      "section": "PRSC",
+      "pages": [
+        30,
+        31,
+        32,
+        33
+      ]
+    },
+    {
+      "code": "T06",
+      "name": "시험대비 플로우",
+      "section": "EXAM",
+      "pages": [
+        39,
+        40,
+        41
+      ]
+    },
+    {
+      "code": "T07",
+      "name": "내신대비",
+      "section": "EXAM",
+      "pages": [
+        42,
+        43,
+        44,
+        45,
+        46,
+        47
+      ]
+    },
+    {
+      "code": "T08",
+      "name": "고등시험대비",
+      "section": "EXAM",
+      "pages": [
+        48,
+        49
+      ]
+    },
+    {
+      "code": "T09",
+      "name": "AI 학습지원",
+      "section": "PRSC",
+      "pages": [
+        34,
+        35,
+        36,
+        37
+      ]
+    },
+    {
+      "code": "T10",
+      "name": "학습통합보고서",
+      "section": "SHARE",
+      "pages": [
+        52,
+        53
+      ]
+    },
+    {
+      "code": "T11",
+      "name": "모바일보고서",
+      "section": "SHARE",
+      "pages": [
+        51,
+        54,
+        55
+      ]
+    },
+    {
+      "code": "T12",
+      "name": "수학경시대회",
+      "section": "CONTEST",
+      "pages": [
+        57,
+        58,
+        59
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "code": "INTRO",
+      "name": "#PROLOGUE",
+      "dividerPage": null,
+      "label": "#PROLOGUE"
+    },
+    {
+      "code": "DIAG",
+      "name": "#진단",
+      "label": "#진단",
+      "dividerPage": 13,
+      "dividerMaster": "B2-간지_#진단",
+      "bodyMaster": "B-마스터_본문_#진단",
+      "color": {
+        "swatch": "섹션_그레이그린 90%",
+        "cmyk": [
+          45,
+          20,
+          35,
+          10
+        ],
+        "tint": 90,
+        "rgb": [
+          156,
+          178,
+          167
+        ],
+        "rgbSource": "p013 PNG 실측"
+      }
+    },
+    {
+      "code": "ANLS",
+      "name": "#분석",
+      "label": "#분석",
+      "dividerPage": 20,
+      "dividerMaster": "C2-간지_#분석",
+      "bodyMaster": "C-마스터_본문_#분석",
+      "color": {
+        "swatch": "섹션_옐로 40%",
+        "cmyk": [
+          0,
+          10,
+          100,
+          0
+        ],
+        "tint": 40,
+        "rgb": [
+          255,
+          244,
+          174
+        ],
+        "rgbSource": "p020 PNG 실측"
+      }
+    },
+    {
+      "code": "PRSC",
+      "name": "#처방",
+      "label": "#처방",
+      "dividerPage": 25,
+      "dividerMaster": "D2-간지_#처방",
+      "bodyMaster": "D-마스터_본문_#처방",
+      "color": {
+        "swatch": "섹션_피치 20%",
+        "cmyk": [
+          15,
+          100,
+          100,
+          0
+        ],
+        "tint": 20,
+        "rgb": [
+          246,
+          216,
+          200
+        ],
+        "rgbSource": "p025 PNG 실측"
+      }
+    },
+    {
+      "code": "EXAM",
+      "name": "#시험대비",
+      "label": "#시험대비",
+      "dividerPage": 38,
+      "dividerMaster": "E2-간지_#시험대비",
+      "bodyMaster": "E-마스터_본문_#시험대비",
+      "color": {
+        "swatch": "섹션_그레이그린 90%",
+        "cmyk": [
+          45,
+          20,
+          35,
+          10
+        ],
+        "tint": 90,
+        "rgb": [
+          156,
+          178,
+          167
+        ],
+        "rgbSource": "p013 PNG 실측"
+      }
+    },
+    {
+      "code": "SHARE",
+      "name": "#나눔",
+      "label": "#나눔",
+      "dividerPage": 50,
+      "dividerMaster": "F2-간지_#나눔",
+      "bodyMaster": "F-마스터_본문_#나눔",
+      "color": {
+        "swatch": "섹션_옐로 40%",
+        "cmyk": [
+          0,
+          10,
+          100,
+          0
+        ],
+        "tint": 40,
+        "rgb": [
+          255,
+          244,
+          174
+        ],
+        "rgbSource": "p020 PNG 실측"
+      }
+    },
+    {
+      "code": "CONTEST",
+      "name": "#경시대회",
+      "label": "#경시대회",
+      "dividerPage": 56,
+      "dividerMaster": "G2-간지_#경시대회",
+      "bodyMaster": "G-마스터_본문_#경시대회",
+      "color": {
+        "swatch": "섹션_피치 20%",
+        "cmyk": [
+          15,
+          100,
+          100,
+          0
+        ],
+        "tint": 20,
+        "rgb": [
+          246,
+          216,
+          200
+        ],
+        "rgbSource": "p025 PNG 실측"
+      }
+    }
+  ],
+  "covers": {
+    "01": {
+      "outer": "cover/cover01_out.png",
+      "inner": "cover/inner_green.png"
+    },
+    "02": {
+      "outer": "cover/cover02_out.png",
+      "inner": "cover/inner_black.png"
+    },
+    "03": {
+      "outer": "cover/cover03_out.png",
+      "inner": "cover/inner_black.png"
+    },
+    "04": {
+      "outer": "cover/cover04_out.png",
+      "inner": "cover/inner_black.png"
+    },
+    "05": {
+      "outer": "cover/cover05_out.png",
+      "inner": "cover/inner_black.png"
+    },
+    "06": {
+      "outer": "cover/cover06_out.png",
+      "inner": "cover/inner_black.png"
+    }
+  },
+  "coverPanels": {
+    "outer": {
+      "left": "표4",
+      "right": "표1"
+    },
+    "inner": {
+      "left": "표2",
+      "right": "표3"
+    }
+  },
+  "spine": {
+    "basis": "내지 36p=2.6mm(업체 지정), 50p=3.5mm(최근 건) 기준 직선. 58p는 4.0mm 지정",
+    "table": [
+      {
+        "innerPages": 28,
+        "totalPages": 32,
+        "spineMm": 2.1,
+        "coverWidthMm": 366.1
+      },
+      {
+        "innerPages": 30,
+        "totalPages": 34,
+        "spineMm": 2.2,
+        "coverWidthMm": 366.2
+      },
+      {
+        "innerPages": 32,
+        "totalPages": 36,
+        "spineMm": 2.3,
+        "coverWidthMm": 366.3
+      },
+      {
+        "innerPages": 34,
+        "totalPages": 38,
+        "spineMm": 2.5,
+        "coverWidthMm": 366.5
+      },
+      {
+        "innerPages": 36,
+        "totalPages": 40,
+        "spineMm": 2.6,
+        "coverWidthMm": 366.6
+      },
+      {
+        "innerPages": 38,
+        "totalPages": 42,
+        "spineMm": 2.7,
+        "coverWidthMm": 366.7
+      },
+      {
+        "innerPages": 40,
+        "totalPages": 44,
+        "spineMm": 2.9,
+        "coverWidthMm": 366.9
+      },
+      {
+        "innerPages": 42,
+        "totalPages": 46,
+        "spineMm": 3,
+        "coverWidthMm": 367
+      },
+      {
+        "innerPages": 44,
+        "totalPages": 48,
+        "spineMm": 3.1,
+        "coverWidthMm": 367.1
+      },
+      {
+        "innerPages": 46,
+        "totalPages": 50,
+        "spineMm": 3.2,
+        "coverWidthMm": 367.2
+      },
+      {
+        "innerPages": 48,
+        "totalPages": 52,
+        "spineMm": 3.4,
+        "coverWidthMm": 367.4
+      },
+      {
+        "innerPages": 50,
+        "totalPages": 54,
+        "spineMm": 3.5,
+        "coverWidthMm": 367.5
+      },
+      {
+        "innerPages": 52,
+        "totalPages": 56,
+        "spineMm": 3.6,
+        "coverWidthMm": 367.6
+      },
+      {
+        "innerPages": 54,
+        "totalPages": 58,
+        "spineMm": 3.8,
+        "coverWidthMm": 367.8
+      },
+      {
+        "innerPages": 56,
+        "totalPages": 60,
+        "spineMm": 3.9,
+        "coverWidthMm": 367.9
+      },
+      {
+        "innerPages": 58,
+        "totalPages": 62,
+        "spineMm": 4,
+        "coverWidthMm": 368
+      }
+    ]
+  },
+  "inputs": {
+    "표지문구": "비어 있으면 표1에 학원명_BRANDBOOK 프레임 사용, 표2_인사말의 표2_슬로건 단락 전부 삭제",
+    "로고": "없으면 3p 학원명_텍스트 사용, 있으면 학원명_텍스트 삭제",
+    "프로필사진": "없으면 프레임 삭제",
+    "인사말_본문": "5p 2단, 열 균형(홀수 줄이면 왼쪽 단이 한 줄 더)"
+  },
+  "index": {
+    "source": "masters_index.json (마스터 A, B~G 인덱스 레이어)",
+    "appliesTo": {
+      "fixed_3_7": "없음 (마스터 [없음])",
+      "fixed_8_12": "푸터만 (#PROLOGUE + 번호, 띠 없음)",
+      "divider": "같은 섹션 본문 마스터의 띠·푸터 그대로 (간지 마스터가 본문 마스터 기준). 푸터 필수, 띠는 바탕과 같은 색이라 거의 안 보임",
+      "body": "섹션 본문 마스터의 띠·푸터"
+    },
+    "tab": {
+      "note": "페이지 바깥쪽 가장자리, 도련 포함. 보이는 폭 3mm",
+      "L": {
+        "xMm": -3,
+        "yMm": -3,
+        "wMm": 6,
+        "hMm": 263
+      },
+      "R": {
+        "xMm": 179,
+        "yMm": -3,
+        "wMm": 6,
+        "hMm": 263
+      },
+      "color": "sections[].color"
+    },
+    "footer": {
+      "yMm": 244,
+      "hMm": 2.47,
+      "font": "Wanted Sans",
+      "sizePt": 7,
+      "color": {
+        "name": "Black",
+        "cmyk": [
+          0,
+          0,
+          0,
+          100
+        ]
+      },
+      "sectionLabel": {
+        "fontStyle": "SemiBold",
+        "L": {
+          "xMm": 18,
+          "wMm": 23,
+          "align": "left"
+        },
+        "R": {
+          "xMm": 141,
+          "wMm": 23,
+          "align": "right"
+        },
+        "text": "sections[].label (INTRO는 #PROLOGUE)"
+      },
+      "pageNumber": {
+        "fontStyle": "Regular",
+        "L": {
+          "xMm": 60,
+          "wMm": 10,
+          "align": "center"
+        },
+        "R": {
+          "xMm": 112,
+          "wMm": 10,
+          "align": "center"
+        },
+        "text": "조립 후 새 페이지 번호"
+      }
+    }
+  },
+  "fonts": {
+    "basePath": "fonts/",
+    "license": "모두 SIL OFL 1.1. 각 폴더의 라이선스 파일을 서체 파일과 함께 배포. SUIT는 Reserved Font Name 있음 → 파일을 수정(경량화 등)하면 SUIT 이름 사용 불가, 원본 그대로 사용",
+    "families": [
+      {
+        "family": "Pretendard",
+        "folder": "Pretendard-1.3.9",
+        "license": "LICENSE.txt",
+        "files": {
+          "Regular": "Pretendard-Regular.otf",
+          "Medium": "Pretendard-Medium.otf",
+          "SemiBold": "Pretendard-SemiBold.otf",
+          "Bold": "Pretendard-Bold.otf",
+          "ExtraBold": "Pretendard-ExtraBold.otf"
+        },
+        "use": "3~5p 가변 문구, 표2"
+      },
+      {
+        "family": "SUIT",
+        "folder": "SUIT-otf",
+        "license": "LICENSE",
+        "files": {
+          "Thin": "SUIT-Thin.otf",
+          "ExtraLight": "SUIT-ExtraLight.otf",
+          "Light": "SUIT-Light.otf",
+          "SemiBold": "SUIT-SemiBold.otf"
+        },
+        "use": "표1, 표2 학원명"
+      },
+      {
+        "family": "나눔손글씨 펜",
+        "folder": "Nanum_Pen_Script",
+        "license": "OFL.txt",
+        "files": {
+          "Regular": "NanumPenScript-Regular.ttf"
+        },
+        "use": "3p 소개 문구"
+      },
+      {
+        "family": "Wanted Sans",
+        "folder": "WantedSans",
+        "license": "OFL.txt",
+        "files": {
+          "Regular": "WantedSans-Regular.otf",
+          "SemiBold": "WantedSans-SemiBold.otf"
+        },
+        "use": "푸터"
+      }
+    ],
+    "lookup": "JSON의 font(패밀리명)+fontStyle(굵기) → fonts/{folder}/{files[굵기]}"
+  },
+  "templates": {
+    "note": "추천 템플릿은 페이지 구성이 고정된 40p(내지 36p + 표지 4p). 원장님은 템플릿(A/B)과 가변 문구만 입력. 근거: 학원맞춤키트_브로슈어_B5_260901_A.pdf / _B.pdf 대조 / A·B형 20p는 모두 원본 24p와 같은 페이지(대조 확인 완료)",
+    "rules": [
+      "sequence 순서 그대로 사용 (원본 페이지 번호로 정렬하지 않음, 간지 자동 추가 없음 — 간지는 sequence에 이미 포함)",
+      "띠·푸터의 섹션은 원본 페이지의 섹션이 아니라 sequence의 section을 따름 (예: 37p는 #나눔, 57·58p는 #시험대비로 표시)",
+      "내지 36p(짝수) → 빈 페이지 없음, 세네카 2.6mm",
+      "가변 요소(3~5p, 표1·표2)는 맞춤형과 동일"
+    ],
+    "A": {
+      "label": "추천 템플릿 A형",
+      "cover": "01",
+      "totalPages": 40,
+      "innerPages": 36,
+      "spineMm": 2.6,
+      "sequence": [
+        {
+          "page": 3,
+          "section": "INTRO"
+        },
+        {
+          "page": 4,
+          "section": "INTRO"
+        },
+        {
+          "page": 5,
+          "section": "INTRO"
+        },
+        {
+          "page": 6,
+          "section": "INTRO"
+        },
+        {
+          "page": 7,
+          "section": "INTRO"
+        },
+        {
+          "page": 8,
+          "section": "INTRO"
+        },
+        {
+          "page": 9,
+          "section": "INTRO"
+        },
+        {
+          "page": 10,
+          "section": "INTRO"
+        },
+        {
+          "page": 11,
+          "section": "INTRO"
+        },
+        {
+          "page": 12,
+          "section": "INTRO"
+        },
+        {
+          "page": 13,
+          "section": "DIAG"
+        },
+        {
+          "page": 14,
+          "section": "DIAG"
+        },
+        {
+          "page": 15,
+          "section": "DIAG"
+        },
+        {
+          "page": 16,
+          "section": "DIAG"
+        },
+        {
+          "page": 17,
+          "section": "DIAG"
+        },
+        {
+          "page": 20,
+          "section": "ANLS"
+        },
+        {
+          "page": 21,
+          "section": "ANLS"
+        },
+        {
+          "page": 24,
+          "section": "ANLS"
+        },
+        {
+          "page": 25,
+          "section": "PRSC"
+        },
+        {
+          "page": 32,
+          "section": "PRSC"
+        },
+        {
+          "page": 33,
+          "section": "PRSC"
+        },
+        {
+          "page": 31,
+          "section": "PRSC"
+        },
+        {
+          "page": 38,
+          "section": "EXAM"
+        },
+        {
+          "page": 40,
+          "section": "EXAM"
+        },
+        {
+          "page": 41,
+          "section": "EXAM"
+        },
+        {
+          "page": 42,
+          "section": "EXAM"
+        },
+        {
+          "page": 43,
+          "section": "EXAM"
+        },
+        {
+          "page": 46,
+          "section": "EXAM"
+        },
+        {
+          "page": 47,
+          "section": "EXAM"
+        },
+        {
+          "page": 48,
+          "section": "EXAM"
+        },
+        {
+          "page": 49,
+          "section": "EXAM"
+        },
+        {
+          "page": 50,
+          "section": "SHARE"
+        },
+        {
+          "page": 51,
+          "section": "SHARE"
+        },
+        {
+          "page": 52,
+          "section": "SHARE"
+        },
+        {
+          "page": 53,
+          "section": "SHARE"
+        },
+        {
+          "page": 37,
+          "section": "SHARE"
+        }
+      ]
+    },
+    "B": {
+      "label": "추천 템플릿 B형",
+      "cover": "03",
+      "totalPages": 40,
+      "innerPages": 36,
+      "spineMm": 2.6,
+      "sequence": [
+        {
+          "page": 3,
+          "section": "INTRO"
+        },
+        {
+          "page": 4,
+          "section": "INTRO"
+        },
+        {
+          "page": 5,
+          "section": "INTRO"
+        },
+        {
+          "page": 6,
+          "section": "INTRO"
+        },
+        {
+          "page": 7,
+          "section": "INTRO"
+        },
+        {
+          "page": 8,
+          "section": "INTRO"
+        },
+        {
+          "page": 9,
+          "section": "INTRO"
+        },
+        {
+          "page": 10,
+          "section": "INTRO"
+        },
+        {
+          "page": 11,
+          "section": "INTRO"
+        },
+        {
+          "page": 12,
+          "section": "INTRO"
+        },
+        {
+          "page": 13,
+          "section": "DIAG"
+        },
+        {
+          "page": 14,
+          "section": "DIAG"
+        },
+        {
+          "page": 15,
+          "section": "DIAG"
+        },
+        {
+          "page": 18,
+          "section": "DIAG"
+        },
+        {
+          "page": 19,
+          "section": "DIAG"
+        },
+        {
+          "page": 20,
+          "section": "ANLS"
+        },
+        {
+          "page": 22,
+          "section": "ANLS"
+        },
+        {
+          "page": 24,
+          "section": "ANLS"
+        },
+        {
+          "page": 25,
+          "section": "PRSC"
+        },
+        {
+          "page": 32,
+          "section": "PRSC"
+        },
+        {
+          "page": 33,
+          "section": "PRSC"
+        },
+        {
+          "page": 31,
+          "section": "PRSC"
+        },
+        {
+          "page": 38,
+          "section": "EXAM"
+        },
+        {
+          "page": 40,
+          "section": "EXAM"
+        },
+        {
+          "page": 41,
+          "section": "EXAM"
+        },
+        {
+          "page": 42,
+          "section": "EXAM"
+        },
+        {
+          "page": 43,
+          "section": "EXAM"
+        },
+        {
+          "page": 46,
+          "section": "EXAM"
+        },
+        {
+          "page": 47,
+          "section": "EXAM"
+        },
+        {
+          "page": 57,
+          "section": "EXAM"
+        },
+        {
+          "page": 58,
+          "section": "EXAM"
+        },
+        {
+          "page": 50,
+          "section": "SHARE"
+        },
+        {
+          "page": 51,
+          "section": "SHARE"
+        },
+        {
+          "page": 52,
+          "section": "SHARE"
+        },
+        {
+          "page": 53,
+          "section": "SHARE"
+        },
+        {
+          "page": 37,
+          "section": "SHARE"
+        }
+      ]
+    }
+  }
+}
