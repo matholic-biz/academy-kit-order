@@ -292,34 +292,41 @@ function stack(cv, items, x0, y0, w){
   items.forEach(([str, spec]) => { if(!str) return; const t = paraText(str, spec, x0, y, w); cv.add(t); y += t.height; });
 }
 const imgP = (url, opt) => new Promise(res => fabric.Image.fromURL(url, img => res(img), opt));
-// 인쇄 기준 펼침면 두 줄: 위 [표4 뒤표지 | 표1 앞표지], 아래 [표2 안쪽 표지 | 3p] (2026-11-05 — 표1은 오른쪽, 표4는 왼쪽)
+// 인쇄 기준 펼침면 두 개: [표4 뒤표지 | 표1 앞표지], [표2 안쪽 표지 | 3p] (2026-11-05 — 표1은 오른쪽, 표4는 왼쪽)
+// 화면이 가로로 넓으면 두 펼침면을 옆으로 나란히(더 크게 보임), 좁으면 위아래로 (2026-11-05 QA)
 const INFO_LABEL = 8, INFO_GAP = 12;
-const INFO_ROW2 = INFO_LABEL + H + INFO_GAP;
-const INFO_GEOM = { W:PAGE_W * 2 + BLEED * 2, H:INFO_ROW2 + INFO_LABEL + H, pages:[], fold:BLEED + PAGE_W, info:true };
+const INFO_ROW2 = INFO_LABEL + H + INFO_GAP, INFO_COL2 = PAGE_W * 2 + BLEED * 2 + INFO_GAP;
+const INFO_GEOM = { W:0, H:0, dx:0, dy:0, pages:[], fold:BLEED + PAGE_W, info:true };
+function setInfoLayout(wide){
+  Object.assign(INFO_GEOM, wide ? { W:INFO_COL2 + PAGE_W * 2 + BLEED * 2, H:INFO_LABEL + H, dx:INFO_COL2, dy:0 }
+    : { W:PAGE_W * 2 + BLEED * 2, H:INFO_ROW2 + INFO_LABEL + H, dx:0, dy:INFO_ROW2 });
+}
+setInfoLayout(false);
 async function drawInfo(cv, info, coverCode, cvJson, base){
   cv.clear(); cv.backgroundColor = '#fff';
   const set = cvJson.set[coverCode] || cvJson.set['01'];
   const pg = f => cvJson.pages.find(p => p.file.replace(/\.png$/, '') === f);
   const pxPerMm = cvJson.spreadSizePx[0] / cvJson.spreadSizeMm[0];
-  const cut = cvJson.cutPx, X1 = BLEED, X2 = BLEED + PAGE_W;
-  const Y1 = INFO_LABEL + BLEED, Y2 = INFO_ROW2 + INFO_LABEL + BLEED;
+  const cut = cvJson.cutPx, X1 = BLEED, X2 = BLEED + PAGE_W, DX = INFO_GEOM.dx, DY = INFO_GEOM.dy;
+  const Y1 = INFO_LABEL + BLEED, Y2 = DY + INFO_LABEL + BLEED;
+  const X1b = X1 + DX, X2b = X2 + DX;   // 두 번째 펼침면(표2 | 3p)
   const lock = { selectable:false, evented:false };
   const label = (t, x, y) => cv.add(new fabric.Text(t, Object.assign({ left:x, top:y, fontSize:3.6, fontFamily:FONT, fontWeight:600, fill:'#7C8C8E' }, lock)));
-  label('표4 뒤표지', X1, 1.5); label('표1 앞표지', X2, 1.5); label('표2 안쪽 표지', X1, INFO_ROW2 + 1.5); label('3p 학원 소개', X2, INFO_ROW2 + 1.5);
+  label('표4 뒤표지', X1, 1.5); label('표1 앞표지', X2, 1.5); label('표2 안쪽 표지', X1b, DY + 1.5); label('3p 학원 소개', X2b, DY + 1.5);
   // 표지 이미지: 바깥(표4|표1)은 펼친 그대로, 안쪽은 왼쪽 반(표2)만
   const out = await imgP(`${base}cover/${set[0]}.jpg?v=1`), out2 = await imgP(`${base}cover/${set[0]}.jpg?v=1`), inn = await imgP(`${base}cover/${set[1]}.jpg?v=1`);
   const k = 1 / pxPerMm;
   out.set(Object.assign({ cropX:cut.left[0], width:cut.left[1] - cut.left[0], left:X1, top:Y1, scaleX:k, scaleY:k }, lock));
   out2.set(Object.assign({ cropX:cut.right[0], width:cut.right[1] - cut.right[0], left:X2, top:Y1, scaleX:k, scaleY:k }, lock));
-  inn.set(Object.assign({ cropX:cut.left[0], width:cut.left[1] - cut.left[0], left:X1, top:Y2, scaleX:k, scaleY:k }, lock));
+  inn.set(Object.assign({ cropX:cut.left[0], width:cut.left[1] - cut.left[0], left:X1b, top:Y2, scaleX:k, scaleY:k }, lock));
   cv.add(out, out2, inn);
   // 3p: 지금 꾸민(또는 예시) 내용
   if(book && book.first){
     const [u] = await renderPages(book.first, { ppi:60, quality:0.85 });
     const im = await imgP(u); const s = PAGE_W / im.width;
-    im.set(Object.assign({ left:X2, top:Y2, scaleX:s, scaleY:s }, lock)); cv.add(im);
+    im.set(Object.assign({ left:X2b, top:Y2, scaleX:s, scaleY:s }, lock)); cv.add(im);
   }
-  cv.add(new fabric.Rect(Object.assign({ left:X2, top:Y2, width:0.2, height:PAGE_H, fill:'rgba(0,0,0,.15)' }, lock)));
+  cv.add(new fabric.Rect(Object.assign({ left:X2b, top:Y2, width:0.2, height:PAGE_H, fill:'rgba(0,0,0,.15)' }, lock)));
   const p1 = pg(set[0]), p2 = pg(set[1]);
   const get = (p, n) => p.items.find(i => i.name === n);
   // 표1: 표지 문구가 있으면 그것, 없으면 학원명 + BRANDBOOK
@@ -331,7 +338,7 @@ async function drawInfo(cv, info, coverCode, cvJson, base){
   // 표2: 프로필 사진(원형) · 학원명 BRANDBOOK · 원장명 · 맺음말
   const prof = get(p2, '프로필사진');
   if(prof){
-    const r = prof.panelMm.w / 2, cx = X1 + prof.panelMm.x + r, cy = Y2 + prof.panelMm.y + r;
+    const r = prof.panelMm.w / 2, cx = X1b + prof.panelMm.x + r, cy = Y2 + prof.panelMm.y + r;
     if(info.profileUrl){
       const im = await imgP(info.profileUrl);
       const s = Math.max(prof.panelMm.w / im.width, prof.panelMm.h / im.height);
@@ -341,10 +348,10 @@ async function drawInfo(cv, info, coverCode, cvJson, base){
     }else cv.add(new fabric.Circle(Object.assign({ left:cx - r, top:cy - r, radius:r, fill:'rgba(255,255,255,0.25)', stroke:'rgba(255,255,255,0.7)', strokeWidth:0.3, strokeDashArray:[1, 1] }, lock)));
   }
   const a = get(p2, '표2_학원명'), d = get(p2, '표2_원장명'), gr = get(p2, '표2_인사말');
-  if(a) stack(cv, [[info.academy || '학원명', a.paragraphs[0]], ['BRANDBOOK', a.paragraphs[1]]], X1 + a.panelMm.x, Y2 + a.panelMm.y, a.panelMm.w);
-  if(d) stack(cv, [[d.paragraphs[0].text.replace('[원장명]', info.director || '원장명'), d.paragraphs[0]]], X1 + d.panelMm.x, Y2 + d.panelMm.y, d.panelMm.w);
+  if(a) stack(cv, [[info.academy || '학원명', a.paragraphs[0]], ['BRANDBOOK', a.paragraphs[1]]], X1b + a.panelMm.x, Y2 + a.panelMm.y, a.panelMm.w);
+  if(d) stack(cv, [[d.paragraphs[0].text.replace('[원장명]', info.director || '원장명'), d.paragraphs[0]]], X1b + d.panelMm.x, Y2 + d.panelMm.y, d.panelMm.w);
   const close = (book && book.spreads.map(greetingText).find(Boolean) || '').split(/(?<=[.!?。])\s+/).filter(Boolean).slice(-2).join(' ');
-  if(gr && close) stack(cv, [[close, gr.paragraphs[0]]], X1 + gr.panelMm.x, Y2 + gr.panelMm.y, gr.panelMm.w);
+  if(gr && close) stack(cv, [[close, gr.paragraphs[0]]], X1b + gr.panelMm.x, Y2 + gr.panelMm.y, gr.panelMm.w);
   cv.requestRenderAll();
 }
 
@@ -460,9 +467,12 @@ function renderTop(){
 // 구성 고르기 (같은 단위 — 낱장/펼침면 — 의 구성만) + 색
 function renderLayoutChips(){
   if(!slot) return;
-  $('dxLayouts').innerHTML = Object.entries(LAYOUTS).filter(([, l]) => l.kind === slot.kind && !l.fixed)
+  // 앞부분 고정(opts.fixed)이면 쪽마다 구성이 정해져 있어 고르지 않고 색만 (2026-11-05 QA — 구성을 누르면 글이 지워져 테마 바꾸기로 오해)
+  $('dxLayoutBox').querySelector('h3').textContent = opts.fixed ? '색' : '구성';
+  $('dxLayouts').hidden = !!opts.fixed;
+  $('dxLayouts').innerHTML = opts.fixed ? '' : Object.entries(LAYOUTS).filter(([, l]) => l.kind === slot.kind && !l.fixed)
     .map(([id, l]) => `<button class="dx-chip ${id === state.layout ? 'on' : ''}" data-l="${id}" title="${l.sub}">${l.name}</button>`).join('');
-  $('dxColors').innerHTML = '색 ' + Object.entries(THEMES).map(([id, t]) => `<button class="dx-dot ${id === state.theme ? 'on' : ''}" title="${t.name}" data-all="${id}" style="background:${t.dot}"></button>`).join('');
+  $('dxColors').innerHTML = (opts.fixed ? '' : '색 ') + Object.entries(THEMES).map(([id, t]) => `<button class="dx-dot ${id === state.theme ? 'on' : ''}" title="${t.name}" data-all="${id}" style="background:${t.dot}"></button>`).join('');
 }
 
 // 왼쪽 입력칸
@@ -560,7 +570,7 @@ function setMode(m){
   document.querySelectorAll('#dxTabs button').forEach(b => b.classList.toggle('on', b.dataset.m === m));
   canvas.discardActiveObject();
   setMsg(isInfo() ? '입력하면 오른쪽 표지에 바로 반영돼요. 학원명을 넣고, 아래 줄에서 3p 학원 소개를 꾸며 주세요.'
-    : m === 'A' ? '구성을 고르고 왼쪽 칸을 채우면 바로 반영돼요. 페이지의 글을 누르면 해당 칸으로 가요.'
+    : m === 'A' ? (opts.fixed ? '' : '구성을 고르고 ') + '왼쪽 칸을 채우면 바로 반영돼요. 페이지의 글을 누르면 해당 칸으로 가요.'
     : '끌어서 옮기고, 모서리를 끌어 크기를 바꿔요. 글은 두 번 눌러 고쳐요.');
   refreshUI();
   fitCanvas();
@@ -614,6 +624,10 @@ async function goTo(i){
   cur = i;
   const s = pagesOf()[i];
   slot = s.info ? null : s;
+  if(s.info){   // 위아래·옆 중 더 크게 보이는 쪽
+    const st = $('dxStage'), fitOf = (w, h) => Math.min((st.clientWidth - 48) / w, (st.clientHeight - 80) / h);
+    setInfoLayout(fitOf(INFO_COL2 + PAGE_W * 2 + BLEED * 2, INFO_LABEL + H) > fitOf(PAGE_W * 2 + BLEED * 2, INFO_ROW2 + INFO_LABEL + H));
+  }
   g = s.info ? INFO_GEOM : geom(s.kind, s.side);
   $('dxTitle').innerHTML = `우리 학원 소개하기<small>${labelsAt(i).join(' · ')} · ${esc(nameAt(i))}</small>`;
   $('dxLabels').innerHTML = s.info ? '' : labelsAt(i).map(l => `<span>${l}</span>`).join('');
