@@ -18,10 +18,6 @@
 .dx-btn{ border:0; border-radius:10px; padding:9px 16px; font:inherit; font-weight:600; cursor:pointer; background:var(--paleMint, #EAF7F4); color:var(--deepTeal); }
 .dx-btn:hover{ filter:brightness(0.97); }
 .dx-btn.primary{ background:var(--deepTeal); color:#fff; }
-/* [완료]: 모든 칸을 확인하기 전에는 흰 버튼, 다 확인하면 채운 색 (2026-11-05 QA — 처음부터 진하게 있어 거슬림) */
-#dxDone{ background:#fff; color:var(--muted); box-shadow:inset 0 0 0 1px var(--line, #EAEFEE); }
-#dxDone.ready{ background:var(--deepTeal); color:#fff; box-shadow:none; }
-#dxDone:focus:not(:focus-visible){ outline:none; }
 .dx-btn.small{ padding:6px 10px; font-size:13px; border-radius:8px; }
 .dx-tabs{ display:flex; gap:4px; background:var(--paleMint, #EAF7F4); border-radius:10px; padding:3px; }
 .dx-tabs button{ border:0; background:none; font:inherit; font-size:14px; font-weight:600; color:var(--body); padding:6px 14px; border-radius:8px; cursor:pointer; }
@@ -132,7 +128,6 @@
 .dx-strip-sum{ font-size:12px; color:var(--muted); }
 .dx-editor[data-info="1"] .dx-legend{ visibility:hidden; }
 
-.dx-st-done{ position:absolute; top:5px; left:5px; box-shadow:0 0 0 2px #fff; width:18px; height:18px; border-radius:50%; background:var(--seafoam); color:#fff; font-size:11px; font-weight:700; line-height:18px; text-align:center; pointer-events:none; }
 .dx-st-tag{ font-size:10.5px; font-weight:600; color:var(--muted); margin-top:1px; }
 .dx-st-tag.need{ color:var(--warn, #C9432B); }
 .dx-st-tag.done{ color:var(--seafoam); }
@@ -144,3 +139,96 @@
 .dx-thumb{ height:44px; max-width:140px; object-fit:contain; border-radius:6px; background:#F6F9F8; border:1px solid var(--line); }
 .dx-thumb.round{ width:44px; object-fit:cover; border-radius:50%; }
 .dx-photo-act{ display:flex; align-items:center; gap:10px; }
+
+/* ===== 2026-11-06 개편: 템플릿 버튼 · 작성 도우미 · 고정/매쓰홀릭 안내 · 구간 표시 ===== */
+.dx-tpls{ display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-bottom:10px; }
+.dx-tpl{ position:relative; text-align:left; border:1px solid var(--line); background:#fff; border-radius:10px; padding:7px 9px; font:inherit; cursor:pointer; color:var(--ink); }
+.dx-tpl b{ display:block; font-size:13px; }
+.dx-tpl span{ display:block; font-size:11px; color:var(--muted); line-height:1.35; margin-top:1px; }
+.dx-tpl i{ position:absolute; top:6px; right:7px; font-style:normal; font-size:10px; color:var(--seafoam); font-weight:700; }
+.dx-tpl:hover{ border-color:var(--seafoam); }
+.dx-tpl.on{ border-color:var(--deepTeal); background:var(--deepTeal); color:#fff; }
+.dx-tpl.on span{ color:rgba(255,255,255,.8); }
+.dx-tpl.free{ border-style:dashed; }
+.dx-guide{ background:#F6F9F8; border:1px solid var(--line); border-radius:12px; padding:12px; margin:4px 0 14px; }
+.dx-gstep{ font-size:12px; font-weight:700; color:var(--deepTeal); margin-bottom:6px; }
+.dx-gstep small{ display:block; font-weight:500; color:var(--muted); font-size:11px; margin-top:1px; }
+.dx-gq{ font-weight:700; font-size:14.5px; line-height:1.45; margin-bottom:8px; }
+.dx-gq::before{ content:'Q. '; color:var(--deepTeal); }
+.dx-gtags{ display:flex; flex-wrap:wrap; gap:5px; margin-bottom:8px; }
+.dx-gans{ width:100%; box-sizing:border-box; font:inherit; font-size:13.5px; border:1px solid var(--line); border-radius:8px; padding:8px 9px; }
+.dx-sug{ margin-top:10px; border:1.5px dashed var(--seafoam); background:#fff; border-radius:10px; padding:10px; }
+.dx-sug-h{ display:flex; align-items:center; gap:6px; margin-bottom:6px; font-size:13px; }
+.dx-sug-badge{ font-size:10.5px; font-weight:700; color:#fff; background:var(--seafoam); border-radius:5px; padding:1px 6px; white-space:nowrap; }
+.dx-sug-body{ font-size:12.5px; line-height:1.55; color:var(--body); display:grid; gap:5px; margin-bottom:8px; max-height:220px; overflow:auto; }
+.dx-sug-body em{ display:block; font-style:normal; font-size:11px; font-weight:700; color:var(--muted); }
+.dx-ttp{ border-collapse:collapse; font-size:11px; width:100%; }
+.dx-ttp th, .dx-ttp td{ border:1px solid var(--line); padding:2px 3px; text-align:center; }
+.dx-ttgrid{ overflow-x:auto; }
+.dx-ttgrid table{ border-collapse:collapse; width:100%; }
+.dx-ttgrid th, .dx-ttgrid td{ padding:1px; font-size:11px; font-weight:600; color:var(--muted); }
+.dx-ttgrid input{ width:100%; box-sizing:border-box; font:inherit; font-size:12px; border:1px solid var(--line); border-radius:6px; padding:5px 3px; text-align:center; min-width:38px; }
+.dx-ttgrid th:first-child input{ min-width:56px; font-weight:700; }
+.dx-auto{ border:1px dashed var(--line); border-radius:8px; padding:7px 9px; font-size:13px; color:var(--body); background:#F6F9F8; }
+.dx-lockcard{ border:1px solid var(--line); border-radius:12px; padding:14px; background:#F6F9F8; }
+.dx-lockcard p{ margin:6px 0 0; font-size:13px; color:var(--body); }
+.dx-stagebar{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:8px; min-height:32px; }
+.dx-where{ font-size:13px; font-weight:600; color:var(--ink); }
+.dx-sec{ display:inline-block; font-size:10.5px; font-weight:700; border-radius:5px; padding:1px 6px; vertical-align:1px; }
+.dx-sec.fix{ background:#E3E8E8; color:#56615F; }
+.dx-sec.cus{ background:var(--deepTeal); color:#fff; }
+.dx-sec.mh{ background:#fff; color:var(--deepTeal); border:1px solid var(--seafoam); }
+.dx-canvas-wrap{ position:relative; display:inline-block; }
+.dx-lock{ position:absolute; inset:0; background:rgba(84,96,98,.28); pointer-events:none; display:flex; justify-content:center; align-items:center; z-index:5; }
+.dx-lock span{ background:rgba(16,40,43,.88); color:#fff; font-size:13px; font-weight:600; padding:8px 14px; border-radius:10px; max-width:80%; text-align:center; line-height:1.5; }
+.dx-static{ display:flex; box-shadow:0 10px 30px -14px rgba(0,0,0,.4); background:#fff; }
+.dx-static img{ height:100%; display:block; }
+.dx-seg{ display:flex; border:1px solid var(--line); border-radius:9px; overflow:hidden; margin-bottom:8px; }
+.dx-seg button{ flex:1; border:0; background:#fff; padding:6px; font:inherit; font-size:12.5px; cursor:pointer; }
+.dx-seg button.on{ background:var(--deepTeal); color:#fff; font-weight:600; }
+.dx-strip-head{ display:flex; align-items:center; gap:14px; flex-wrap:wrap; font-size:12px; color:var(--muted); margin-bottom:6px; }
+.dx-strip-head b{ color:var(--ink); font-size:12.5px; }
+.dx-strip-head .dx-strip-sum{ margin-left:auto; }
+.dx-st-img{ position:relative; }
+.dx-st-lock{ position:absolute; inset:0; background:rgba(84,96,98,.32); }
+.dx-st-cap .dx-sec{ margin-right:2px; }
+.dx-st-sep{ flex:none; width:2px; align-self:stretch; background:#C9D3D2; margin:0 4px 22px; border-radius:2px; }
+.dx-st.mh .dx-st-img img{ height:100%; }
+.dx-editor[data-fixed="1"] .dx-legend{ visibility:hidden; }
+@media print{ .dx-lock, .dx-stagebar, .dx-st-lock{ display:none !important; } }
+.dx-editor{ grid-template-columns:minmax(0, 1fr); }
+.dx-editor > *{ min-width:0; }
+.dx-lock[hidden], .dx-static[hidden]{ display:none !important; }
+.dx-stage-inner{ max-width:100%; box-sizing:border-box; }
+/* [완료]를 눌렀는데 필수가 남았을 때 */
+/* [완료]: 남은 곳이 있으면 흰 버튼 + 남은 개수, 다 채우면 채운 색 (2026-11-05 QA — 처음부터 진하게 있어 거슬림) */
+#dxDone.pending{ background:#fff; color:var(--muted); box-shadow:inset 0 0 0 1px var(--line, #EAEFEE); }
+#dxDone.ready{ background:var(--deepTeal); color:#fff; box-shadow:none; }
+#dxDone:focus:not(:focus-visible){ outline:none; }
+.dx-need{ position:relative; display:flex; gap:12px; align-items:flex-start; background:#FFF6E8; border-bottom:1px solid #F1D9B5; padding:12px 44px 12px 20px; font-size:13.5px; }
+.dx-need[hidden]{ display:none !important; }
+.dx-need b{ color:var(--warn, #C9432B); }
+.dx-need ul{ list-style:none; margin:8px 0 0; padding:0; display:grid; gap:6px; }
+.dx-need li{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+.dx-need li span{ font-weight:700; min-width:150px; }
+.dx-need li small{ color:var(--body); flex:1; min-width:200px; }
+.dx-need-x{ position:absolute; top:8px; right:10px; border:0; background:none; font-size:15px; cursor:pointer; color:var(--muted); }
+.dx-editor{ position:relative; }
+.dx-need{ position:absolute; left:0; right:0; top:58px; z-index:30; box-shadow:0 10px 24px -12px rgba(0,0,0,.35); }
+/* 작성 도우미 (키워드 1개 ↔ 추천 문구 1개) */
+.dx-glabel{ font-size:12px; font-weight:700; color:var(--body); margin:10px 0 5px; }
+.dx-glabel small{ font-weight:500; color:var(--muted); margin-left:4px; }
+.dx-gtargets{ display:flex; gap:5px; }
+.dx-gtarget{ flex:1; border:1px solid var(--line); background:#fff; border-radius:8px; padding:6px 0; font:inherit; font-size:14px; font-weight:700; cursor:pointer; color:var(--body); }
+.dx-gtarget.on{ background:var(--deepTeal); border-color:var(--deepTeal); color:#fff; }
+.dx-gnow{ font-size:12px; color:var(--muted); margin-top:6px; line-height:1.5; }
+.dx-gnow b{ color:var(--ink); margin-right:4px; }
+.dx-gnow i{ font-style:normal; color:#A3B0B1; }
+.dx-sug-badge{ background:var(--deepTeal); }
+.dx-sug-body > div{ color:var(--ink); }
+.dx-own{ margin-top:10px; border-top:1px dashed var(--line); padding-top:8px; }
+.dx-own summary{ cursor:pointer; font-size:12.5px; font-weight:700; color:var(--deepTeal); }
+.dx-own textarea{ width:100%; box-sizing:border-box; margin-top:6px; font:inherit; font-size:13px; border:1px solid var(--line); border-radius:8px; padding:7px 9px; resize:vertical; }
+.dx-own-acts{ display:flex; gap:6px; margin-top:6px; flex-wrap:wrap; }
+.dx-gnote{ margin:0 0 6px; font-size:13.5px; line-height:1.6; color:var(--ink); font-weight:600; }
+.dx-st-done{ position:absolute; top:5px; left:5px; box-shadow:0 0 0 2px #fff; width:18px; height:18px; border-radius:50%; background:var(--seafoam); color:#fff; font-size:11px; font-weight:700; line-height:18px; text-align:center; pointer-events:none; }

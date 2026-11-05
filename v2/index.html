@@ -945,9 +945,9 @@
 <!-- 엔진을 고치면 ?v= 값을 바꿔 브라우저에 남은 예전 엔진을 쓰지 않게 합니다 -->
 <script src="brandbook/engine.js?v=20261105b"></script>
 <!-- 앞부분(3~12p) 직접 꾸미기 편집기 (2026-11-05). 편집기를 고치면 ?v= 값을 바꿉니다. -->
-<link rel="stylesheet" href="diy/diy-editor.css?v=20261105g">
+<link rel="stylesheet" href="diy/diy-editor.css?v=20261106f">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.0/fabric.min.js"></script>
-<script src="diy/diy-editor.js?v=20261105m"></script>
+<script src="diy/diy-editor.js?v=20261106g"></script>
 <!-- 다음(카카오) 우편번호 검색 — 우편번호를 모르는 고객도 주소만 검색하면 우편번호+주소가 자동으로 채워집니다.
      (구 URL이던 ssl.daumcdn.net/dmaps/map_js_init/postcode.v2.js는 더 이상 응답하지 않아, 현재 공식 URL인
      t1.kakaocdn.net 쪽으로 바꿨습니다 — 2024년경 다음 우편번호 서비스가 카카오 도메인으로 이전되었습니다.) -->
@@ -1220,19 +1220,21 @@ const DIY_MAX_SPREADS = 4;
 // 앞부분 10p 고정(2026-11-05 결정): 펼침면 빼기·더하기 없음 → 쪽수 계산이 기존 사이트(고정 10p)와 같아
 // 원장님은 주제 5~6개만 고르면 32~40p가 됨. false로 바꾸면 펼침면 0~4개를 고를 수 있음(2~10p, 늘 짝수).
 const DIY_FIXED_FRONT = true;
-const DIY_SPREAD_ORDER = ['greeting', 'class', 'space', 'flow', 'teacher', 'blank'];   // [펼침면 추가] 때 아직 안 쓴 구성부터
+const DIY_SPREAD_ORDER = ['greeting', 'class', 'care', 'flow', 'space', 'timetable', 'teacher', 'curriculum', 'books', 'blank'];
+// 2026-11-06 개편: 3p 학원 소개는 위치·레이아웃 고정(내용만 입력), 12p는 매쓰홀릭이 준비한 '쉬어 가는 페이지'(그림, 편집 없음), 4~11p 네 자리는 두 쪽 템플릿 10종 중 선택.
+// 처음 열면 네 자리는 인사말·수업 방식·학생 관리·상담 절차(원장님이 바꿀 수 있음).
 const diyBook = {
-  info: { academy:'', director:'', cover:'', logoUrl:null, profileUrl:null },
+  info: { academy:'', director:'', cover:'', logoUrl:null, profileUrl:null, address:'', phone:'', visit:'' },
   first: { kind:'single', side:'R', layout:'intro', theme:'clean', saved:null },
-  spreads: ['greeting', 'class', 'space', 'flow'].map(layout => ({ kind:'spread', layout, theme:'clean', saved:null })),
-  last: { kind:'single', side:'L', layout:'prologue', theme:'clean', saved:null },   // 12p 고정 안내 페이지(#OUR WAY) — 13p부터 주제별 간지
+  spreads: ['greeting', 'class', 'care', 'flow'].map(layout => ({ kind:'spread', layout, theme:'clean', saved:null, cache:{}, guide:{} })),
+  last: { kind:'single', side:'L', layout:'prologue', theme:'clean', saved:null },   // 12p 쉬어 가는 페이지(매쓰홀릭 고정 그림) — 13p부터 주제별 간지
 };
 if(window.DiyEditor) DiyEditor.setBook(diyBook);
 // 온보딩 투어: 고정 3묶음(다릅니다·인사말·고르는 법) 안내 3개를 [우리 학원 소개하기] 하나로 바꿉니다.
 if(DIY_ENABLED){
   const i = TOUR_STEPS.findIndex(t => t.target === '#commonSectionsInline .cb-section:nth-child(3)');
   if(i >= 0) TOUR_STEPS.splice(i, 3, { panel:1, target:'#commonSectionsInline .cb-section:nth-child(3)',
-    title:'우리 학원 소개하기', desc:'3p~12p(10p)를 원장님이 직접 꾸며요. [우리 학원 소개하기]를 누르면 학원 기본 정보와 페이지를 한 화면에서 채울 수 있어요. 꼭 쓸 것만 채우면 나머지는 추천 문구로 들어가요.',
+    title:'우리 학원 소개하기', desc:'3p 학원 소개와 12p 쉬어 가는 페이지는 위치가 고정이고, 4~11p 네 자리는 원장님이 템플릿을 골라 채워요. [우리 학원 소개하기]를 누르면 학원 기본 정보와 페이지를 한 화면에서 채울 수 있어요.',
     mode:'info' });
 }
 function diyActive(){ return DIY_ENABLED && configMode === 'custom'; }
@@ -1252,6 +1254,62 @@ function diyGreeting(){
   return s ? DiyEditor.greetingText(s) : '';
 }
 
+// 13p부터 들어갈 매쓰홀릭 프로그램 페이지(편집기 아래 줄·미리보기용, 편집 불가).
+// 엔진 조립 규칙과 같게: 고른 주제의 원본 쪽을 섹션별 간지와 함께 원래 쪽 순서로 모으고, 새 쪽 번호의 좌우(L/R) 이미지를 씁니다.
+// 주제를 고르기 전에는 예시 주제(진단·문제풀이클리닉·내신대비·모바일보고서)로 보여줍니다.
+const DIY_SAMPLE_TOPICS = [1, 5, 7, 11];
+const SECTION_DIVIDER = { DIAG:13, ANLS:20, PRSC:25, EXAM:38, SHARE:50, CONTEST:56 };
+function diyBackPages(){
+  const sample = selectedTopics.size === 0;
+  const chosen = TOPICS.filter(t => sample ? DIY_SAMPLE_TOPICS.includes(t.id) : selectedTopics.has(t.id));
+  const secs = [...new Set(chosen.map(t => t.section))];
+  const src = [...secs.map(sc => ({ p:SECTION_DIVIDER[sc], title:'간지' })), ...chosen.flatMap(t => t.pages.map(p => ({ p, title:t.label })))].sort((a, b) => a.p - b.p);
+  let no = 3 + diyFrontPages();
+  const pages = src.map(x => { const n = no++; return { no:n, title:x.title, src:`${ENGINE_BASE}pages/p${String(x.p).padStart(3, '0')}_${n % 2 ? 'R' : 'L'}.jpg` }; });
+  const items = [];
+  if(pages.length) items.push({ mh:true, sample, title:pages[0].title, imgs:[pages[0]] });   // 13p는 12p(쉬어 가는 페이지)와 마주 봄
+  for(let i = 1; i < pages.length; i += 2) items.push({ mh:true, sample, title:[...new Set(pages.slice(i, i + 2).map(x => x.title))].join('·'), imgs:pages.slice(i, i + 2) });
+  return items;
+}
+
+// ===================== 저장 · 재접속 (2026-11-06) =====================
+// 맞춤형 구성(표지·주제·우리 학원 소개하기의 글·사진·위치)을 이 브라우저의 IndexedDB에 저장합니다.
+// 사진이 들어가 용량이 커서 localStorage 대신 IndexedDB를 씁니다. 다시 들어오면 그대로 불러옵니다.
+const SAVE_DB = 'mhBrandbook', SAVE_KEY = 'customBook';
+function idb(){ return new Promise((res, rej)=>{ const r = indexedDB.open(SAVE_DB, 1); r.onupgradeneeded = ()=> r.result.createObjectStore('kv'); r.onsuccess = ()=> res(r.result); r.onerror = ()=> rej(r.error); }); }
+async function idbSet(k, v){ const db = await idb(); return new Promise((res, rej)=>{ const tx = db.transaction('kv', 'readwrite'); tx.objectStore('kv').put(v, k); tx.oncomplete = res; tx.onerror = ()=> rej(tx.error); }); }
+async function idbGet(k){ const db = await idb(); return new Promise((res, rej)=>{ const r = db.transaction('kv').objectStore('kv').get(k); r.onsuccess = ()=> res(r.result); r.onerror = ()=> rej(r.error); }); }
+let saveStateTimer = null, stateRestored = false;
+function saveState(){
+  if(!stateRestored) return;   // 불러오기 전에 빈 상태로 덮어쓰지 않도록
+  clearTimeout(saveStateTimer);
+  saveStateTimer = setTimeout(async ()=>{
+    try{
+      const book = JSON.parse(JSON.stringify(diyBook, (k, v)=> k.startsWith('_') ? undefined : v));
+      await idbSet(SAVE_KEY, { v:1, savedAt:Date.now(), configMode, cover:themeState.selectedCoverId, topics:[...selectedTopics], book });
+    }catch(err){ console.warn('[저장] 실패', err); }
+  }, 400);
+}
+async function restoreState(){
+  try{
+    const st = await idbGet(SAVE_KEY);
+    if(st && st.v === 1 && st.book){
+      Object.assign(diyBook.info, st.book.info || {});
+      Object.assign(diyBook.first, st.book.first || {});
+      // 12p는 늘 매쓰홀릭 고정 페이지(쉬어 가는 페이지) — 예전에 '오시는 길'로 저장한 것도 고정 페이지로 바꿈
+      Object.assign(diyBook.last, { kind:'single', side:'L', layout:'prologue', theme:'clean', saved:null });
+      (st.book.spreads || []).forEach((s, i)=>{ if(diyBook.spreads[i]) Object.assign(diyBook.spreads[i], s); });
+      if(st.cover && findCover(st.cover)) themeState.selectedCoverId = st.cover;
+      selectedTopics.clear(); (st.topics || []).forEach(t => selectedTopics.add(t));
+      if(st.configMode) setConfigMode(st.configMode);
+      renderCommonSections(); renderTopics(); updateSummary();
+      if(st.configMode === 'custom'){ goCat('kit'); showToast('지난번에 만들던 브랜드북을 불러왔어요.'); }
+    }
+  }catch(err){ console.warn('[불러오기] 실패', err); }
+  stateRestored = true;
+}
+window.addEventListener('beforeunload', ()=>{ if(window.DiyEditor) DiyEditor.flush(); });
+
 // STEP 1 [우리 학원 소개하기]: 어떤 페이지가 만들어지는지 앞 3칸을 예시로 보여주고, 버튼으로 편집기를 엽니다.
 function renderDiyFront(){
   const el = document.getElementById('diyFrontGrid');
@@ -1264,7 +1322,7 @@ function renderDiyFront(){
       <button type="button" class="btn primary" id="btnOpenIntro" style="width:auto;padding:12px 22px;">우리 학원 소개하기</button>
       <span class="intro-status">${DiyEditor.requiredDone() ? `<b>✓ ${info.academy.replace(/</g, '&lt;')}</b> · ` : ''}앞부분 ${diyFrontPages()}p</span>
     </div>
-    <p class="note" style="margin:8px 0 0;">표지(학원명·표지 문구·원장명·사진)와 3p~12p(10p)를 한 화면에서 채워요. 고치지 않은 페이지는 추천 문구로 들어가요.</p>`;
+    <p class="note" style="margin:8px 0 0;"><b>고정</b> 표지(앞표지·안쪽 표지) · 3p 학원 소개 · 12p 쉬어 가는 페이지 &nbsp;/&nbsp; <b>맞춤</b> 4~11p 네 자리: ${diyBook.spreads.map((s, i) => `${4 + i * 2}~${5 + i * 2}p ${diyName(s)}`).join(' · ')}<br>템플릿을 고르고 작성 도우미에서 키워드를 골라 적용하면 돼요. 작성한 내용은 이 브라우저에 자동 저장돼요.</p>`;
   document.getElementById('btnOpenIntro').onclick = ()=> openDiy(0);
   el.querySelectorAll('.is-img').forEach(box => {
     const s = show[+box.dataset.i];
@@ -1282,13 +1340,14 @@ async function drawDiyThumb(slot, box){
     if(box.isConnected) box.innerHTML = urls.map(u => `<img alt="" src="${u}">`).join('');
   }catch(err){ console.error(err); }
 }
-async function openDiy(start){
+async function openDiy(start, startMode){
   const data = await loadEngineData();
   DiyEditor.openBook(diyBook, {
-    start, cv: data.cv, cover: (findCover(themeState.selectedCoverId) || COVERS[0]).engine, base: ENGINE_BASE,
+    start, startMode, cv: data.cv, cover: (findCover(themeState.selectedCoverId) || COVERS[0]).engine, base: ENGINE_BASE,
     labelsFor: diyLabels, frontPages: diyFrontPages, maxSpreads: DIY_MAX_SPREADS, spreadOrder: DIY_SPREAD_ORDER,
-    fixed: DIY_FIXED_FRONT,
+    fixed: DIY_FIXED_FRONT, backPages: diyBackPages,
     onChange: ()=> updateSummary(),
+    onSave: ()=> saveState(),
     onClose: (r)=>{
       renderDiyFront(); updateSummary();
       if(r && r.complete){
@@ -1472,7 +1531,7 @@ function renderCommonSections(){
     <div class="cb-section">
       <div class="cb-head">
         <div class="cb-title">우리 학원 소개하기</div>
-        <div class="cb-desc">3p~12p (10p)<br>직접 꾸미기</div>
+        <div class="cb-desc">3p·12p 고정<br>4~11p 맞춤 구성</div>
       </div>
       <div class="intro-row" id="diyFrontGrid"></div>
     </div>`;
@@ -1484,6 +1543,7 @@ function renderCommonSections(){
       themeState.selectedCoverId = thumb.dataset.id;
       renderCommonSections();
       renderMiniSummary();
+      saveState();
     };
   });
 
@@ -1668,7 +1728,8 @@ function showToast(msg){
   t.textContent = msg; t.classList.add('show');
   clearTimeout(showToast.timer); showToast.timer = setTimeout(()=> t.classList.remove('show'), 3200);
 }
-function showDoneModal(message){
+function showDoneModal(message, title){
+  document.getElementById('doneTitle').textContent = title || '신청이 완료됐습니다!';
   document.getElementById('doneBody').textContent = message || '확인 후 순차적으로 진행해드릴게요.';
   document.getElementById('doneOverlay').classList.add('show');
 }
@@ -1714,6 +1775,7 @@ function renderTopics(){
       }
       renderTopics();
       updateSummary();
+      saveState();
     };
   });
 }
@@ -1802,6 +1864,7 @@ var configMode = null; // 'template' | 'custom'
 // mode를 null로 넘기면 두 카드 모두 선택 해제된 처음 상태로 돌아갑니다.
 function setConfigMode(mode){
   configMode = mode;
+  if(typeof saveState === 'function') saveState();
   document.querySelectorAll('#modeSelect .mode-card').forEach(c=>{
     c.classList.toggle('selected', c.dataset.mode === configMode);
   });
@@ -2052,6 +2115,10 @@ const GAS_SHARED_SECRET = 'academy-kit-2026';
 // 입력 확인까지는 그대로 동작하고, 메일을 보내기 직전에 멈춥니다. 팀 테스트에서 실제 발송을 확인할 때만 false로 바꿉니다.
 const TEST_SITE_NO_SEND = true;
 const TEST_SITE_NO_SEND_MESSAGE = '테스트 사이트라 실제로 발송하지 않아요. 입력하신 내용은 확인만 했습니다.';
+// 브랜드북 [제작 요청하기] 완료 안내 (2026-11-06). 제작·배송 기간이 정해지면 아래 숫자만 바꾸면 됩니다.
+const KIT_DELIVERY_DAYS = '0~0';
+const KIT_DONE_TITLE = '신청이 완료되었어요.';
+const KIT_DONE_MESSAGE = `예쁘게 만들어서 배송해드릴게요(${KIT_DELIVERY_DAYS}일 소요)`;
 
 let lastPdfBase64 = null;
 let lastPdfFileName = null;
@@ -2140,7 +2207,8 @@ async function sendToVendor(){
     statusEl.textContent = '배송 주소를 정확히 입력해주세요.'; return;
   }
 
-  if(TEST_SITE_NO_SEND){ statusEl.textContent = TEST_SITE_NO_SEND_MESSAGE; return; }
+  // 테스트 사이트: 실제로 보내지는 않지만, 원장님이 보게 될 완료 안내는 그대로 보여줍니다.
+  if(TEST_SITE_NO_SEND){ statusEl.textContent = TEST_SITE_NO_SEND_MESSAGE; showDoneModal(KIT_DONE_MESSAGE, KIT_DONE_TITLE); return; }
   btn.disabled = true;
   statusEl.textContent = '이메일을 발송하는 중...';
   try{
@@ -2186,7 +2254,7 @@ async function sendToVendor(){
     if(data.status === 'ok'){
       statusEl.textContent = '제작 요청이 접수되었습니다. 신청해주셔서 감사합니다.';
       document.getElementById('btnRestartKit').style.display = 'block';
-      showDoneModal('학원맞춤키트 신청이 완료됐습니다. 확인 후 순차적으로 제작·발송해드릴게요.');
+      showDoneModal(KIT_DONE_MESSAGE, KIT_DONE_TITLE);
     } else {
       statusEl.textContent = '발송 중 문제가 발생했습니다: ' + (data.message || '알 수 없는 오류') + ' 잠시 후 다시 시도해주세요.';
     }
@@ -2521,6 +2589,9 @@ async function buildPdf(){
 document.getElementById('btnBuild').onclick = ()=>{ syncBookToForm(); buildPdf(); };
 
 updateSummary();
+restoreState();
 </script>
-</body>
-</html>
+
+
+
+</body></html>
