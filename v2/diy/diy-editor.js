@@ -97,7 +97,7 @@ const LAYOUTS = {
   blank1: { kind:'single', name:'빈 페이지', sub:'처음부터 직접', build: g => [academyText(at(g).L)] },
   // 고정 페이지: 디자이너가 만든 그림(재단 크기 182×257) 한 장. 원장님은 바꾸지 않고, 구성 목록에도 나오지 않습니다.
   // 12p 안내(#OUR WAY) — 13p부터 주제별 간지가 시작됨을 알림(2026-11-05).
-  prologue: { kind:'single', name:'안내 페이지', sub:'고정', fixed:'diy/fixed/p012_prologue.jpg', build: () => [] },
+  prologue: { kind:'single', name:'쉬어 가는 페이지', sub:'고정', fixed:'diy/fixed/p012_prologue.jpg', build: () => [] },
 
   // ---------- 펼침면 ----------
   greeting: { kind:'spread', name:'인사말', sub:'제목 + 본문 (마지막 문장은 안쪽 표지에도)', greeting:true, build: g => { const { L, R } = at(g); return [
@@ -476,7 +476,7 @@ function renderForm(){
   const box = $('dxForm');
   if(mode !== 'A') return;
   if(isInfo()) return renderInfoForm();
-  if(isLocked()){ box.innerHTML = '<p class="dx-note">이 페이지는 본사가 준비한 고정 안내 페이지예요. 다음 쪽부터 주제별 구성이 시작돼요. 따로 꾸미지 않아도 돼요.</p>'; return; }
+  if(isLocked()){ box.innerHTML = '<p class="dx-note">매쓰홀릭이 준비한 고정 페이지예요. 다음 쪽부터 주제별 구성이 시작돼요. 따로 꾸미지 않아도 돼요.</p>'; return; }
   const objs = canvas.getObjects().filter(o => o.key);
   if(!objs.length){ box.innerHTML = '<p class="dx-note">빈 페이지는 [상세 편집]에서 글과 사진을 넣어요.</p>'; return; }
   box.innerHTML = objs.map(o => {
@@ -591,14 +591,13 @@ function renderStrip(){
   const items = pages.map((s, i) => `<div class="dx-st ${i === cur ? 'on' : ''} ${i === 0 ? 'info' : s.kind}" data-go="${i}">
       <div class="dx-st-img" data-thumb="${i}">${i === 0 ? '<span>표지·<br>기본 정보</span>' : ''}</div>
       <div class="dx-st-cap">${labelsAt(i).join('~')}<b>${nameAt(i)}</b></div>
-      <div class="dx-st-tag ${isFixed(s) ? 'fixed' : isDone(i) ? 'done' : isRequired(i) ? 'need' : ''}">${isFixed(s) ? '고정' : isDone(i) ? '✓ 완료' : isRequired(i) ? '필수' : '추천 문구'}</div>
+      ${!isFixed(s) && isDone(i) ? '<span class="dx-st-done" title="꾸밈">✓</span>' : ''}
       ${s.kind === 'spread' && !opts.fixed ? `<button type="button" class="dx-st-del" data-del="${i}" title="이 펼침면 빼기">✕</button>` : ''}
     </div>`);
   if(!opts.fixed && book.spreads.length < max) items.splice(items.length - 1, 0, `<button type="button" class="dx-st-add" id="dxAddSpread">+ 펼침면<br><small>2쪽 추가</small></button>`);
-  const req = requiredList(), need = req.filter(isDone).length;
-  const others = pages.map((s, i) => i).filter(i => i > 0 && !req.includes(i) && !isFixed(pages[i])), opt = others.filter(isDone).length;
-  $('dxStrip').innerHTML = `<div class="dx-strip-row">${items.join('')}</div>
-    <div class="dx-strip-sum"><span class="dx-bar"><i style="width:${need / req.length * 100}%"></i></span> 필수 <b>${need}/${req.length}</b> 완료 · 나머지 ${others.length}개는 추천 문구로 들어가요(고친 것 ${opt}) · 앞부분 ${opts.frontPages ? opts.frontPages() : ''}p</div>`;
+  // 아래 줄은 썸네일 + 쪽·이름만(2026-11-05 QA — '필수/추천 문구/고정' 표시와 진행 줄이 복잡해 뺌). 꾸민 페이지는 ✓만.
+  // 꼭 써야 하는 페이지는 [완료]를 누를 때 그 페이지로 옮겨 안내함(missingRequired)
+  $('dxStrip').innerHTML = `<div class="dx-strip-row">${items.join('')}</div>`;
   $('dxStrip').querySelectorAll('[data-thumb]').forEach(async el => {
     const i = +el.dataset.thumb; if(i === 0) return;
     const urls = await stripThumb(pages[i]);
@@ -621,7 +620,7 @@ async function goTo(i){
   const lock = !s.info && isFixed(s);
   $('dxLayoutBox').hidden = $('dxDetailBox').hidden = !!s.info || lock;
   $('dxTabs').style.visibility = s.info || lock ? 'hidden' : '';
-  $('dxFormTitle').textContent = s.info ? '학원 기본 정보' : '내용 입력';
+  $('dxFormTitle').textContent = s.info ? '학원 기본 정보' : lock ? nameAt(i) : '내용 입력';   // 고정 페이지는 꼭지명(쉬어 가는 페이지)
   $('dxStageNote').textContent = s.info ? '인쇄했을 때의 펼침면 모습이에요. 표지 글자는 대략적인 모습이에요.' : '';
   userZoom = 1;
   canvas.setBackgroundImage(null); canvas.setDimensions({ width:g.W * zoom, height:g.H * zoom }); canvas.setZoom(zoom);

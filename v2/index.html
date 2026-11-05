@@ -945,9 +945,9 @@
 <!-- 엔진을 고치면 ?v= 값을 바꿔 브라우저에 남은 예전 엔진을 쓰지 않게 합니다 -->
 <script src="brandbook/engine.js?v=20261105b"></script>
 <!-- 앞부분(3~12p) 직접 꾸미기 편집기 (2026-11-05). 편집기를 고치면 ?v= 값을 바꿉니다. -->
-<link rel="stylesheet" href="diy/diy-editor.css?v=20261105d">
+<link rel="stylesheet" href="diy/diy-editor.css?v=20261105f">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.0/fabric.min.js"></script>
-<script src="diy/diy-editor.js?v=20261105g"></script>
+<script src="diy/diy-editor.js?v=20261105h"></script>
 <!-- 다음(카카오) 우편번호 검색 — 우편번호를 모르는 고객도 주소만 검색하면 우편번호+주소가 자동으로 채워집니다.
      (구 URL이던 ssl.daumcdn.net/dmaps/map_js_init/postcode.v2.js는 더 이상 응답하지 않아, 현재 공식 URL인
      t1.kakaocdn.net 쪽으로 바꿨습니다 — 2024년경 다음 우편번호 서비스가 카카오 도메인으로 이전되었습니다.) -->
@@ -1262,9 +1262,9 @@ function renderDiyFront(){
       `<div><div class="is-img ${s.kind}" data-i="${i}"></div><div class="is-cap">${diyLabels(s).join('~')} ${diyName(s)}</div></div>`).join('')}</div>
     <div class="intro-actions">
       <button type="button" class="btn primary" id="btnOpenIntro" style="width:auto;padding:12px 22px;">우리 학원 소개하기</button>
-      <span class="intro-status">${DiyEditor.requiredDone() ? `<b>✓ 필수 완료</b> · ${info.academy.replace(/</g, '&lt;')} · ` : '<span style="color:var(--warn)">꼭 쓸 것: 학원 기본 정보 · 3p 학원 소개 · 인사말</span> · '}앞부분 ${diyFrontPages()}p 고정 (나머지는 추천 문구로 들어가요)</span>
+      <span class="intro-status">${DiyEditor.requiredDone() ? `<b>✓ ${info.academy.replace(/</g, '&lt;')}</b> · ` : ''}앞부분 ${diyFrontPages()}p</span>
     </div>
-    <p class="note" style="margin:8px 0 0;">학원 기본 정보(학원명·원장명·표지 문구·사진·로고)와 3p~12p(10p)를 한 화면에서 채워요. 꼭 쓸 것만 채우면 나머지는 추천 문구로 들어가요.</p>`;
+    <p class="note" style="margin:8px 0 0;">학원 기본 정보(학원명·원장명·표지 문구·사진·로고)와 3p~12p(10p)를 한 화면에서 채워요. 고치지 않은 페이지는 추천 문구로 들어가요.</p>`;
   document.getElementById('btnOpenIntro').onclick = ()=> openDiy(0);
   el.querySelectorAll('.is-img').forEach(box => {
     const s = show[+box.dataset.i];
