@@ -18,6 +18,10 @@
 .dx-btn{ border:0; border-radius:10px; padding:9px 16px; font:inherit; font-weight:600; cursor:pointer; background:var(--paleMint, #EAF7F4); color:var(--deepTeal); }
 .dx-btn:hover{ filter:brightness(0.97); }
 .dx-btn.primary{ background:var(--deepTeal); color:#fff; }
+/* [완료]: 모든 칸을 확인하기 전에는 흰 버튼, 다 확인하면 채운 색 (2026-11-05 QA — 처음부터 진하게 있어 거슬림) */
+#dxDone{ background:#fff; color:var(--muted); box-shadow:inset 0 0 0 1px var(--line, #EAEFEE); }
+#dxDone.ready{ background:var(--deepTeal); color:#fff; box-shadow:none; }
+#dxDone:focus:not(:focus-visible){ outline:none; }
 .dx-btn.small{ padding:6px 10px; font-size:13px; border-radius:8px; }
 .dx-tabs{ display:flex; gap:4px; background:var(--paleMint, #EAF7F4); border-radius:10px; padding:3px; }
 .dx-tabs button{ border:0; background:none; font:inherit; font-size:14px; font-weight:600; color:var(--body); padding:6px 14px; border-radius:8px; cursor:pointer; }

@@ -292,53 +292,35 @@ function stack(cv, items, x0, y0, w){
   items.forEach(([str, spec]) => { if(!str) return; const t = paraText(str, spec, x0, y, w); cv.add(t); y += t.height; });
 }
 const imgP = (url, opt) => new Promise(res => fabric.Image.fromURL(url, img => res(img), opt));
-// 인쇄 기준 펼침면 두 개: [표4 뒤표지 | 표1 앞표지], [표2 안쪽 표지 | 3p] (2026-11-05 — 표1은 오른쪽, 표4는 왼쪽)
-// 화면이 가로로 넓으면 두 펼침면을 옆으로 나란히(더 크게 보임), 좁으면 위아래로 (2026-11-05 QA)
-const INFO_LABEL = 8, INFO_GAP = 12;
-const INFO_ROW2 = INFO_LABEL + H + INFO_GAP, INFO_COL2 = PAGE_W * 2 + BLEED * 2 + INFO_GAP;
-const INFO_GEOM = { W:0, H:0, dx:0, dy:0, pages:[], fold:BLEED + PAGE_W, info:true };
-function setInfoLayout(wide){
-  Object.assign(INFO_GEOM, wide ? { W:INFO_COL2 + PAGE_W * 2 + BLEED * 2, H:INFO_LABEL + H, dx:INFO_COL2, dy:0 }
-    : { W:PAGE_W * 2 + BLEED * 2, H:INFO_ROW2 + INFO_LABEL + H, dx:0, dy:INFO_ROW2 });
-}
-setInfoLayout(false);
-async function drawInfo(cv, info, coverCode, cvJson, base){
+// 표지 기본 정보: 표1(앞표지)·표2(안쪽 표지)를 낱장으로 하나씩 (2026-11-05 QA — 뒤표지는 빼고, 펼침면 대신 크게)
+const INFO_LABEL = 8;
+const INFO_N = 2;   // 아래 줄 맨 앞 두 칸 = 표1, 표2
+const INFO_GEOM = { W:PAGE_W + BLEED * 2, H:INFO_LABEL + H, pages:[], fold:0, info:true };
+async function drawInfo(cv, info, coverCode, cvJson, base, which = 'p1'){
   cv.clear(); cv.backgroundColor = '#fff';
   const set = cvJson.set[coverCode] || cvJson.set['01'];
   const pg = f => cvJson.pages.find(p => p.file.replace(/\.png$/, '') === f);
   const pxPerMm = cvJson.spreadSizePx[0] / cvJson.spreadSizeMm[0];
-  const cut = cvJson.cutPx, X1 = BLEED, X2 = BLEED + PAGE_W, DX = INFO_GEOM.dx, DY = INFO_GEOM.dy;
-  const Y1 = INFO_LABEL + BLEED, Y2 = DY + INFO_LABEL + BLEED;
-  const X1b = X1 + DX, X2b = X2 + DX;   // 두 번째 펼침면(표2 | 3p)
+  const cut = cvJson.cutPx, X = BLEED, Y1 = INFO_LABEL + BLEED;
   const lock = { selectable:false, evented:false };
-  const label = (t, x, y) => cv.add(new fabric.Text(t, Object.assign({ left:x, top:y, fontSize:3.6, fontFamily:FONT, fontWeight:600, fill:'#7C8C8E' }, lock)));
-  label('표4 뒤표지', X1, 1.5); label('표1 앞표지', X2, 1.5); label('표2 안쪽 표지', X1b, DY + 1.5); label('3p 학원 소개', X2b, DY + 1.5);
-  // 표지 이미지: 바깥(표4|표1)은 펼친 그대로, 안쪽은 왼쪽 반(표2)만
-  const out = await imgP(`${base}cover/${set[0]}.jpg?v=1`), out2 = await imgP(`${base}cover/${set[0]}.jpg?v=1`), inn = await imgP(`${base}cover/${set[1]}.jpg?v=1`);
-  const k = 1 / pxPerMm;
-  out.set(Object.assign({ cropX:cut.left[0], width:cut.left[1] - cut.left[0], left:X1, top:Y1, scaleX:k, scaleY:k }, lock));
-  out2.set(Object.assign({ cropX:cut.right[0], width:cut.right[1] - cut.right[0], left:X2, top:Y1, scaleX:k, scaleY:k }, lock));
-  inn.set(Object.assign({ cropX:cut.left[0], width:cut.left[1] - cut.left[0], left:X1b, top:Y2, scaleX:k, scaleY:k }, lock));
-  cv.add(out, out2, inn);
-  // 3p: 지금 꾸민(또는 예시) 내용
-  if(book && book.first){
-    const [u] = await renderPages(book.first, { ppi:60, quality:0.85 });
-    const im = await imgP(u); const s = PAGE_W / im.width;
-    im.set(Object.assign({ left:X2b, top:Y2, scaleX:s, scaleY:s }, lock)); cv.add(im);
-  }
-  cv.add(new fabric.Rect(Object.assign({ left:X2b, top:Y2, width:0.2, height:PAGE_H, fill:'rgba(0,0,0,.15)' }, lock)));
+  cv.add(new fabric.Text(which === 'p1' ? '표1 앞표지' : '표2 안쪽 표지', Object.assign({ left:X, top:1.5, fontSize:3.6, fontFamily:FONT, fontWeight:600, fill:'#7C8C8E' }, lock)));
+  // 표1 = 바깥 표지의 오른쪽 반, 표2 = 안쪽 표지의 왼쪽 반
+  const im0 = await imgP(`${base}cover/${set[which === 'p1' ? 0 : 1]}.jpg?v=1`), c = which === 'p1' ? cut.right : cut.left, k = 1 / pxPerMm;
+  im0.set(Object.assign({ cropX:c[0], width:c[1] - c[0], left:X, top:Y1, scaleX:k, scaleY:k }, lock));
+  cv.add(im0);
   const p1 = pg(set[0]), p2 = pg(set[1]);
   const get = (p, n) => p.items.find(i => i.name === n);
   // 표1: 표지 문구가 있으면 그것, 없으면 학원명 + BRANDBOOK
   const [top, strong] = coverLines(info.cover);
   const has = !!(top || strong);
-  const it = get(p1, has ? '표지문구' : '학원명_BRANDBOOK');
+  const it = which === 'p1' && get(p1, has ? '표지문구' : '학원명_BRANDBOOK');
   if(it) stack(cv, has ? [[top, it.paragraphs[0]], [strong, it.paragraphs[1]]] : [[info.academy || '학원명', it.paragraphs[0]], ['BRANDBOOK', it.paragraphs[1]]],
-    X2 + it.panelMm.x, Y1 + it.panelMm.y, it.panelMm.w);
+    X + it.panelMm.x, Y1 + it.panelMm.y, it.panelMm.w);
+  if(which !== 'p2'){ cv.requestRenderAll(); return; }
   // 표2: 프로필 사진(원형) · 학원명 BRANDBOOK · 원장명 · 맺음말
   const prof = get(p2, '프로필사진');
   if(prof){
-    const r = prof.panelMm.w / 2, cx = X1b + prof.panelMm.x + r, cy = Y2 + prof.panelMm.y + r;
+    const r = prof.panelMm.w / 2, cx = X + prof.panelMm.x + r, cy = Y1 + prof.panelMm.y + r;
     if(info.profileUrl){
       const im = await imgP(info.profileUrl);
       const s = Math.max(prof.panelMm.w / im.width, prof.panelMm.h / im.height);
@@ -348,10 +330,10 @@ async function drawInfo(cv, info, coverCode, cvJson, base){
     }else cv.add(new fabric.Circle(Object.assign({ left:cx - r, top:cy - r, radius:r, fill:'rgba(255,255,255,0.25)', stroke:'rgba(255,255,255,0.7)', strokeWidth:0.3, strokeDashArray:[1, 1] }, lock)));
   }
   const a = get(p2, '표2_학원명'), d = get(p2, '표2_원장명'), gr = get(p2, '표2_인사말');
-  if(a) stack(cv, [[info.academy || '학원명', a.paragraphs[0]], ['BRANDBOOK', a.paragraphs[1]]], X1b + a.panelMm.x, Y2 + a.panelMm.y, a.panelMm.w);
-  if(d) stack(cv, [[d.paragraphs[0].text.replace('[원장명]', info.director || '원장명'), d.paragraphs[0]]], X1b + d.panelMm.x, Y2 + d.panelMm.y, d.panelMm.w);
+  if(a) stack(cv, [[info.academy || '학원명', a.paragraphs[0]], ['BRANDBOOK', a.paragraphs[1]]], X + a.panelMm.x, Y1 + a.panelMm.y, a.panelMm.w);
+  if(d) stack(cv, [[d.paragraphs[0].text.replace('[원장명]', info.director || '원장명'), d.paragraphs[0]]], X + d.panelMm.x, Y1 + d.panelMm.y, d.panelMm.w);
   const close = (book && book.spreads.map(greetingText).find(Boolean) || '').split(/(?<=[.!?。])\s+/).filter(Boolean).slice(-2).join(' ');
-  if(gr && close) stack(cv, [[close, gr.paragraphs[0]]], X1b + gr.panelMm.x, Y2 + gr.panelMm.y, gr.panelMm.w);
+  if(gr && close) stack(cv, [[close, gr.paragraphs[0]]], X + gr.panelMm.x, Y1 + gr.panelMm.y, gr.panelMm.w);
   cv.requestRenderAll();
 }
 
@@ -360,8 +342,8 @@ async function drawInfo(cv, info, coverCode, cvJson, base){
 let mounted = false, canvas, g, slot = null, cur = 0, opts = {};
 let state = { theme:'clean', layout:null };
 let mode = 'A', zoom = 2, userZoom = 1, showGuides = true;
-let history = [], future = [], muted = false;
-const pagesOf = () => [{ info:true }, book.first, ...book.spreads, book.last];
+let history = [], future = [], muted = false, doneAsked = false;
+const pagesOf = () => [{ info:'p1' }, { info:'p2' }, book.first, ...book.spreads, book.last];
 
 function mount(){
   if(mounted) return;
@@ -403,11 +385,11 @@ function mount(){
   bind();
 }
 const isOpen = () => mounted && $('dxModal').classList.contains('show');
-const isInfo = () => cur === 0;
+const isInfo = () => cur < INFO_N;
 const isLocked = () => isFixed(slot);   // 고정 페이지: 보기만
 function setMsg(m, warn){ const el = $('dxMsg'); el.textContent = m; el.className = warn ? 'warn' : ''; }
-const labelsAt = i => i === 0 ? ['표지'] : (opts.labelsFor ? opts.labelsFor(pagesOf()[i]) : []);
-const nameAt = i => i === 0 ? '학원 기본 정보' : (LAYOUTS[pagesOf()[i].layout] || {}).name;
+const labelsAt = i => i < INFO_N ? [i === 0 ? '표1' : '표2'] : (opts.labelsFor ? opts.labelsFor(pagesOf()[i]) : []);
+const nameAt = i => i < INFO_N ? (i === 0 ? '앞표지' : '안쪽 표지') : (LAYOUTS[pagesOf()[i].layout] || {}).name;
 
 function fitCanvas(){
   const stage = $('dxStage');
@@ -507,19 +489,24 @@ function renderInfoForm(){
   const file = (k, label, hint) => `<div class="dx-fld"><label>${label} <small>${hint}</small></label><div class="dx-photo">
     ${i[k] ? `<img class="dx-thumb ${k === 'profileUrl' ? 'round' : ''}" alt="" src="${i[k]}">` : '<span class="st">아직 없어요</span>'}
     <span class="dx-photo-act">${i[k] ? `<button type="button" class="dx-link" data-clear="${k}">지우기</button>` : ''}<label class="dx-btn small" style="margin:0;">${i[k] ? '바꾸기' : '올리기'}<input type="file" accept="image/png,image/jpeg" hidden data-info-file="${k}"></label></span></div></div>`;
+  if(cur === 1){
+    $('dxForm').innerHTML = `
+    <div class="dx-fld"><label>원장명</label><input type="text" data-info="director" value="${esc(i.director)}" placeholder="예: 김홀릭"></div>
+    ${file('profileUrl', '원장님 프로필 사진', '얼굴이 가운데 오는 사진')}
+    <p class="dx-note">아래 맺음말은 4~5p 인사말의 마지막 문장이 들어가요. 오른쪽은 대략적인 모습이고, 정확한 배치는 다음 단계 미리보기에서 확인할 수 있어요.</p>`;
+    return;
+  }
   $('dxForm').innerHTML = `
     <div class="dx-fld"><label>학원명</label><input type="text" data-info="academy" value="${esc(i.academy)}" placeholder="예: 홀릭수학학원"></div>
-    <div class="dx-fld"><label>원장명 <small>안쪽 표지</small></label><input type="text" data-info="director" value="${esc(i.director)}" placeholder="예: 김홀릭"></div>
     <div class="dx-fld"><label>표지 문구 <small>앞표지</small></label>
       <p class="dx-hint">비워두면 '학원명 + BRANDBOOK'이 들어가요. 직접 쓰실 땐 두 줄로 써 주세요(첫 줄 얇은 글씨, 둘째 줄 굵은 글씨).</p>
       <textarea data-info="cover" rows="2" placeholder="예: 생각하는 힘을 키우는&#10;홀릭수학학원">${esc(i.cover)}</textarea></div>
-    ${file('profileUrl', '원장님 프로필 사진', '안쪽 표지 · 얼굴이 가운데 오는 사진')}
     ${file('logoUrl', '로고', '앞부분 페이지의 학원명 자리 · PNG 권장')}
     <p class="dx-note">표지는 STEP 1에서 고른 디자인으로 보여드려요. 오른쪽은 대략적인 모습이고, 정확한 배치는 다음 단계 미리보기에서 확인할 수 있어요.</p>`;
 }
 const readUrl = f => new Promise(res => { const r = new FileReader(); r.onload = () => res(r.result); r.readAsDataURL(f); });
 let infoTimer = null;
-function redrawInfo(){ clearTimeout(infoTimer); infoTimer = setTimeout(() => drawInfo(canvas, book.info, opts.cover, opts.cv, opts.base || 'brandbook/'), 150); }
+function redrawInfo(){ clearTimeout(infoTimer); infoTimer = setTimeout(() => drawInfo(canvas, book.info, opts.cover, opts.cv, opts.base || 'brandbook/', cur === 0 ? 'p1' : 'p2'), 150); }
 
 // 상세 편집
 function kindOf(o){ return o.type === 'textbox' ? '글' : o.role === 'frame' ? '칸' : o.role === 'photo' ? '사진' : o.role === 'logo' ? '로고' : '도형'; }
@@ -569,7 +556,7 @@ function setMode(m){
   $('dxEditor').dataset.info = isInfo() ? '1' : '';
   document.querySelectorAll('#dxTabs button').forEach(b => b.classList.toggle('on', b.dataset.m === m));
   canvas.discardActiveObject();
-  setMsg(isInfo() ? '입력하면 오른쪽 표지에 바로 반영돼요. 학원명을 넣고, 아래 줄에서 3p 학원 소개를 꾸며 주세요.'
+  setMsg(isInfo() ? (cur === 0 ? '학원명을 넣으면 앞표지에 바로 반영돼요.' : '원장명을 넣으면 안쪽 표지에 바로 반영돼요.')
     : m === 'A' ? (opts.fixed ? '' : '구성을 고르고 ') + '왼쪽 칸을 채우면 바로 반영돼요. 페이지의 글을 누르면 해당 칸으로 가요.'
     : '끌어서 옮기고, 모서리를 끌어 크기를 바꿔요. 글은 두 번 눌러 고쳐요.');
   refreshUI();
@@ -579,9 +566,13 @@ function setMode(m){
 // 앞부분은 모든 페이지가 책에 들어감(opts.fixed — 2026-11-05: 10p 고정). 그중 직접 써야 하는 것(필수)은
 // 학원 기본 정보(학원명·원장명) + 3p 학원 소개 + 인사말 펼침면(안쪽 표지 맺음말에도 쓰임).
 // 나머지는 추천 문구가 채워진 채로 들어가고, 고치면 '완료'로 표시됩니다.
-const requiredList = () => [0, 1, ...pagesOf().map((s, i) => (i > 1 && s.layout === 'greeting') ? i : -1).filter(i => i > 0)];
+const requiredList = () => [0, 1, INFO_N, ...pagesOf().map((s, i) => (i > INFO_N && s.layout === 'greeting') ? i : -1).filter(i => i > 0)];
 const isRequired = i => requiredList().includes(i);
-const isDone = i => i === 0 ? !!(book.info.academy.trim() && book.info.director.trim()) : !!pagesOf()[i].saved;   // 기본 정보 = 학원명 + 원장명
+const isDone = i => i === 0 ? !!book.info.academy.trim() : i === 1 ? !!book.info.director.trim() : !!pagesOf()[i].saved;   // 표1 = 학원명, 표2 = 원장명
+// ✓ 표시: 꼭 써야 하는 페이지는 채웠을 때, 나머지는 한 번 열어 봤을 때(추천 문구 그대로여도 됨)
+const visited = () => (book._visited = book._visited || []);
+const isClear = i => isRequired(i) ? isDone(i) : (visited().includes(i) || !!(pagesOf()[i] || {}).saved);
+const allClear = () => pagesOf().every((s, i) => isClear(i));
 function missingRequired(){ return requiredList().find(i => !isDone(i)); }
 
 // 아래 줄: 기본 정보 + 앞부분 페이지 (펼침면 빼기·더하기)
@@ -595,22 +586,41 @@ async function stripThumb(s){
   stripCache.set(s, { key, p });
   return p;
 }
+// 표1·표2 썸네일: 입력한 학원명·표지 문구가 들어간 모습
+const infoThumbCache = {};
+async function infoThumb(i){
+  const f = book.info, key = [opts.cover, f.academy, f.director, f.cover, f.profileUrl ? f.profileUrl.length : 0].join('|');
+  if(infoThumbCache[i] && infoThumbCache[i].key === key) return infoThumbCache[i].p;
+  const p = (async () => {
+    const k = PX_PER_MM(22), sc = new fabric.StaticCanvas(null, { width:INFO_GEOM.W * k, height:INFO_GEOM.H * k, renderOnAddRemove:false, enableRetinaScaling:false });
+    sc.setZoom(k);
+    await drawInfo(sc, f, opts.cover, opts.cv, opts.base || 'brandbook/', i === 0 ? 'p1' : 'p2');
+    sc.renderAll();
+    const u = sc.toDataURL({ format:'jpeg', quality:0.75, left:BLEED * k, top:(INFO_LABEL + BLEED) * k, width:PAGE_W * k, height:PAGE_H * k });
+    sc.dispose();
+    return u;
+  })();
+  infoThumbCache[i] = { key, p };
+  return p;
+}
 function renderStrip(){
   const pages = pagesOf();
   const max = opts.maxSpreads || 4;
-  const items = pages.map((s, i) => `<div class="dx-st ${i === cur ? 'on' : ''} ${i === 0 ? 'info' : s.kind}" data-go="${i}">
-      <div class="dx-st-img" data-thumb="${i}">${i === 0 ? '<span>표지·<br>기본 정보</span>' : ''}</div>
+  const items = pages.map((s, i) => `<div class="dx-st ${i === cur ? 'on' : ''} ${s.info ? 'single' : s.kind}" data-go="${i}">
+      <div class="dx-st-img" data-thumb="${i}"></div>
       <div class="dx-st-cap">${labelsAt(i).join('~')}<b>${nameAt(i)}</b></div>
-      ${!isFixed(s) && isDone(i) ? '<span class="dx-st-done" title="꾸밈">✓</span>' : ''}
+      ${isClear(i) ? '<span class="dx-st-done" title="확인함">✓</span>' : ''}
       ${s.kind === 'spread' && !opts.fixed ? `<button type="button" class="dx-st-del" data-del="${i}" title="이 펼침면 빼기">✕</button>` : ''}
     </div>`);
   if(!opts.fixed && book.spreads.length < max) items.splice(items.length - 1, 0, `<button type="button" class="dx-st-add" id="dxAddSpread">+ 펼침면<br><small>2쪽 추가</small></button>`);
   // 아래 줄은 썸네일 + 쪽·이름만(2026-11-05 QA — '필수/추천 문구/고정' 표시와 진행 줄이 복잡해 뺌). 꾸민 페이지는 ✓만.
   // 꼭 써야 하는 페이지는 [완료]를 누를 때 그 페이지로 옮겨 안내함(missingRequired)
   $('dxStrip').innerHTML = `<div class="dx-strip-row">${items.join('')}</div>`;
+  // [완료]는 모든 칸을 확인했을 때 채운 색으로 (그 전에는 흰 버튼 — 누르면 남은 페이지로 안내)
+  $('dxDone').classList.toggle('ready', allClear());
   $('dxStrip').querySelectorAll('[data-thumb]').forEach(async el => {
-    const i = +el.dataset.thumb; if(i === 0) return;
-    const urls = await stripThumb(pages[i]);
+    const i = +el.dataset.thumb;
+    const urls = i < INFO_N ? [await infoThumb(i)] : await stripThumb(pages[i]);
     if(el.isConnected) el.innerHTML = urls.map(u => `<img alt="" src="${u}">`).join('');
   });
 }
@@ -622,30 +632,28 @@ function commit(){
 async function goTo(i){
   commit();
   cur = i;
+  if(!visited().includes(i)) visited().push(i);
   const s = pagesOf()[i];
   slot = s.info ? null : s;
-  if(s.info){   // 위아래·옆 중 더 크게 보이는 쪽
-    const st = $('dxStage'), fitOf = (w, h) => Math.min((st.clientWidth - 48) / w, (st.clientHeight - 80) / h);
-    setInfoLayout(fitOf(INFO_COL2 + PAGE_W * 2 + BLEED * 2, INFO_LABEL + H) > fitOf(PAGE_W * 2 + BLEED * 2, INFO_ROW2 + INFO_LABEL + H));
-  }
   g = s.info ? INFO_GEOM : geom(s.kind, s.side);
   $('dxTitle').innerHTML = `우리 학원 소개하기<small>${labelsAt(i).join(' · ')} · ${esc(nameAt(i))}</small>`;
   $('dxLabels').innerHTML = s.info ? '' : labelsAt(i).map(l => `<span>${l}</span>`).join('');
   const lock = !s.info && isFixed(s);
   $('dxLayoutBox').hidden = $('dxDetailBox').hidden = !!s.info || lock;
   $('dxTabs').style.visibility = s.info || lock ? 'hidden' : '';
-  $('dxFormTitle').textContent = s.info ? '학원 기본 정보' : lock ? nameAt(i) : '내용 입력';   // 고정 페이지는 꼭지명(쉬어 가는 페이지)
-  $('dxStageNote').textContent = s.info ? '인쇄했을 때의 펼침면 모습이에요. 표지 글자는 대략적인 모습이에요.' : '';
+  $('dxFormTitle').textContent = s.info ? (i === 0 ? '앞표지' : '안쪽 표지') : lock ? nameAt(i) : '내용 입력';   // 고정 페이지는 꼭지명(쉬어 가는 페이지)
+  $('dxStageNote').textContent = s.info ? '표지 글자는 대략적인 모습이에요.' : '';
   userZoom = 1;
   canvas.setBackgroundImage(null); canvas.setDimensions({ width:g.W * zoom, height:g.H * zoom }); canvas.setZoom(zoom);
   history = []; future = [];
-  if(s.info){ await drawInfo(canvas, book.info, opts.cover, opts.cv, opts.base || 'brandbook/'); }
+  if(s.info){ await drawInfo(canvas, book.info, opts.cover, opts.cv, opts.base || 'brandbook/', s.info); }
   else if(lock){ canvas.clear(); canvas.backgroundColor = '#fff'; state.layout = slot.layout; canvas.add(await fixedImage(slot, g)); canvas.requestRenderAll(); }
   else if(slot.saved){ await restore(slot.saved); await fillAuto(canvas); history = [snapshot()]; }
   else await applyLayout(slot.layout, slot.theme, false);
   setMode('A');
   renderLayoutChips();
   renderStrip();
+  if(allClear()) setMsg('모두 확인했어요. 오른쪽 위 [완료]를 눌러 주세요.');
 }
 
 // 사진: 사진 칸(또는 넣어 둔 사진)이 골라져 있으면 그 크기에 맞춰 가운데를 잘라 넣고, 없으면 가로 80mm로 넣습니다.
@@ -680,6 +688,8 @@ function addObj(o){ canvas.add(o); setInteractive(); if(mode === 'B') canvas.set
 
 function bind(){
   window.addEventListener('resize', () => { if(isOpen()) fitCanvas(); });
+  // 아래 줄 썸네일이 늦게 채워져 무대 높이가 바뀌어도 다시 맞춤(처음 열 때 표지 아래가 잘렸음)
+  if(window.ResizeObserver) new ResizeObserver(() => { if(isOpen() && g) fitCanvas(); }).observe($('dxStage'));
   canvas.on('mouse:down', ({ target }) => {
     if(mode !== 'A' || !target || !target.key) return;
     const f = document.querySelector(`#dxForm .dx-fld[data-k="${target.key}"]`); if(!f) return;
@@ -809,10 +819,19 @@ function bind(){
     const miss = missingRequired();
     if(miss != null){
       if(miss !== cur) await goTo(miss);
-      return setMsg(miss === 0 ? (book.info.academy.trim() ? '원장명을 넣어 주세요. 안쪽 표지에 들어가요.' : '학원명을 넣어 주세요. 앞표지와 페이지 곳곳에 들어가요.')
-        : miss === 1 ? '3p 학원 소개는 꼭 꾸며 주세요. 예시 문구를 고치거나 [추천 문구]를 골라도 돼요.'
+      return setMsg(miss === 0 ? '학원명을 넣어 주세요. 앞표지와 페이지 곳곳에 들어가요.'
+        : miss === 1 ? '원장명을 넣어 주세요. 안쪽 표지에 들어가요.'
+        : miss === INFO_N ? '3p 학원 소개는 꼭 꾸며 주세요. 예시 문구를 고치거나 [추천 문구]를 골라도 돼요.'
         : '인사말은 꼭 써 주세요. 마지막 문장은 안쪽 표지에도 들어가요. [추천 문구]를 골라 고쳐 써도 돼요.', true);
     }
+    // 아직 안 연 페이지가 있으면 그 페이지로 한 번 안내(한 번 더 누르면 닫힘 — 안 고친 페이지는 추천 문구로 들어감)
+    const unseen = pagesOf().findIndex((x, i) => !isClear(i));
+    if(unseen >= 0 && !doneAsked){
+      doneAsked = true;
+      if(unseen !== cur) await goTo(unseen);
+      return setMsg('아직 확인하지 않은 페이지예요. 고치지 않으면 추천 문구로 들어가요. 그대로 마치려면 [완료]를 한 번 더 눌러 주세요.', true);
+    }
+    doneAsked = false;
     $('dxModal').classList.remove('show');
     opts.onClose && opts.onClose({ complete:true });
   };

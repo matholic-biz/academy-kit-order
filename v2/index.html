@@ -945,9 +945,9 @@
 <!-- 엔진을 고치면 ?v= 값을 바꿔 브라우저에 남은 예전 엔진을 쓰지 않게 합니다 -->
 <script src="brandbook/engine.js?v=20261105b"></script>
 <!-- 앞부분(3~12p) 직접 꾸미기 편집기 (2026-11-05). 편집기를 고치면 ?v= 값을 바꿉니다. -->
-<link rel="stylesheet" href="diy/diy-editor.css?v=20261105f">
+<link rel="stylesheet" href="diy/diy-editor.css?v=20261105g">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.0/fabric.min.js"></script>
-<script src="diy/diy-editor.js?v=20261105i"></script>
+<script src="diy/diy-editor.js?v=20261105k"></script>
 <!-- 다음(카카오) 우편번호 검색 — 우편번호를 모르는 고객도 주소만 검색하면 우편번호+주소가 자동으로 채워집니다.
      (구 URL이던 ssl.daumcdn.net/dmaps/map_js_init/postcode.v2.js는 더 이상 응답하지 않아, 현재 공식 URL인
      t1.kakaocdn.net 쪽으로 바꿨습니다 — 2024년경 다음 우편번호 서비스가 카카오 도메인으로 이전되었습니다.) -->
@@ -1269,7 +1269,7 @@ function renderDiyFront(){
   el.querySelectorAll('.is-img').forEach(box => {
     const s = show[+box.dataset.i];
     box.style.cursor = 'pointer';
-    box.onclick = ()=> openDiy(1 + slots.indexOf(s));
+    box.onclick = ()=> openDiy(2 + slots.indexOf(s));   // 편집기 아래 줄: 0 표1, 1 표2, 2부터 3p…
     drawDiyThumb(s, box);
   });
 }
@@ -1891,7 +1891,7 @@ document.getElementById('step1NextBtn').onclick = ()=>{
     }
   }
   // 필수(학원 기본 정보 + 3p 학원 소개)를 안 채웠으면 그 페이지부터
-  if(diyActive() && !DiyEditor.requiredDone()){ openDiy(diyBook.info.academy.trim() && diyBook.info.director.trim() ? 1 : 0); return; }
+  if(diyActive() && !DiyEditor.requiredDone()){ openDiy(!diyBook.info.academy.trim() ? 0 : !diyBook.info.director.trim() ? 1 : 2); return; }
   goStep(2);
 };
 
