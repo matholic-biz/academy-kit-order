@@ -937,7 +937,7 @@
 <script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@pdf-lib/fontkit@1.1.1/dist/fontkit.umd.min.js"></script>
 <!-- 엔진을 고치면 ?v= 값을 바꿔 브라우저에 남은 예전 엔진을 쓰지 않게 합니다 -->
-<script src="brandbook/engine.js?v=20261105"></script>
+<script src="brandbook/engine.js?v=20261105b"></script>
 <!-- 앞부분(3~12p) 직접 꾸미기 편집기 (2026-11-05). 편집기를 고치면 ?v= 값을 바꿉니다. -->
 <link rel="stylesheet" href="diy/diy-editor.css?v=20261105d">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.0/fabric.min.js"></script>
@@ -1355,7 +1355,7 @@ const selectedTopics = new Set();
 // 실제 업로드된 파일이 guide_1.png, greeting_1.png처럼 언더스코어로 되어있어 pageFile()도 언더스코어를 씁니다.
 function pageFile(prefix, idx){ return `../assets/pages/${prefix}_${idx}.png`; }
 function thumbFile(prefix, idx){ return `../assets/thumbs/${prefix}-${idx}.jpg`; }
-function frontCoverFile(name){ return `../assets/covers/${name}.jpg`; } // 앞표지 6종 실제 파일은 ../assets/covers 폴더에 jpg로 있습니다 (cover-1.jpg ~ cover-6.jpg).
+function frontCoverFile(name){ return `assets/covers/${name}.jpg`; } // 앞표지 12종 썸네일은 v2/assets/covers/cover-01.jpg ~ cover-12.jpg (엔진으로 학원명 + BRANDBOOK을 넣어 만든 이미지)
 // 미리보기 모달 이미지: 주제의 idx번째 페이지(1부터)를 엔진이 PDF에 쓰는 바탕 이미지로 보여줍니다.
 // (예전 사이트의 topic_N_k.png는 간지가 섞이고 페이지 구성이 달라 장수가 맞지 않아 쓰지 않습니다.)
 function topicFile(topicId, idx){
@@ -1378,20 +1378,17 @@ function pageBreakdown(){
 }
 function totalSelectedPages(){ return pageBreakdown().total; }
 
-// ===================== 표지 디자인 6종 =====================
-// front: 화면 썸네일용 앞표지 파일명 (../assets/covers/{front}.jpg, frontCoverFile() 참고).
-// engine: 미리보기 엔진(brandbook/brandbook_rules.json의 covers)의 표지 코드.
-//   엔진이 코드에 맞는 표지 세트를 고릅니다 — 01은 바깥 블랙 + 안쪽 그린, 02~06은 바깥 그린 + 안쪽 블랙.
-const COVERS = [
-  { id:'cover-1', name:'브랜드북 01', front:'cover-1', engine:'01' },
-  { id:'cover-2', name:'브랜드북 02', front:'cover-2', engine:'02' },
-  { id:'cover-3', name:'브랜드북 03', front:'cover-3', engine:'03' },
-  { id:'cover-4', name:'브랜드북 04', front:'cover-4', engine:'04' },
-  { id:'cover-5', name:'브랜드북 05', front:'cover-5', engine:'05' },
-  { id:'cover-6', name:'브랜드북 06', front:'cover-6', engine:'06' },
-];
+// ===================== 표지 디자인 12종 =====================
+// front: 화면 썸네일용 앞표지 파일명 (assets/covers/{front}.jpg, frontCoverFile() 참고).
+// engine: 미리보기 엔진(brandbook/brandbook_rules.json의 covers)의 표지 코드 = 표지 마스터 쪽 순서(2026-11-05 12종).
+//   안쪽 표지: 01·02·03·05·06은 그린, 나머지는 블랙 (엔진이 코드에 맞는 세트를 고름).
+//   예전 6종 번호 → 새 번호: 01→01, 02→08, 03→12, 04→09, 05→07, 06→11
+const COVERS = Array.from({ length:12 }, (_, i) => {
+  const n = String(i + 1).padStart(2, '0');
+  return { id:'cover-' + n, name:'브랜드북 ' + n, front:'cover-' + n, engine:n };
+});
 
-let themeState = { selectedCoverId:'cover-1' };
+let themeState = { selectedCoverId:'cover-01' };
 
 function findCover(id){ return COVERS.find(c=>c.id===id); }
 
@@ -1416,7 +1413,7 @@ function renderCommonSections(){
     <div class="cb-section">
       <div class="cb-head">
         <div class="cb-title">표지</div>
-        <div class="cb-desc">6종 중 선택</div>
+        <div class="cb-desc">12종 중 선택</div>
       </div>
       <div class="cb-grid">${coverThumbs}</div>
     </div>`;

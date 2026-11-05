@@ -1153,11 +1153,11 @@
     },
     "02": {
       "outer": "cover/cover02_out.png",
-      "inner": "cover/inner_black.png"
+      "inner": "cover/inner_green.png"
     },
     "03": {
       "outer": "cover/cover03_out.png",
-      "inner": "cover/inner_black.png"
+      "inner": "cover/inner_green.png"
     },
     "04": {
       "outer": "cover/cover04_out.png",
@@ -1165,10 +1165,34 @@
     },
     "05": {
       "outer": "cover/cover05_out.png",
-      "inner": "cover/inner_black.png"
+      "inner": "cover/inner_green.png"
     },
     "06": {
       "outer": "cover/cover06_out.png",
+      "inner": "cover/inner_green.png"
+    },
+    "07": {
+      "outer": "cover/cover07_out.png",
+      "inner": "cover/inner_black.png"
+    },
+    "08": {
+      "outer": "cover/cover08_out.png",
+      "inner": "cover/inner_black.png"
+    },
+    "09": {
+      "outer": "cover/cover09_out.png",
+      "inner": "cover/inner_black.png"
+    },
+    "10": {
+      "outer": "cover/cover10_out.png",
+      "inner": "cover/inner_black.png"
+    },
+    "11": {
+      "outer": "cover/cover11_out.png",
+      "inner": "cover/inner_black.png"
+    },
+    "12": {
+      "outer": "cover/cover12_out.png",
       "inner": "cover/inner_black.png"
     }
   },
@@ -1571,7 +1595,7 @@
     },
     "B": {
       "label": "추천 템플릿 B형",
-      "cover": "03",
+      "cover": "12",
       "totalPages": 40,
       "innerPages": 36,
       "spineMm": 2.6,
