@@ -97,7 +97,7 @@ const LAYOUTS = {
   blank1: { kind:'single', name:'빈 페이지', sub:'처음부터 직접', build: g => [academyText(at(g).L)] },
   // 고정 페이지: 디자이너가 만든 그림(재단 크기 182×257) 한 장. 원장님은 바꾸지 않고, 구성 목록에도 나오지 않습니다.
   // 12p 안내(#OUR WAY) — 13p부터 주제별 간지가 시작됨을 알림(2026-11-05).
-  prologue: { kind:'single', name:'쉬어 가는 페이지', sub:'고정', fixed:'diy/fixed/p012_prologue.jpg', build: () => [] },
+  prologue: { kind:'single', name:'쉬어 가는 페이지', sub:'고정', fixed:'diy/fixed/p012_prologue.jpg?v=20261105h', build: () => [] },
 
   // ---------- 펼침면 ----------
   greeting: { kind:'spread', name:'인사말', sub:'제목 + 본문 (마지막 문장은 안쪽 표지에도)', greeting:true, build: g => { const { L, R } = at(g); return [
