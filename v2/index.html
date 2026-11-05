@@ -11,7 +11,7 @@
     --deepTeal:#028090; --seafoam:#00A896; --mint:#02C39A;
     --lightMint:#D6F5ED; --paleMint:#EAF7F4; --ink:#10282B;
     --body:#45585B; --muted:#7C8C8E; --white:#FFFFFF; --warn:#C9432B; --warnBg:#FBEAE7;
-    --line:#EAEFEE;
+    --line:#EAEFEE; --sage:#557A70;   /* 안내 글씨용: 청록보다 채도를 뺀 그린(2026-11-05 QA) */
   }
   *{box-sizing:border-box;}
   body{margin:0;font-family:"Pretendard","Malgun Gothic","Apple SD Gothic Neo",system-ui,sans-serif;color:var(--ink);background:#fff;line-height:1.55;word-break:keep-all;overflow-wrap:break-word;}
@@ -118,7 +118,7 @@
   .tpl-info .field input,.tpl-info .field textarea{background:#F5F7F7;border-color:#F5F7F7;}
   .tpl-info .field input:focus,.tpl-info .field textarea:focus{background:#fff;}
   .tpl-more{margin-top:18px;border-top:1px solid var(--line);padding-top:14px;}
-  .tpl-more summary{cursor:pointer;font-weight:700;font-size:14px;color:var(--deepTeal);list-style:none;}
+  .tpl-more summary{cursor:pointer;font-weight:700;font-size:14px;color:var(--sage);list-style:none;}
   .tpl-more summary::-webkit-details-marker{display:none;}
   .tpl-more summary::before{content:'+ ';}
   .tpl-more[open] summary::before{content:'− ';}
@@ -138,7 +138,7 @@
   .template-diff img{width:100%;display:block;border:1px solid var(--line);border-radius:4px;cursor:zoom-in;}
   .template-diff figcaption{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   .template-diff figcaption{font-size:10.5px;color:var(--body);margin-top:2px;line-height:1.25;}
-  .tpl-lead{font-size:13.5px;color:var(--deepTeal);margin:0 0 10px;line-height:1.55;}
+  .tpl-lead{font-size:13.5px;color:var(--sage);margin:0 0 10px;line-height:1.55;}
   /* 입력 예시(placeholder)는 회색으로 — 실제 입력한 글과 구분 */
   .field input::placeholder,.field textarea::placeholder{color:#A3B0B1;opacity:1;}
   .field.ok .field-error{color:var(--seafoam);}
@@ -194,6 +194,10 @@
   .field-foot .field-error{margin-top:6px;}
   .field-foot .char-count{margin-left:auto;}
   .field input[readonly]{background:#F5F7F6;color:var(--muted);cursor:default;}
+  .field-head{display:flex;align-items:baseline;gap:10px;margin-bottom:6px;}
+  .field-head label{margin-bottom:0;}
+  .text-link{margin-left:auto;flex:0 0 auto;background:none;border:0;padding:0;font:inherit;font-size:12px;color:var(--sage);text-decoration:underline;text-underline-offset:2px;cursor:pointer;white-space:nowrap;}
+  .text-link[hidden]{display:none;}
   .char-count{text-align:right;font-size:11.5px;color:var(--muted);margin-top:6px;}
   .char-count.over{color:#D64545;font-weight:700;}
   .row2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
@@ -209,7 +213,9 @@
   .btn.plain:hover{background:#F7FAF9;}
   .btn:disabled{opacity:.45;cursor:not-allowed;}
 
-  #status{font-size:12.5px;color:var(--muted);margin-top:14px;white-space:pre-wrap;}
+  .status-row{display:flex;align-items:baseline;gap:12px;margin-top:14px;}
+  #status{font-size:12.5px;color:var(--muted);white-space:pre-wrap;}
+  .status-row .text-link:disabled{opacity:.45;cursor:default;}
   #status.err{color:var(--warn);}
   #previewWrap{margin-top:16px;display:none;}
   #previewWrap.show{display:block;}
@@ -233,7 +239,7 @@
 
   /* 발송 전 확인할 수 있는 신청 내용(구성 방식·표지·주제별 구성) 요약 카드 */
   .order-summary-box{background:var(--paleMint);border:1px solid var(--lightMint);border-radius:12px;
-    padding:16px 18px;margin-bottom:16px;}
+    padding:16px 18px;margin:32px 0 16px;}   /* 주소 칸과 붙어 보여 위 여백(2026-11-05 QA) */
   .order-summary-title{font-weight:800;font-size:13.5px;margin-bottom:10px;color:var(--ink);}
   .order-summary-row{display:flex;gap:10px;font-size:12.5px;line-height:1.6;padding:4px 0;}
   .order-summary-row .k{flex:0 0 auto;color:var(--muted);font-weight:700;white-space:nowrap;}
@@ -647,12 +653,12 @@
         <summary>소개 문구·인사말도 직접 쓰기 <span>(선택 · 지금은 준비된 문구가 들어가요)</span></summary>
         <div class="tpl-more-body">
         <div class="field">
-          <label>소개 문구 (3p) <span class="field-hint">- 우리학원은 이렇게 다릅니다</span></label>
+          <div class="field-head"><label>소개 문구 (3p) <span class="field-hint">- 우리학원은 이렇게 다릅니다</span></label><button type="button" class="text-link" data-preset="f_slogan" hidden>준비된 문구로 되돌리기</button></div>
           <textarea id="f_slogan" rows="4" maxlength="100" placeholder="우리 학원만의 차별점을 자유롭게 작성해주세요.&#10;&#10;예: 한 문제를 풀어도 왜 그런지 끝까지 묻게 합니다.&#10;학생마다 다른 출발점에서 시작해 스스로 답을 찾는 힘을 기릅니다."></textarea>
           <div class="char-count" id="f_slogan_count">0 / 100자</div>
         </div>
         <div class="field">
-          <label>인사말 (4~5p, 안쪽 표지) <span class="field-hint">- 학부모님께 전하는 인사말</span></label>
+          <div class="field-head"><label>인사말 (4~5p, 안쪽 표지) <span class="field-hint">- 학부모님께 전하는 인사말</span></label><button type="button" class="text-link" data-preset="f_greeting" hidden>준비된 문구로 되돌리기</button></div>
           <textarea id="f_greeting" rows="8" maxlength="300" placeholder="학부모님께 전하고 싶은 말씀을 편하게 작성해주세요.&#10;&#10;예: 아이들과 함께 자라는 학원이 되고 싶습니다.&#10;저는 이 지역에서 아이들에게 수학을 가르치고 있습니다. 같은 문제를 풀어도 아이마다 걸리는 곳이 다르기에, 한 명 한 명의 속도에 맞춰 차근차근 이끌어 가려 합니다.&#10;이 책에 저희 홀릭수학학원이 아이들을 어떻게 가르치고 살피는지 담았습니다. 아이의 공부를 함께 고민하는 데 작은 도움이 되길 바랍니다."></textarea>
           <div class="char-count" id="f_greeting_count">0 / 300자</div>
         </div>
@@ -684,15 +690,15 @@
   <!-- STEP 2: 미리보기 (2026-11-05 — 단계 순서: 구성·꾸미기 → 미리보기 → 주문 정보·제작 요청) -->
   <section class="panel" data-panel="2">
     <h2 id="step3Title">미리보기로 확인해주세요</h2>
-    <p class="desc" id="step3Desc">고르고 꾸민 내용이 실제 책에 들어간 모습이에요. 고칠 곳이 있으면 [이전]으로 돌아가 바꿀 수 있어요.</p>
-    <div id="status"></div>
+    <p class="desc" id="step3Desc">고르고 꾸민 내용이 실제 책에 들어간 모습이에요. 수정이 필요하면 아래 <b class="accent">[이전]</b> 버튼을 눌러 주세요.</p>
+    <!-- 상태 줄 + [미리보기 다시 만들기] 작은 링크: STEP 2에 들어오면 자동으로 만들어서 다시 만들기는 보조 동작(2026-11-05 QA) -->
+    <div class="status-row"><div id="status"></div><button type="button" class="text-link" id="btnBuild">미리보기 다시 만들기</button></div>
     <div class="warnbox" id="engineWarnings"></div>
     <div id="previewWrap">
       <div class="book-viewer" id="bookViewer"></div>
       <iframe id="previewFrame" hidden></iframe>
       <div class="preview-foot"><span class="preview-note">* 본사 검수를 거쳐 제작되며, 문구 배치가 일부 달라질 수 있어요.</span><a id="pdfDownload" class="pdf-download"><svg class="dl-icon" viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M8 2v8M4.5 6.8 8 10.3l3.5-3.5M3 13.5h10" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg><span>PDF 내려받기(출력 가능)</span></a></div>
     </div>
-    <button class="btn plain" id="btnBuild" style="width:100%;margin-top:12px;">미리보기 다시 만들기</button>
 
     <div class="nav">
       <button class="btn plain" data-prev="1">이전</button>
@@ -941,7 +947,7 @@
 <!-- 앞부분(3~12p) 직접 꾸미기 편집기 (2026-11-05). 편집기를 고치면 ?v= 값을 바꿉니다. -->
 <link rel="stylesheet" href="diy/diy-editor.css?v=20261105d">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.0/fabric.min.js"></script>
-<script src="diy/diy-editor.js?v=20261105f"></script>
+<script src="diy/diy-editor.js?v=20261105g"></script>
 <!-- 다음(카카오) 우편번호 검색 — 우편번호를 모르는 고객도 주소만 검색하면 우편번호+주소가 자동으로 채워집니다.
      (구 URL이던 ssl.daumcdn.net/dmaps/map_js_init/postcode.v2.js는 더 이상 응답하지 않아, 현재 공식 URL인
      t1.kakaocdn.net 쪽으로 바꿨습니다 — 2024년경 다음 우편번호 서비스가 카카오 도메인으로 이전되었습니다.) -->
@@ -1038,7 +1044,7 @@ const TOUR_STEPS = [
     title:'다음 단계로', desc:'원하시는 구성(표지 포함 전체 32p 이상, 또는 템플릿)을 다 고르셨다면 [다음] 버튼을 눌러주세요.',
     mode:'click', clickTarget:'#step1NextBtn' },
   { panel:2, target:'#bookViewer',
-    title:'미리보기', desc:'고르고 꾸민 내용이 실제 책에 들어간 모습이에요. [이전]·[다음]이나 아래 썸네일로 넘겨 보고, 고칠 곳이 있으면 STEP 1로 돌아가 바꿔 주세요.',
+    title:'미리보기', desc:'고르고 꾸민 내용이 실제 책에 들어간 모습이에요. [이전]·[다음]이나 아래 썸네일로 넘겨 보고, 수정이 필요하면 아래 [이전] 버튼을 눌러 주세요.',
     mode:'info' },
   { panel:2, target:'#step2NextBtn',
     title:'다음 단계로', desc:'미리보기를 확인했다면 [다음]을 눌러 주문 정보를 입력해주세요.',
@@ -1219,7 +1225,7 @@ const diyBook = {
   info: { academy:'', director:'', cover:'', logoUrl:null, profileUrl:null },
   first: { kind:'single', side:'R', layout:'intro', theme:'clean', saved:null },
   spreads: ['greeting', 'class', 'space', 'flow'].map(layout => ({ kind:'spread', layout, theme:'clean', saved:null })),
-  last: { kind:'single', side:'L', layout:'contact', theme:'clean', saved:null },
+  last: { kind:'single', side:'L', layout:'prologue', theme:'clean', saved:null },   // 12p 고정 안내 페이지(#OUR WAY) — 13p부터 주제별 간지
 };
 if(window.DiyEditor) DiyEditor.setBook(diyBook);
 // 온보딩 투어: 고정 3묶음(다릅니다·인사말·고르는 법) 안내 3개를 [우리 학원 소개하기] 하나로 바꿉니다.
@@ -1300,6 +1306,15 @@ const TPL_INTRO = '한 문제를 풀어도 왜 그런지 끝까지 묻게 합니
 const TPL_GREETING = '아이들과 함께 자라는 학원이 되고 싶습니다.\n같은 문제를 풀어도 아이마다 걸리는 곳이 다르기에, 한 명 한 명의 속도에 맞춰 차근차근 이끌어 갑니다. 진단으로 출발점을 확인하고, 틀린 문제는 이해할 때까지 다시 살핍니다.\n이 책에 저희가 아이들을 어떻게 가르치고 살피는지 담았습니다. 늘 곁에서 함께하겠습니다.';
 document.getElementById('f_slogan').value = TPL_INTRO;
 document.getElementById('f_greeting').value = TPL_GREETING;
+// 준비된 문구를 고치거나 지우면 [준비된 문구로 되돌리기]가 보임(2026-11-05 QA — 지우면 예시 글씨만 남아 돌아갈 길이 없었음)
+const TPL_PRESETS = { f_slogan: TPL_INTRO, f_greeting: TPL_GREETING };
+document.querySelectorAll('[data-preset]').forEach(btn => {
+  const ta = document.getElementById(btn.dataset.preset);
+  const sync = () => { btn.hidden = ta.value === TPL_PRESETS[ta.id]; };
+  ta.addEventListener('input', sync);
+  btn.onclick = () => { ta.value = TPL_PRESETS[ta.id]; ta.dispatchEvent(new Event('input')); };
+  sync();
+});
 // 엔진·신청 내용·접수 메일이 읽는 값: 맞춤형은 [우리 학원 소개하기]의 기본 정보와 꾸민 페이지, 추천 템플릿은 STEP 1 입력 칸.
 const val = id => document.getElementById(id).value.trim();
 function bookSource(){
@@ -1526,6 +1541,8 @@ const RECOMMENDED_TEMPLATES = [
 ];
 
 let selectedTemplateId = null;
+// 카드의 'A형과 5장이 달라요' 썸네일 줄: 글씨가 작고 해시태그·[펼침면 미리보기]와 겹쳐 뺌(2026-11-05 QA). true면 다시 보임
+const SHOW_TEMPLATE_DIFF = false;
 
 function renderTemplateSection(){
   const el = document.getElementById('templateSectionInline');
@@ -1538,10 +1555,10 @@ function renderTemplateSection(){
       <div class="template-body">
         <div class="template-name">${t.name}</div>
         ${t.tags ? `<div class="template-tags">${t.tags.map(x => `<span>#${x}</span>`).join('')}</div>` : (t.recommendFor ? `<div class="template-recommend">${t.recommendFor}</div>` : '')}
-        ${t.diff ? `<div class="template-diff"><div class="td-title"><b>${RECOMMENDED_TEMPLATES.find(x => x.id !== t.id).name.replace('추천 템플릿 ', '')}과 ${t.diff.length}장이 달라요</b></div>
+        ${(SHOW_TEMPLATE_DIFF && t.diff) ? `<div class="template-diff"><div class="td-title"><b>${RECOMMENDED_TEMPLATES.find(x => x.id !== t.id).name.replace('추천 템플릿 ', '')}과 ${t.diff.length}장이 달라요</b></div>
           <div class="td-row">${t.diff.map(([n, label]) => `<figure><img src="brandbook/pages/p${String(n).padStart(3,'0')}_R.jpg" alt="${n}p" data-big="brandbook/pages/p${String(n).padStart(3,'0')}_R.jpg" loading="lazy"><figcaption>${label}</figcaption></figure>`).join('')}</div></div>` : ''}
         <div class="template-actions">
-          <button class="template-preview-btn" data-id="${t.id}">📖 펼침면 미리보기</button>
+          <button class="template-preview-btn" data-id="${t.id}">펼침면 미리보기</button>
           <button class="template-select-btn ${selectedTemplateId===t.id?'is-selected':''}" data-id="${t.id}">${selectedTemplateId===t.id ? '✓ 선택됨' : '이 템플릿 선택'}</button>
         </div>
       </div>
@@ -1893,7 +1910,7 @@ function getConfigSummaryLines(){
   return [
     ['구성 방식', '맞춤형 구성'],
     ['표지 디자인', cover ? cover.name : '선택 안 됨'],
-    ...(diyActive() ? [[`앞부분 꾸미기 (${diyFrontPages()}p)`, diySlots().map(x => `${diyLabels(x).join('~')} ${diyName(x)}${x.saved ? '' : '(예시 그대로)'}`).join(', ')]] : []),
+    ...(diyActive() ? [[`앞부분 꾸미기 (${diyFrontPages()}p)`, diySlots().map(x => `${diyLabels(x).join('~')} ${diyName(x)}${DiyEditor.LAYOUTS[x.layout].fixed ? '(고정)' : x.saved ? '' : '(예시 그대로)'}`).join(', ')]] : []),
     [`주제별 구성 (${topics.length}개)`, topics.length ? topics.map(t=>t.label).join(', ') : '선택 안 됨'],
     ['총 페이지', (b=>`${b.total}p (내지 ${b.inner}p + 표지 ${b.cover}p)`)(pageBreakdown())],
   ];
@@ -2489,7 +2506,8 @@ async function buildPdf(){
     dl.download = lastPdfFileName.replace(/\.pdf$/, '_미리보기.pdf');
     document.getElementById('emailStatus').textContent = '';
 
-    setStatus(`완료되었습니다. 총 ${result.totalPages}페이지 (내지 ${result.innerPages}p + 표지 4p${result.blank ? ', 빈 페이지 1p 포함' : ''}) · ${(bytes.length/1024/1024).toFixed(1)}MB`);
+    // 파일 크기·내지/표지 내역은 빼고 총 쪽수만(2026-11-05 QA — 내역은 STEP 1 요약·STEP 3 신청 내용에 있음)
+    setStatus(`총 ${result.totalPages}페이지 (표지 포함)`);
     showEngineWarnings(result.warnings || []);
     updateEmailUi();
   }catch(err){

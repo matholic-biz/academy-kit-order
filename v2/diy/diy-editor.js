@@ -95,6 +95,9 @@ const LAYOUTS = {
     academyText(L),
   ]; } },
   blank1: { kind:'single', name:'빈 페이지', sub:'처음부터 직접', build: g => [academyText(at(g).L)] },
+  // 고정 페이지: 디자이너가 만든 그림(재단 크기 182×257) 한 장. 원장님은 바꾸지 않고, 구성 목록에도 나오지 않습니다.
+  // 12p 안내(#OUR WAY) — 13p부터 주제별 간지가 시작됨을 알림(2026-11-05).
+  prologue: { kind:'single', name:'안내 페이지', sub:'고정', fixed:'diy/fixed/p012_prologue.jpg', build: () => [] },
 
   // ---------- 펼침면 ----------
   greeting: { kind:'spread', name:'인사말', sub:'제목 + 본문 (마지막 문장은 안쪽 표지에도)', greeting:true, build: g => { const { L, R } = at(g); return [
@@ -226,6 +229,13 @@ async function fillAuto(cv){
 const SAVE_PROPS = ['role', 'key', 'label'];
 const loadFonts = () => Promise.all([`400 10px ${FONT}`, `600 10px ${FONT}`, `700 10px ${FONT}`, `400 10px ${PEN}`].map(f => document.fonts.load(f)));
 const loadJSON = (cv, json) => new Promise(res => cv.loadFromJSON(json, res));
+const isFixed = s => !!(s && LAYOUTS[s.layout] && LAYOUTS[s.layout].fixed);
+// 고정 페이지 그림을 재단선에 맞춰 놓음(도련은 흰색 — 인쇄본은 본사가 InDesign 원본으로 만듦)
+async function fixedImage(s, g){
+  const img = await new Promise(res => fabric.Image.fromURL(LAYOUTS[s.layout].fixed, res));
+  img.set({ left:g.pages[0].x, top:BLEED, scaleX:PAGE_W / img.width, scaleY:PAGE_H / img.height, selectable:false, evented:false });
+  return img;
+}
 
 // ===================== 내보내기 (팝업을 열지 않고 칸 하나를 그림) =====================
 // bleed가 true면 도련 포함(인쇄용, 접히는 쪽은 도련 없음), false면 재단 크기(미리보기용).
@@ -235,10 +245,11 @@ async function renderPages(slot, { ppi = 150, bleed = false, type = 'jpeg', qual
   const sc = new fabric.StaticCanvas(null, { width:g.W * k, height:g.H * k, backgroundColor:'#fff', renderOnAddRemove:false, enableRetinaScaling:false });
   sc.setZoom(k);
   let theme = slot.theme;
-  if(slot.saved){ const s = JSON.parse(slot.saved); theme = s.theme; await loadJSON(sc, s.canvas); }
+  if(isFixed(slot)){ sc.add(await fixedImage(slot, g)); theme = null; }
+  else if(slot.saved){ const s = JSON.parse(slot.saved); theme = s.theme; await loadJSON(sc, s.canvas); }
   else LAYOUTS[slot.layout].build(g).forEach(o => sc.add(o));
   await fillAuto(sc);
-  sc.backgroundImage = themeGroup(g, theme);
+  if(theme) sc.backgroundImage = themeGroup(g, theme);
   sc.renderAll();
   const out = g.pages.map(p => {
     const x0 = p.x - (bleed && p.side === 'L' ? BLEED : 0);
@@ -386,6 +397,7 @@ function mount(){
 }
 const isOpen = () => mounted && $('dxModal').classList.contains('show');
 const isInfo = () => cur === 0;
+const isLocked = () => isFixed(slot);   // 고정 페이지: 보기만
 function setMsg(m, warn){ const el = $('dxMsg'); el.textContent = m; el.className = warn ? 'warn' : ''; }
 const labelsAt = i => i === 0 ? ['표지'] : (opts.labelsFor ? opts.labelsFor(pagesOf()[i]) : []);
 const nameAt = i => i === 0 ? '학원 기본 정보' : (LAYOUTS[pagesOf()[i].layout] || {}).name;
@@ -414,7 +426,7 @@ async function applyLayout(id, themeId, ask = true){
   if(ask) history.unshift(history[0]);   // 구성을 바꾼 것도 '편집함'으로 칩니다
 }
 function setInteractive(){
-  const edit = mode === 'B' && !isInfo();
+  const edit = mode === 'B' && !isInfo() && !isLocked();
   canvas.selection = edit;
   canvas.getObjects().forEach(o => o.set({ selectable:edit, evented:edit || !!o.key, hoverCursor:edit ? 'move' : (o.key ? 'pointer' : 'default') }));
 }
@@ -422,7 +434,7 @@ function setInteractive(){
 // 되돌리기
 function snapshot(){ const j = canvas.toJSON(SAVE_PROPS); delete j.backgroundImage; return JSON.stringify({ theme:state.theme, layout:state.layout, canvas:j }); }
 function silent(fn){ muted = true; try{ fn(); } finally{ muted = false; } }
-function pushHistory(){ if(muted || isInfo()) return; history.push(snapshot()); if(history.length > 60) history.shift(); future = []; refreshUI(); }
+function pushHistory(){ if(muted || isInfo() || isLocked()) return; history.push(snapshot()); if(history.length > 60) history.shift(); future = []; refreshUI(); }
 async function restore(json){
   const s = JSON.parse(json);
   muted = true;
@@ -448,7 +460,7 @@ function renderTop(){
 // 구성 고르기 (같은 단위 — 낱장/펼침면 — 의 구성만) + 색
 function renderLayoutChips(){
   if(!slot) return;
-  $('dxLayouts').innerHTML = Object.entries(LAYOUTS).filter(([, l]) => l.kind === slot.kind)
+  $('dxLayouts').innerHTML = Object.entries(LAYOUTS).filter(([, l]) => l.kind === slot.kind && !l.fixed)
     .map(([id, l]) => `<button class="dx-chip ${id === state.layout ? 'on' : ''}" data-l="${id}" title="${l.sub}">${l.name}</button>`).join('');
   $('dxColors').innerHTML = '색 ' + Object.entries(THEMES).map(([id, t]) => `<button class="dx-dot ${id === state.theme ? 'on' : ''}" title="${t.name}" data-all="${id}" style="background:${t.dot}"></button>`).join('');
 }
@@ -464,6 +476,7 @@ function renderForm(){
   const box = $('dxForm');
   if(mode !== 'A') return;
   if(isInfo()) return renderInfoForm();
+  if(isLocked()){ box.innerHTML = '<p class="dx-note">이 페이지는 본사가 준비한 고정 안내 페이지예요. 다음 쪽부터 주제별 구성이 시작돼요. 따로 꾸미지 않아도 돼요.</p>'; return; }
   const objs = canvas.getObjects().filter(o => o.key);
   if(!objs.length){ box.innerHTML = '<p class="dx-note">빈 페이지는 [상세 편집]에서 글과 사진을 넣어요.</p>'; return; }
   box.innerHTML = objs.map(o => {
@@ -578,12 +591,12 @@ function renderStrip(){
   const items = pages.map((s, i) => `<div class="dx-st ${i === cur ? 'on' : ''} ${i === 0 ? 'info' : s.kind}" data-go="${i}">
       <div class="dx-st-img" data-thumb="${i}">${i === 0 ? '<span>표지·<br>기본 정보</span>' : ''}</div>
       <div class="dx-st-cap">${labelsAt(i).join('~')}<b>${nameAt(i)}</b></div>
-      <div class="dx-st-tag ${isDone(i) ? 'done' : isRequired(i) ? 'need' : ''}">${isDone(i) ? '✓ 완료' : isRequired(i) ? '필수' : '추천 문구'}</div>
+      <div class="dx-st-tag ${isFixed(s) ? 'fixed' : isDone(i) ? 'done' : isRequired(i) ? 'need' : ''}">${isFixed(s) ? '고정' : isDone(i) ? '✓ 완료' : isRequired(i) ? '필수' : '추천 문구'}</div>
       ${s.kind === 'spread' && !opts.fixed ? `<button type="button" class="dx-st-del" data-del="${i}" title="이 펼침면 빼기">✕</button>` : ''}
     </div>`);
   if(!opts.fixed && book.spreads.length < max) items.splice(items.length - 1, 0, `<button type="button" class="dx-st-add" id="dxAddSpread">+ 펼침면<br><small>2쪽 추가</small></button>`);
   const req = requiredList(), need = req.filter(isDone).length;
-  const others = pages.map((s, i) => i).filter(i => i > 0 && !req.includes(i)), opt = others.filter(isDone).length;
+  const others = pages.map((s, i) => i).filter(i => i > 0 && !req.includes(i) && !isFixed(pages[i])), opt = others.filter(isDone).length;
   $('dxStrip').innerHTML = `<div class="dx-strip-row">${items.join('')}</div>
     <div class="dx-strip-sum"><span class="dx-bar"><i style="width:${need / req.length * 100}%"></i></span> 필수 <b>${need}/${req.length}</b> 완료 · 나머지 ${others.length}개는 추천 문구로 들어가요(고친 것 ${opt}) · 앞부분 ${opts.frontPages ? opts.frontPages() : ''}p</div>`;
   $('dxStrip').querySelectorAll('[data-thumb]').forEach(async el => {
@@ -594,7 +607,7 @@ function renderStrip(){
 }
 // 지금 페이지를 책에 저장 (편집했을 때만)
 function commit(){
-  if(!slot || isInfo()) return;
+  if(!slot || isInfo() || isLocked()) return;
   if(history.length > 1 || slot.saved){ slot.saved = snapshot(); slot.layout = state.layout; slot.theme = state.theme; }
 }
 async function goTo(i){
@@ -605,14 +618,16 @@ async function goTo(i){
   g = s.info ? INFO_GEOM : geom(s.kind, s.side);
   $('dxTitle').innerHTML = `우리 학원 소개하기<small>${labelsAt(i).join(' · ')} · ${esc(nameAt(i))}</small>`;
   $('dxLabels').innerHTML = s.info ? '' : labelsAt(i).map(l => `<span>${l}</span>`).join('');
-  $('dxLayoutBox').hidden = $('dxDetailBox').hidden = !!s.info;
-  $('dxTabs').style.visibility = s.info ? 'hidden' : '';
+  const lock = !s.info && isFixed(s);
+  $('dxLayoutBox').hidden = $('dxDetailBox').hidden = !!s.info || lock;
+  $('dxTabs').style.visibility = s.info || lock ? 'hidden' : '';
   $('dxFormTitle').textContent = s.info ? '학원 기본 정보' : '내용 입력';
   $('dxStageNote').textContent = s.info ? '인쇄했을 때의 펼침면 모습이에요. 표지 글자는 대략적인 모습이에요.' : '';
   userZoom = 1;
   canvas.setBackgroundImage(null); canvas.setDimensions({ width:g.W * zoom, height:g.H * zoom }); canvas.setZoom(zoom);
   history = []; future = [];
   if(s.info){ await drawInfo(canvas, book.info, opts.cover, opts.cv, opts.base || 'brandbook/'); }
+  else if(lock){ canvas.clear(); canvas.backgroundColor = '#fff'; state.layout = slot.layout; canvas.add(await fixedImage(slot, g)); canvas.requestRenderAll(); }
   else if(slot.saved){ await restore(slot.saved); await fillAuto(canvas); history = [snapshot()]; }
   else await applyLayout(slot.layout, slot.theme, false);
   setMode('A');
