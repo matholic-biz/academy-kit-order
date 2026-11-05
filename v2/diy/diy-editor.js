@@ -209,8 +209,9 @@ function frame(x, y, w, h, key, label){
 let book = null;
 const getAuto = () => book ? { academy:book.info.academy, logoUrl:book.info.logoUrl } : { academy:'', logoUrl:null };
 const byKey = (k, cv) => cv.getObjects().find(o => o.key === k);
-async function fillAuto(cv){
-  const { academy, logoUrl } = getAuto();
+// 로고는 3p(학원 소개)에만 — 나머지 페이지 학원명 자리는 글자 그대로 (2026-11-05 QA)
+async function fillAuto(cv, s = slot){
+  const { academy } = getAuto(), logoUrl = book && s === book.first ? book.info.logoUrl : null;
   const o = byKey('academy', cv); if(!o) return;
   const idx = cv.getObjects().indexOf(o);
   if(logoUrl){
@@ -248,7 +249,7 @@ async function renderPages(slot, { ppi = 150, bleed = false, type = 'jpeg', qual
   if(isFixed(slot)){ sc.add(await fixedImage(slot, g)); theme = null; }
   else if(slot.saved){ const s = JSON.parse(slot.saved); theme = s.theme; await loadJSON(sc, s.canvas); }
   else LAYOUTS[slot.layout].build(g).forEach(o => sc.add(o));
-  await fillAuto(sc);
+  await fillAuto(sc, slot);
   if(theme) sc.backgroundImage = themeGroup(g, theme);
   sc.renderAll();
   const out = g.pages.map(p => {
@@ -293,17 +294,15 @@ function stack(cv, items, x0, y0, w){
 }
 const imgP = (url, opt) => new Promise(res => fabric.Image.fromURL(url, img => res(img), opt));
 // 표지 기본 정보: 표1(앞표지)·표2(안쪽 표지)를 낱장으로 하나씩 (2026-11-05 QA — 뒤표지는 빼고, 펼침면 대신 크게)
-const INFO_LABEL = 8;
 const INFO_N = 2;   // 아래 줄 맨 앞 두 칸 = 표1, 표2
-const INFO_GEOM = { W:PAGE_W + BLEED * 2, H:INFO_LABEL + H, pages:[], fold:0, info:true };
+const INFO_GEOM = { W:PAGE_W, H:PAGE_H, pages:[], fold:0, info:true };   // 재단 크기만(흰 테두리·이름 줄 없이 — 2026-11-05 QA)
 async function drawInfo(cv, info, coverCode, cvJson, base, which = 'p1'){
   cv.clear(); cv.backgroundColor = '#fff';
   const set = cvJson.set[coverCode] || cvJson.set['01'];
   const pg = f => cvJson.pages.find(p => p.file.replace(/\.png$/, '') === f);
   const pxPerMm = cvJson.spreadSizePx[0] / cvJson.spreadSizeMm[0];
-  const cut = cvJson.cutPx, X = BLEED, Y1 = INFO_LABEL + BLEED;
+  const cut = cvJson.cutPx, X = 0, Y1 = 0;
   const lock = { selectable:false, evented:false };
-  cv.add(new fabric.Text(which === 'p1' ? '표1 앞표지' : '표2 안쪽 표지', Object.assign({ left:X, top:1.5, fontSize:3.6, fontFamily:FONT, fontWeight:600, fill:'#7C8C8E' }, lock)));
   // 표1 = 바깥 표지의 오른쪽 반, 표2 = 안쪽 표지의 왼쪽 반
   const im0 = await imgP(`${base}cover/${set[which === 'p1' ? 0 : 1]}.jpg?v=1`), c = which === 'p1' ? cut.right : cut.left, k = 1 / pxPerMm;
   im0.set(Object.assign({ cropX:c[0], width:c[1] - c[0], left:X, top:Y1, scaleX:k, scaleY:k }, lock));
@@ -478,7 +477,13 @@ function renderForm(){
       return `<div class="dx-fld" data-k="${k}"><label>${o.label}</label><div class="dx-photo"><span class="st ${ok ? 'ok' : ''}">${ok ? '사진 들어감' : '비어 있음'}</span>
         <label class="dx-btn small" style="margin:0;">${ok ? '바꾸기' : '사진 올리기'}<input type="file" accept="image/png,image/jpeg" hidden data-k="${k}"></label></div></div>`;
     }
-    if(k === 'academy') return `<div class="dx-fld" data-k="${k}"><label>${o.role === 'logo' ? '학원 로고' : '학원명'} <small>[학원 기본 정보]에서 가져와요</small></label></div>`;
+    if(k === 'academy' && slot === book.first){
+      const u = book.info.logoUrl;
+      return `<div class="dx-fld"><label>로고 <small>올리지 않으면 학원명이 들어가요 · PNG 권장</small></label><div class="dx-photo">
+        ${u ? `<img class="dx-thumb" alt="" src="${u}">` : '<span class="st">아직 없어요</span>'}
+        <span class="dx-photo-act">${u ? '<button type="button" class="dx-link" data-clear="logoUrl">지우기</button>' : ''}<label class="dx-btn small" style="margin:0;">${u ? '바꾸기' : '올리기'}<input type="file" accept="image/png,image/jpeg" hidden data-info-file="logoUrl"></label></span></div></div>`;
+    }
+    if(k === 'academy') return `<div class="dx-fld" data-k="${k}"><label>학원명 <small>[앞표지]에서 넣은 이름이 들어가요</small></label></div>`;
     return `<div class="dx-fld" data-k="${k}"><label>${o.label}${presetBtn(k)}</label><div class="dx-presets" data-for="${k}" hidden></div>` +
       (LONG(k) ? `<textarea data-k="${k}" rows="${k === 'gbody' ? 8 : /title/.test(k) ? 2 : 3}">${esc(o.text || '')}</textarea>` : `<input type="text" data-k="${k}" value="${esc(o.text || '')}">`) + '</div>';
   }).join('');
@@ -501,8 +506,13 @@ function renderInfoForm(){
     <div class="dx-fld"><label>표지 문구 <small>앞표지</small></label>
       <p class="dx-hint">비워두면 '학원명 + BRANDBOOK'이 들어가요. 직접 쓰실 땐 두 줄로 써 주세요(첫 줄 얇은 글씨, 둘째 줄 굵은 글씨).</p>
       <textarea data-info="cover" rows="2" placeholder="예: 생각하는 힘을 키우는&#10;홀릭수학학원">${esc(i.cover)}</textarea></div>
-    ${file('logoUrl', '로고', '앞부분 페이지의 학원명 자리 · PNG 권장')}
     <p class="dx-note">표지는 STEP 1에서 고른 디자인으로 보여드려요. 오른쪽은 대략적인 모습이고, 정확한 배치는 다음 단계 미리보기에서 확인할 수 있어요.</p>`;
+}
+// 사진·로고를 올리거나 지운 뒤: 표지면 표지를 다시 그리고, 3p(로고)면 페이지에 넣고 편집함으로 기록
+async function afterInfoFile(){
+  if(isInfo()){ renderInfoForm(); redrawInfo(); }
+  else{ await fillAuto(canvas); canvas.requestRenderAll(); pushHistory(); }
+  opts.onChange && opts.onChange(); renderStrip();
 }
 const readUrl = f => new Promise(res => { const r = new FileReader(); r.onload = () => res(r.result); r.readAsDataURL(f); });
 let infoTimer = null;
@@ -579,7 +589,7 @@ function missingRequired(){ return requiredList().find(i => !isDone(i)); }
 const stripCache = new WeakMap();
 async function stripThumb(s){
   const { academy, logoUrl } = getAuto();
-  const key = `${s.layout}|${s.theme}|${s.saved || ''}|${academy}|${logoUrl ? logoUrl.length : 0}`;
+  const key = `${s.layout}|${s.theme}|${s.saved || ''}|${academy}|${s === book.first && logoUrl ? logoUrl.length : 0}`;
   const c = stripCache.get(s);
   if(c && c.key === key) return c.p;
   const p = renderPages(s, { ppi:22, quality:0.75 });
@@ -596,7 +606,7 @@ async function infoThumb(i){
     sc.setZoom(k);
     await drawInfo(sc, f, opts.cover, opts.cv, opts.base || 'brandbook/', i === 0 ? 'p1' : 'p2');
     sc.renderAll();
-    const u = sc.toDataURL({ format:'jpeg', quality:0.75, left:BLEED * k, top:(INFO_LABEL + BLEED) * k, width:PAGE_W * k, height:PAGE_H * k });
+    const u = sc.toDataURL({ format:'jpeg', quality:0.75 });
     sc.dispose();
     return u;
   })();
@@ -723,14 +733,14 @@ function bind(){
   });
   $('dxForm').addEventListener('change', async e => {
     const t = e.target;
-    if(t.dataset.infoFile){ if(t.files[0]){ book.info[t.dataset.infoFile] = await readUrl(t.files[0]); renderInfoForm(); redrawInfo(); opts.onChange && opts.onChange(); } return; }
+    if(t.dataset.infoFile){ if(t.files[0]){ book.info[t.dataset.infoFile] = await readUrl(t.files[0]); await afterInfoFile(); } return; }
     const k = t.dataset.k; if(!k || t.dataset.info) return;
     if(t.type === 'file'){ if(t.files[0]) placePhoto(t.files[0], byKey(k, canvas)); }
     else{ history.push(snapshot()); future = []; renderTop(); }   // 입력 중에는 칸을 다시 그리지 않도록 기록만
   });
   $('dxForm').addEventListener('click', e => {
     const clr = e.target.closest('[data-clear]');
-    if(clr){ book.info[clr.dataset.clear] = null; renderInfoForm(); redrawInfo(); opts.onChange && opts.onChange(); return; }
+    if(clr){ book.info[clr.dataset.clear] = null; afterInfoFile(); return; }
     const pb = e.target.closest('[data-preset]');
     if(pb){
       const k = pb.dataset.preset, box = document.querySelector(`#dxForm .dx-presets[data-for="${k}"]`);
