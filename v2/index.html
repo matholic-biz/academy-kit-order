@@ -667,7 +667,7 @@
       <p class="note">※ 샘플 인쇄 시안 이미지입니다. 문구 위치는 예시이며, 다르게 보이면 알려주시면 조정해드립니다.</p>
 
       <h3 class="subhead">주제별 구성</h3>
-      <p class="note" style="margin-top:0;">우리 학원에서 활용하는 수업·관리 항목을 골라주세요.<br>썸네일을 눌러 선택하고, [미리보기]로 내용을 확인할 수 있어요.</p>
+      <p class="note" style="margin-top:0;">우리 학원에서 활용하는 수업·관리 항목을 골라주세요. <b>5~6개를 고르면 보통 32~40p</b>가 돼요.<br>썸네일을 눌러 선택하고, [미리보기]로 내용을 확인할 수 있어요.</p>
       <div class="selection-summary">
         <div id="totalPages"></div>
       </div>
@@ -941,7 +941,7 @@
 <!-- 앞부분(3~12p) 직접 꾸미기 편집기 (2026-11-05). 편집기를 고치면 ?v= 값을 바꿉니다. -->
 <link rel="stylesheet" href="diy/diy-editor.css?v=20261105d">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.0/fabric.min.js"></script>
-<script src="diy/diy-editor.js?v=20261105e"></script>
+<script src="diy/diy-editor.js?v=20261105f"></script>
 <!-- 다음(카카오) 우편번호 검색 — 우편번호를 모르는 고객도 주소만 검색하면 우편번호+주소가 자동으로 채워집니다.
      (구 URL이던 ssl.daumcdn.net/dmaps/map_js_init/postcode.v2.js는 더 이상 응답하지 않아, 현재 공식 URL인
      t1.kakaocdn.net 쪽으로 바꿨습니다 — 2024년경 다음 우편번호 서비스가 카카오 도메인으로 이전되었습니다.) -->
@@ -1211,6 +1211,9 @@ const FIXED_INTRO = [
 // false로 바꾸면 맞춤형도 예전처럼 고정 3~12p로 돌아갑니다(이때 학원 정보 입력 칸은 따로 만들어야 함).
 const DIY_ENABLED = true;
 const DIY_MAX_SPREADS = 4;
+// 앞부분 10p 고정(2026-11-05 결정): 펼침면 빼기·더하기 없음 → 쪽수 계산이 기존 사이트(고정 10p)와 같아
+// 원장님은 주제 5~6개만 고르면 32~40p가 됨. false로 바꾸면 펼침면 0~4개를 고를 수 있음(2~10p, 늘 짝수).
+const DIY_FIXED_FRONT = true;
 const DIY_SPREAD_ORDER = ['greeting', 'class', 'space', 'flow', 'teacher', 'blank'];   // [펼침면 추가] 때 아직 안 쓴 구성부터
 const diyBook = {
   info: { academy:'', director:'', cover:'', logoUrl:null, profileUrl:null },
@@ -1223,7 +1226,7 @@ if(window.DiyEditor) DiyEditor.setBook(diyBook);
 if(DIY_ENABLED){
   const i = TOUR_STEPS.findIndex(t => t.target === '#commonSectionsInline .cb-section:nth-child(3)');
   if(i >= 0) TOUR_STEPS.splice(i, 3, { panel:1, target:'#commonSectionsInline .cb-section:nth-child(3)',
-    title:'우리 학원 소개하기', desc:'3p부터 최대 10p를 원장님이 직접 고르고 꾸며요. [우리 학원 소개하기]를 누르면 학원 기본 정보와 페이지를 한 화면에서 채울 수 있어요.',
+    title:'우리 학원 소개하기', desc:'3p~12p(10p)를 원장님이 직접 꾸며요. [우리 학원 소개하기]를 누르면 학원 기본 정보와 페이지를 한 화면에서 채울 수 있어요. 꼭 쓸 것만 채우면 나머지는 추천 문구로 들어가요.',
     mode:'info' });
 }
 function diyActive(){ return DIY_ENABLED && configMode === 'custom'; }
@@ -1253,9 +1256,9 @@ function renderDiyFront(){
       `<div><div class="is-img ${s.kind}" data-i="${i}"></div><div class="is-cap">${diyLabels(s).join('~')} ${diyName(s)}</div></div>`).join('')}</div>
     <div class="intro-actions">
       <button type="button" class="btn primary" id="btnOpenIntro" style="width:auto;padding:12px 22px;">우리 학원 소개하기</button>
-      <span class="intro-status">${DiyEditor.requiredDone() ? `<b>✓ 필수 완료</b> · ${info.academy.replace(/</g, '&lt;')} · ` : '<span style="color:var(--warn)">필수: 학원 기본 정보(학원명·원장명) · 3p 학원 소개</span> · '}앞부분 ${diyFrontPages()}p (선택 ${slots.length - 1}개 중 ${slots.slice(1).filter(s => s.saved).length}개 꾸밈)</span>
+      <span class="intro-status">${DiyEditor.requiredDone() ? `<b>✓ 필수 완료</b> · ${info.academy.replace(/</g, '&lt;')} · ` : '<span style="color:var(--warn)">꼭 쓸 것: 학원 기본 정보 · 3p 학원 소개 · 인사말</span> · '}앞부분 ${diyFrontPages()}p 고정 (나머지는 추천 문구로 들어가요)</span>
     </div>
-    <p class="note" style="margin:8px 0 0;">학원 기본 정보(학원명·원장명·표지 문구·사진·로고)와 3p부터 최대 10p를 한 화면에서 채워요. 꾸미지 않은 페이지는 예시 내용으로 들어가요.</p>`;
+    <p class="note" style="margin:8px 0 0;">학원 기본 정보(학원명·원장명·표지 문구·사진·로고)와 3p~12p(10p)를 한 화면에서 채워요. 꼭 쓸 것만 채우면 나머지는 추천 문구로 들어가요.</p>`;
   document.getElementById('btnOpenIntro').onclick = ()=> openDiy(0);
   el.querySelectorAll('.is-img').forEach(box => {
     const s = show[+box.dataset.i];
@@ -1278,6 +1281,7 @@ async function openDiy(start){
   DiyEditor.openBook(diyBook, {
     start, cv: data.cv, cover: (findCover(themeState.selectedCoverId) || COVERS[0]).engine, base: ENGINE_BASE,
     labelsFor: diyLabels, frontPages: diyFrontPages, maxSpreads: DIY_MAX_SPREADS, spreadOrder: DIY_SPREAD_ORDER,
+    fixed: DIY_FIXED_FRONT,
     onChange: ()=> updateSummary(),
     onClose: (r)=>{
       renderDiyFront(); updateSummary();
@@ -1343,6 +1347,7 @@ const TOPICS = [
 // 무선제본 최소 제작 페이지 수 = 표지 포함 전체 32p (표지 4p + 내지 28p).
 // 내지 = 고정 10p(3~12p) + 선택 주제 본문 + 섹션별 간지 1장씩 + (내지가 홀수면) 흰 페이지 1p.
 const MIN_TOTAL_PAGES = 32; // 주제 개수 상한 없음, 최대 12개
+const RECOMMENDED_MAX_PAGES = 40; // 권장 분량 — 넘어도 막지 않고 안내만 (2026-11-05)
 const FIXED_INNER_PAGES = 10;
 const COVER_PAGES = 4; // 표1·표2·표3·표4
 const selectedTopics = new Set();
@@ -1455,7 +1460,7 @@ function renderCommonSections(){
     <div class="cb-section">
       <div class="cb-head">
         <div class="cb-title">우리 학원 소개하기</div>
-        <div class="cb-desc">3p부터 최대 10p<br>직접 고르고 꾸미기</div>
+        <div class="cb-desc">3p~12p (10p)<br>직접 꾸미기</div>
       </div>
       <div class="intro-row" id="diyFrontGrid"></div>
     </div>`;
@@ -1721,7 +1726,7 @@ function updateSummary(){
   if(b.blank) chosenParts.push(`빈 페이지 ${b.blank}p`);
   if(summaryEl) summaryEl.innerHTML =
     `<div><span class="summary-count">${selectedTopics.size}개 선택 (총 ${b.total}p)</span>` +
-    `<span class="summary-help">* ${remain>0 ? `총 ${MIN_TOTAL_PAGES}p부터 제작할 수 있어요` : '제작 가능! 아래 [다음]을 눌러주세요'}</span></div>` +
+    `<span class="summary-help">* ${remain>0 ? `총 ${MIN_TOTAL_PAGES}p부터 제작할 수 있어요` : b.total > RECOMMENDED_MAX_PAGES ? `권장 분량(${RECOMMENDED_MAX_PAGES}p)을 넘었어요. 그대로 제작할 수도 있어요` : '제작 가능! 아래 [다음]을 눌러주세요'}</span></div>` +
     `<div class="summary-detail">` +
       `<b>공통 ${common}p</b><span>표지 ${b.cover}p + 앞부분 ${b.fixed}p</span>` +
       `<b>선택 ${b.total - common}p</b><span>${b.topic ? chosenParts.join(' + ') : '주제를 고르면 여기에 더해져요'}</span>` +

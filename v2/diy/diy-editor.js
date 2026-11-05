@@ -553,11 +553,13 @@ function setMode(m){
   fitCanvas();
 }
 
-// 필수: 학원 기본 정보(학원명·원장명) + 3p 학원 소개(한 번 이상 꾸미기). 나머지 페이지는 선택(꾸미지 않으면 예시 내용).
-// 마지막 장은 쪽수를 짝수로 맞추려고 늘 들어가지만 꾸미기는 선택입니다.
-const isRequired = i => i <= 1;
+// 앞부분은 모든 페이지가 책에 들어감(opts.fixed — 2026-11-05: 10p 고정). 그중 직접 써야 하는 것(필수)은
+// 학원 기본 정보(학원명·원장명) + 3p 학원 소개 + 인사말 펼침면(안쪽 표지 맺음말에도 쓰임).
+// 나머지는 추천 문구가 채워진 채로 들어가고, 고치면 '완료'로 표시됩니다.
+const requiredList = () => [0, 1, ...pagesOf().map((s, i) => (i > 1 && s.layout === 'greeting') ? i : -1).filter(i => i > 0)];
+const isRequired = i => requiredList().includes(i);
 const isDone = i => i === 0 ? !!(book.info.academy.trim() && book.info.director.trim()) : !!pagesOf()[i].saved;   // 기본 정보 = 학원명 + 원장명
-function missingRequired(){ return [0, 1].find(i => !isDone(i)); }
+function missingRequired(){ return requiredList().find(i => !isDone(i)); }
 
 // 아래 줄: 기본 정보 + 앞부분 페이지 (펼침면 빼기·더하기)
 const stripCache = new WeakMap();
@@ -576,13 +578,14 @@ function renderStrip(){
   const items = pages.map((s, i) => `<div class="dx-st ${i === cur ? 'on' : ''} ${i === 0 ? 'info' : s.kind}" data-go="${i}">
       <div class="dx-st-img" data-thumb="${i}">${i === 0 ? '<span>표지·<br>기본 정보</span>' : ''}</div>
       <div class="dx-st-cap">${labelsAt(i).join('~')}<b>${nameAt(i)}</b></div>
-      <div class="dx-st-tag ${isDone(i) ? 'done' : isRequired(i) ? 'need' : ''}">${isDone(i) ? '✓ 완료' : isRequired(i) ? '필수' : '선택'}</div>
-      ${s.kind === 'spread' ? `<button type="button" class="dx-st-del" data-del="${i}" title="이 펼침면 빼기">✕</button>` : ''}
+      <div class="dx-st-tag ${isDone(i) ? 'done' : isRequired(i) ? 'need' : ''}">${isDone(i) ? '✓ 완료' : isRequired(i) ? '필수' : '추천 문구'}</div>
+      ${s.kind === 'spread' && !opts.fixed ? `<button type="button" class="dx-st-del" data-del="${i}" title="이 펼침면 빼기">✕</button>` : ''}
     </div>`);
-  if(book.spreads.length < max) items.splice(items.length - 1, 0, `<button type="button" class="dx-st-add" id="dxAddSpread">+ 펼침면<br><small>2쪽 추가</small></button>`);
-  const need = [0, 1].filter(isDone).length, opt = pages.slice(2).filter(s => s.saved).length;
+  if(!opts.fixed && book.spreads.length < max) items.splice(items.length - 1, 0, `<button type="button" class="dx-st-add" id="dxAddSpread">+ 펼침면<br><small>2쪽 추가</small></button>`);
+  const req = requiredList(), need = req.filter(isDone).length;
+  const others = pages.map((s, i) => i).filter(i => i > 0 && !req.includes(i)), opt = others.filter(isDone).length;
   $('dxStrip').innerHTML = `<div class="dx-strip-row">${items.join('')}</div>
-    <div class="dx-strip-sum"><span class="dx-bar"><i style="width:${need * 50}%"></i></span> 필수 <b>${need}/2</b> 완료 · 선택 ${opt}/${pages.length - 2} 꾸밈 · 앞부분 ${opts.frontPages ? opts.frontPages() : ''}p</div>`;
+    <div class="dx-strip-sum"><span class="dx-bar"><i style="width:${need / req.length * 100}%"></i></span> 필수 <b>${need}/${req.length}</b> 완료 · 나머지 ${others.length}개는 추천 문구로 들어가요(고친 것 ${opt}) · 앞부분 ${opts.frontPages ? opts.frontPages() : ''}p</div>`;
   $('dxStrip').querySelectorAll('[data-thumb]').forEach(async el => {
     const i = +el.dataset.thumb; if(i === 0) return;
     const urls = await stripThumb(pages[i]);
@@ -778,7 +781,9 @@ function bind(){
     const miss = missingRequired();
     if(miss != null){
       if(miss !== cur) await goTo(miss);
-      return setMsg(miss === 0 ? (book.info.academy.trim() ? '원장명을 넣어 주세요. 안쪽 표지에 들어가요.' : '학원명을 넣어 주세요. 앞표지와 페이지 곳곳에 들어가요.') : '3p 학원 소개는 꼭 꾸며 주세요. 예시 문구를 고치거나 [추천 문구]를 골라도 돼요.', true);
+      return setMsg(miss === 0 ? (book.info.academy.trim() ? '원장명을 넣어 주세요. 안쪽 표지에 들어가요.' : '학원명을 넣어 주세요. 앞표지와 페이지 곳곳에 들어가요.')
+        : miss === 1 ? '3p 학원 소개는 꼭 꾸며 주세요. 예시 문구를 고치거나 [추천 문구]를 골라도 돼요.'
+        : '인사말은 꼭 써 주세요. 마지막 문장은 안쪽 표지에도 들어가요. [추천 문구]를 골라 고쳐 써도 돼요.', true);
     }
     $('dxModal').classList.remove('show');
     opts.onClose && opts.onClose({ complete:true });
