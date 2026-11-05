@@ -79,6 +79,7 @@
     }
 
     // ---------- 글자 배치 ----------
+    const COVER_TIGHTEN = 10;   // 표1 한 줄 맞춤: 자간을 줄일 수 있는 최대값(1/1000 em)
     function measure(f, size, tracking, s) {
       return f.widthOfTextAtSize(s, size) + size * tracking / 1000 * Math.max(0, s.length - 1);
     }
@@ -259,6 +260,15 @@
       const it = items.find(i => i.name === want);
       const texts = hasCover ? [coverTop, coverStrong] : [name, 'BRANDBOOK'];
       const paras = it.paragraphs.map((s, i) => ({ text: texts[i] || '', spec: s })).filter(p => p.text);
+      // 한 줄로 쓴 줄이 칸을 조금 넘으면 줄바꿈 대신 자간을 최대 10까지 줄여 한 줄로(-90 → -100, 2026-11-05 — 9월 발주 샘플과 같게)
+      for (const pa of paras) {
+        if (pa.text.includes('\n')) continue;
+        const f = await font(pa.spec.font, pa.spec.fontStyle), t0 = pa.spec.tracking || 0, W = it.panelMm.w * MM;
+        if (measure(f, pa.spec.sizePt, t0, pa.text) <= W) continue;
+        for (let t = t0 - 1; t >= t0 - COVER_TIGHTEN; t--) {
+          if (measure(f, pa.spec.sizePt, t, pa.text) <= W) { pa.spec = Object.assign({}, pa.spec, { tracking: t }); break; }
+        }
+      }
       const lines1 = await layoutParas(paras, it.panelMm.w);
       // 표지 04: 표지 문구가 한 줄이면 위에 떠 보여서 아래 정렬 (InDesign 조립 스크립트와 같음, 2026-11-03)
       const vAlign1 = (hasCover && coverCode === '04' && lines1.length === 1) ? 'BOTTOM_ALIGN' : it.verticalAlign;
