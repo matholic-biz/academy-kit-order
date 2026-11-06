@@ -19,7 +19,8 @@
  *     backPages(): 13p부터 들어갈 매쓰홀릭 페이지 [{ mh:true, sample, title, imgs:[{ no, src }] }] — 아래 줄·미리보기용(편집 불가)
  *     onSave(): 바뀐 내용을 저장할 때마다 부름(index.html이 IndexedDB에 저장)
  *   await DiyEditor.renderPages(slot, { ppi, bleed })  // 쪽마다 이미지(dataURL) 배열
- *   DiyEditor.greetingText(slot)                       // 인사말 펼침면이면 그 글(표2 맺음용), 아니면 ''
+ *   DiyEditor.greetingText(slot)                       // 인사말 펼침면이면 그 글, 아니면 ''
+ *   DiyEditor.closingText(book)                        // 표2 맺음말 원문(인사말 펼침면 → 없으면 3p 학원 소개)
  * AI 문구 도우미는 쓰지 않음(2026-11-05 회의) — 템플릿마다 [작성 도우미](질문 → 키워드 하나 → 연결된 추천 문구 하나 → [○○에 적용])로 대신합니다.
  *
  * 테마 배경은 디자이너 시안이 오기 전까지 섹션 색으로 그린 임시안, 구성(layout)은 임시 콘텐츠입니다.
@@ -67,6 +68,117 @@ const THEMES = {
 };
 function rect(x, y, w, h, fill){ return new fabric.Rect({ left:x, top:y, width:w, height:h, fill, strokeWidth:0 }); }
 function themeGroup(g, id){ return new fabric.Group((THEMES[id] || THEMES.clean).draw(g), { left:0, top:0 }); }
+
+// ===================== InDesign 테마 (2026-11-06: 테마_export.jsx → 테마_웹변환.py → diy/theme/T1) =====================
+// 템플릿 모음(_내지_1105.indd)에서 뽑은 theme.json이 있으면 그 칸 위치·서식과 배경 그림(색 변형별)으로 그립니다.
+// 없거나 그 템플릿이 theme.json에 없으면 아래 LAYOUTS(임시 구성)·THEMES(임시 색)를 씁니다.
+const THEME_DIR = 'diy/theme/T1/';
+let THEME = null, themeReady = null;
+const OLD_THEME = { clean:'v1', green:'v1', yellow:'v2', peach:'v4' };   // 예전에 저장한 색 → 변형
+function loadTheme(){
+  if(!themeReady) themeReady = fetch(THEME_DIR + 'theme.json', { cache:'no-cache' }).then(r => r.ok ? r.json() : null).then(t => {
+    if(!t || !t.variants) return null;
+    THEME = t;
+    Object.keys(THEMES).forEach(k => delete THEMES[k]);
+    t.variants.forEach(v => { const c = v.colors && v.colors['강조']; THEMES[v.id] = { name:v.name, dot:c && c.rgb ? `rgb(${c.rgb.join(',')})` : '#ccc' }; });
+    return t;
+  }).catch(() => null);
+  return themeReady;
+}
+const THEME_VER = () => THEME ? `${THEME.theme}:${THEME.version}` : '';
+const themeSpread = id => THEME && THEME.spreads.find(x => x.id === id && !x.fixed);
+const themeId = id => !THEME ? id : THEMES[id] ? id : (OLD_THEME[id] || THEME.variants[0].id);
+// 저장해 둔 편집이 지금 테마로 만든 것인지(아니면 글만 옮겨 새 칸에 넣음)
+const savedOk = json => { if(!THEME) return true; try{ return JSON.parse(json).tv === THEME_VER(); }catch(e){ return false; } };
+
+const FONT_MAP = { 'Wanted Sans':'DxWanted', 'Pretendard':FONT };
+const W_MAP = { Thin:100, ExtraLight:200, Light:300, Regular:400, Medium:500, SemiBold:600, Bold:700, ExtraBold:800, Black:900 };
+const alignOf = a => /CENTER/.test(a || '') ? 'center' : /RIGHT/.test(a || '') ? 'right' : 'left';
+const rgbOf = (c, def) => c && c.rgb ? `rgb(${c.rgb.join(',')})` : def;
+const TAG_PAD = 3, TAG_GAP = 1.2;   // 해시태그 알약: 글 양옆 여백·알약 사이 (mm)
+// 낱장 오른쪽(3p)은 InDesign 그림에 접히는 쪽 도련이 있어 캔버스(접히는 쪽 도련 없음)보다 3mm 넓음 → 왼쪽으로 3mm
+const themeDx = (ts, g) => ts.kind === 'single' && g.pages[0].side === 'R' ? -BLEED : 0;
+function themeObjs(ts, g){
+  const dx = themeDx(ts, g), out = [];
+  const logo = ts.items.find(it => it.key === 'logo');
+  ts.items.forEach(it => {
+    const m = it.mm, x = m.x + dx;
+    if(it.key === 'logo') return;   // 로고는 학원명 칸 자리에(fillAuto)
+    if(it.type === 'frame'){ if(/^사진_/.test(it.name)) out.push(frame(x, m.y, m.w, m.h, it.key || it.name, it.label || '사진')); return; }
+    const p = (it.paragraphs || [])[0] || {};
+    const tag = /^글_태그\s*(\d+)/.exec(it.name);
+    const key = it.key || (tag ? 'tag' + tag[1] : it.name.replace(/^글_/, ''));
+    const sizePt = p.sizePt || 10, lead = typeof p.leadingPt === 'number' ? p.leadingPt : sizePt * 1.2;
+    const o = new fabric.Textbox(String(it.text || '').replace(/\r/g, '\n'), { left:x, top:m.y, width:m.w, fontSize:sizePt / PT, lineHeight:lead / sizePt / 1.13,
+      fontFamily:FONT_MAP[p.font] || FONT, fontWeight:W_MAP[p.fontStyle] || 400, charSpacing:p.tracking || 0, fill:rgbOf(p.color, C.ink), textAlign:alignOf(p.align),
+      role:'text', key, label:tag ? `해시태그 ${tag[1]}` : (it.label || key) });
+    if(p.ruleBelow) o.set('underline', true);              // 밑줄 라벨(글_주제): 단락 경계선(아래) → 글 길이만큼 밑줄
+    if(tag && it.stroke) o.set({ pill:{ stroke:rgbOf(it.stroke, C.teal), weight:(it.stroke.weightPt || 0.3) / PT, r:it.cornerMm || m.h / 2, h:m.h }, rowX:x });
+    if(it.verticalAlign === 'CENTER_ALIGN') o.set('top', m.y + (m.h - o.height) / 2);
+    if(key === 'academy') o.set({ boxL:x, boxT:m.y, boxW:m.w, boxH:m.h, logoBox:!!logo });
+    out.push(o);
+  });
+  reflowTags(out);
+  return out;
+}
+// 해시태그 알약: 글 길이에 맞춰 폭을 정하고 왼쪽부터 나란히. 빈 태그는 숨김
+function reflowTags(objs){
+  const tags = objs.filter(o => /^tag\d+$/.test(o.key || '') && o.pill).sort((a, b) => a.key.localeCompare(b.key, 'en', { numeric:true }));
+  if(!tags.length) return;
+  let x = tags[0].rowX != null ? tags[0].rowX : tags[0].left;
+  tags.forEach(o => {
+    const t = String(o.text || '').trim();
+    o.set('visible', !!t);
+    if(!t) return;
+    const probe = new fabric.Text(t, { fontSize:o.fontSize, fontFamily:o.fontFamily, fontWeight:o.fontWeight, charSpacing:o.charSpacing });
+    o.set({ width:probe.width + TAG_PAD * 2, left:x });
+    o.initDimensions(); o.setCoords();
+    x += o.width + TAG_GAP;
+  });
+}
+// 알약 테두리: 글상자 배경 자리에 둥근 사각형(높이는 InDesign 칸 높이)
+(function(){
+  const base = fabric.Textbox.prototype._renderBackground;
+  fabric.Textbox.prototype._renderBackground = function(ctx){
+    const p = this.pill;
+    if(p && String(this.text || '').trim()){
+      const w = this.width, h = p.h, r = Math.min(p.r, h / 2), x = -w / 2 + p.weight / 2, y = -h / 2, ww = w - p.weight;
+      ctx.save(); ctx.beginPath();
+      ctx.moveTo(x + r, y); ctx.lineTo(x + ww - r, y); ctx.arcTo(x + ww, y, x + ww, y + r, r); ctx.lineTo(x + ww, y + h - r); ctx.arcTo(x + ww, y + h, x + ww - r, y + h, r);
+      ctx.lineTo(x + r, y + h); ctx.arcTo(x, y + h, x, y + h - r, r); ctx.lineTo(x, y + r); ctx.arcTo(x, y, x + r, y, r); ctx.closePath();
+      ctx.lineWidth = p.weight; ctx.strokeStyle = p.stroke; ctx.stroke(); ctx.restore();
+    }
+    return base.call(this, ctx);
+  };
+})();
+// 템플릿 칸 만들기: theme.json에 있으면 그것, 없으면 임시 구성
+function buildObjs(id, g){ const ts = themeSpread(id); return ts ? themeObjs(ts, g) : LAYOUTS[id].build(g); }
+// 예전 테마로 저장한 편집이면: 새 칸을 만들고 같은 칸 이름(key)의 글만 옮김
+function carryText(json, objs){
+  try{ (JSON.parse(json).canvas.objects || []).forEach(x => { if(!x.key || typeof x.text !== 'string') return; const o = objs.find(y => y.key === x.key && y.type === 'textbox'); if(o && x.key !== 'academy') o.set('text', x.text); }); }catch(e){}
+  reflowTags(objs);
+  return objs;
+}
+// 배경: 변형 색의 배경 그림 + 실제 책 쪽 번호(theme.json footer가 있을 때). 그림이 없으면 임시 THEMES
+const bgCache = {};
+const loadEl = url => bgCache[url] || (bgCache[url] = new Promise(res => { const im = new Image(); im.onload = () => res(im); im.onerror = () => res(null); im.src = url; }));
+async function backgroundFor(layout, g, theme, pageNos){
+  const ts = themeSpread(layout);
+  if(!ts) return THEMES[theme] && THEMES[theme].draw ? themeGroup(g, theme) : null;
+  const el = await loadEl(`${THEME_DIR}bg/${themeId(theme)}/${layout}.jpg`);
+  if(!el) return null;
+  const k = ts.sizeMm[0] / el.naturalWidth;
+  const objs = [new fabric.Image(el, { left:themeDx(ts, g), top:0, scaleX:k, scaleY:k })];
+  const ft = THEME.footer || {};
+  (pageNos || []).forEach((no, i) => {
+    const pg = ts.pages[i], gp = g.pages[i]; if(!pg || !gp || !no) return;
+    const spec = ft[pg.master] && ft[pg.master][pg.side]; if(!spec) return;
+    const f = spec.format || {}, sizePt = f.sizePt || 7;
+    objs.push(new fabric.Textbox(String(no), { left:gp.x + spec.mm.x, top:BLEED + spec.mm.y, width:spec.mm.w, fontSize:sizePt / PT, lineHeight:1,
+      fontFamily:FONT_MAP[f.font] || FONT, fontWeight:W_MAP[f.fontStyle] || 400, fill:rgbOf(f.color, '#000'), textAlign:alignOf(f.align) }));
+  });
+  return objs.length > 1 ? new fabric.Group(objs, { left:objs[0].left, top:0 }) : objs[0];
+}
 
 // ===================== 구성 (2026-11-06: 3p·12p 고정, 4~11p는 두 쪽 템플릿 10종) =====================
 // build(g): g의 쪽 위치 기준으로 글·사진 칸을 만듭니다. L = 첫 쪽 안전 영역 왼쪽, R = 둘째 쪽(펼침면) 안전 영역 왼쪽.
@@ -362,23 +474,35 @@ const INFO_KEYS = { addr:'address', tel:'phone', visit:'visit' };
 async function fillAuto(cv, s = slot){
   if(book) cv.getObjects().filter(o => o.auto === 'info' && INFO_KEYS[o.key]).forEach(o => { const v = (book.info[INFO_KEYS[o.key]] || '').trim(); if(v) o.set('text', v); });
   const { academy } = getAuto(), logoUrl = book && s === book.first ? book.info.logoUrl : null;
+  if(book){   // 템플릿 글의 [원장명]·[학원명] (예: 원장 [원장명] 드림)
+    const d = (book.info.director || '').trim(), a = (academy || '').trim();
+    cv.getObjects().filter(o => o.type === 'textbox' && o.key !== 'academy').forEach(o => { const t = String(o.text || ''); let n = t; if(d) n = n.replace(/\[원장명\]/g, d); if(a) n = n.replace(/\[학원명\]/g, a); if(n !== t) o.set('text', n); });
+  }
   const o = byKey('academy', cv); if(!o) return;
   const idx = cv.getObjects().indexOf(o);
   if(logoUrl){
     const img = await new Promise(res => fabric.Image.fromURL(logoUrl, res));
+    if(o.boxH){   // InDesign 로고 칸(3p): 칸 안에 비율 그대로, 가운데
+      const sc = Math.min(o.boxH / img.height, o.boxW / img.width);
+      img.set({ left:o.boxL + (o.boxW - img.width * sc) / 2, top:o.boxT + (o.boxH - img.height * sc) / 2, scaleX:sc, scaleY:sc, role:'logo', key:'academy', label:'학원 로고',
+        boxL:o.boxL, boxT:o.boxT, boxW:o.boxW, boxH:o.boxH, lockSkewingX:true, lockSkewingY:true });
+    }else{
     const s = Math.min(9 / img.height, 60 / img.width);
     img.set({ left:o.left, top:o.role === 'logo' ? o.top : o.top - 4, scaleX:s, scaleY:s, role:'logo', key:'academy', label:'학원 로고', lockSkewingX:true, lockSkewingY:true });
+    }
     img.setControlsVisibility({ mt:false, mb:false, ml:false, mr:false });
     cv.remove(o); cv.insertAt(img, idx);
   }else if(o.role === 'logo'){
-    cv.remove(o); cv.insertAt(academyText(o.left, academy || '학원명', o.top + 4), idx);
+    const ts = themeSpread(s && s.layout), t = ts && themeObjs(ts, geom(s.kind, s.side)).find(x => x.key === 'academy');
+    if(t) t.set('text', academy || '학원명');
+    cv.remove(o); cv.insertAt(t || academyText(o.left, academy || '학원명', o.top + 4), idx);
   }else{
     o.set('text', academy || '학원명');
   }
 }
 
-const SAVE_PROPS = ['role', 'key', 'label', 'auto', 'cellbg'];
-const loadFonts = () => Promise.all([`400 10px ${FONT}`, `600 10px ${FONT}`, `700 10px ${FONT}`, `400 10px ${PEN}`].map(f => document.fonts.load(f)));
+const SAVE_PROPS = ['role', 'key', 'label', 'auto', 'cellbg', 'pill', 'rowX', 'boxL', 'boxT', 'boxW', 'boxH', 'logoBox'];
+const loadFonts = () => Promise.all([`400 10px ${FONT}`, `600 10px ${FONT}`, `700 10px ${FONT}`, `400 10px ${PEN}`, '400 10px DxWanted', '600 10px DxWanted', '700 10px DxWanted'].map(f => document.fonts.load(f)));
 const loadJSON = (cv, json) => new Promise(res => cv.loadFromJSON(json, res));
 // 그림으로 된 고정 페이지(12p 쉬어 가는 페이지)인지
 const isImagePage = s => !!(s && LAYOUTS[s.layout] && LAYOUTS[s.layout].image);
@@ -391,17 +515,19 @@ async function fixedImage(s, g){
 
 // ===================== 내보내기 (팝업을 열지 않고 칸 하나를 그림) =====================
 // bleed가 true면 도련 포함(인쇄용, 접히는 쪽은 도련 없음), false면 재단 크기(미리보기용).
-async function renderPages(slot, { ppi = 150, bleed = false, type = 'jpeg', quality = 0.9 } = {}){
+async function renderPages(slot, { ppi = 150, bleed = false, type = 'jpeg', quality = 0.9, pageNo = null } = {}){
+  await loadTheme();
   await loadFonts();
   const g = geom(slot.kind, slot.side), k = PX_PER_MM(ppi);
   const sc = new fabric.StaticCanvas(null, { width:g.W * k, height:g.H * k, backgroundColor:'#fff', renderOnAddRemove:false, enableRetinaScaling:false });
   sc.setZoom(k);
   let theme = slot.theme;
   if(isImagePage(slot)){ sc.add(await fixedImage(slot, g)); theme = null; }
-  else if(slot.saved){ const s = JSON.parse(slot.saved); theme = s.theme; await loadJSON(sc, s.canvas); }
-  else LAYOUTS[slot.layout].build(g).forEach(o => sc.add(o));
+  else if(slot.saved && savedOk(slot.saved)){ const s = JSON.parse(slot.saved); theme = s.theme; await loadJSON(sc, s.canvas); }
+  else (slot.saved ? carryText(slot.saved, buildObjs(slot.layout, g)) : buildObjs(slot.layout, g)).forEach(o => sc.add(o));
   await fillAuto(sc, slot);
-  if(theme) sc.backgroundImage = themeGroup(g, theme);
+  if(pageNo == null && opts && opts.labelsFor && book) pageNo = parseInt(opts.labelsFor(slot)[0], 10) || null;
+  if(theme){ const bg = await backgroundFor(slot.layout, g, theme, pageNo ? g.pages.map((_, i) => pageNo + i) : null); if(bg) sc.backgroundImage = bg; }
   sc.renderAll();
   const out = g.pages.map(p => {
     const x0 = p.x - (bleed && p.side === 'L' ? BLEED : 0);
@@ -413,14 +539,23 @@ async function renderPages(slot, { ppi = 150, bleed = false, type = 'jpeg', qual
   return out;
 }
 
-// 인사말 펼침면이면 제목 + 본문(표2 맺음말을 여기서 가져감). 편집하지 않았으면 예시 글.
-function greetingText(slot){
-  if(!LAYOUTS[slot.layout] || !LAYOUTS[slot.layout].greeting) return '';
+// 칸(key)들의 글을 한 줄씩 이어 줍니다. 편집하지 않았으면 예시 글. 제목 칸의 줄바꿈은 한 칸 띄움으로.
+function slotText(slot, keys){
+  if(!slot || !LAYOUTS[slot.layout]) return '';
   let objs;
-  if(slot.saved) objs = JSON.parse(slot.saved).canvas.objects || [];
-  else objs = LAYOUTS[slot.layout].build(geom(slot.kind, slot.side));
+  if(slot.saved && savedOk(slot.saved)) objs = JSON.parse(slot.saved).canvas.objects || [];
+  else objs = slot.saved ? carryText(slot.saved, buildObjs(slot.layout, geom(slot.kind, slot.side))) : buildObjs(slot.layout, geom(slot.kind, slot.side));
   const get = k => { const o = objs.find(x => x.key === k); return o && o.text ? o.text.trim() : ''; };
-  return [get('gtitle').replace(/\n/g, ' '), get('gbody')].filter(Boolean).join('\n');
+  return keys.map((k, i) => i ? get(k) : get(k).replace(/\n/g, ' ')).filter(Boolean).join('\n');
+}
+// 인사말 펼침면이면 제목 + 본문(표2 맺음말을 여기서 가져감).
+function greetingText(slot){
+  return LAYOUTS[slot.layout] && LAYOUTS[slot.layout].greeting ? slotText(slot, ['gtitle', 'gbody']) : '';
+}
+// 표2 맺음말 원문: 4~11p 중 인사말 펼침면 → 없으면 3p 학원 소개(제목 + 소개 문구). 늘 채워지게(2026-11-06).
+function closingText(book){
+  if(!book) return '';
+  return book.spreads.map(greetingText).find(Boolean) || slotText(book.first, ['title', 'lead']);
 }
 
 // ===================== 학원 기본 정보 (표1 앞표지·표2 안쪽 표지 미리보기) =====================
@@ -482,7 +617,7 @@ async function drawInfo(cv, info, coverCode, cvJson, base, which = 'p1'){
   const a = get(p2, '표2_학원명'), d = get(p2, '표2_원장명'), gr = get(p2, '표2_인사말');
   if(a) stack(cv, [[info.academy || '학원명', a.paragraphs[0]], ['BRANDBOOK', a.paragraphs[1]]], X + a.panelMm.x, Y1 + a.panelMm.y, a.panelMm.w);
   if(d) stack(cv, [[d.paragraphs[0].text.replace('[원장명]', info.director || '원장명'), d.paragraphs[0]]], X + d.panelMm.x, Y1 + d.panelMm.y, d.panelMm.w);
-  const close = (book && book.spreads.map(greetingText).find(Boolean) || '').split(/(?<=[.!?。])\s+/).filter(Boolean).slice(-2).join(' ');
+  const close = closingText(book).split(/(?<=[.!?。])\s+/).filter(Boolean).slice(-2).join(' ');
   if(gr && close) stack(cv, [[close, gr.paragraphs[0]]], X + gr.panelMm.x, Y1 + gr.panelMm.y, gr.panelMm.w);
   cv.requestRenderAll();
 }
@@ -574,14 +709,17 @@ function fitCanvas(){
   canvas.setZoom(zoom);
   canvas.requestRenderAll();
 }
+let bgTok = 0;
+const pageNosAt = i => labelsAt(i).map(l => parseInt(l, 10)).filter(n => n > 0);
 function applyTheme(id){
-  state.theme = id;
-  canvas.setBackgroundImage(themeGroup(g, id), canvas.renderAll.bind(canvas));
+  state.theme = themeId(id);
+  const tok = ++bgTok, layout = state.layout, cg = g;
+  backgroundFor(layout, cg, state.theme, pageNosAt(cur)).then(bg => { if(tok === bgTok) canvas.setBackgroundImage(bg, canvas.renderAll.bind(canvas)); });
   renderLayoutChips();
 }
 async function buildLayout(id, themeId){
   state.layout = id;
-  silent(() => { canvas.clear(); canvas.backgroundColor = '#fff'; LAYOUTS[id].build(g).forEach(o => canvas.add(o)); });
+  silent(() => { canvas.clear(); canvas.backgroundColor = '#fff'; buildObjs(id, g).forEach(o => canvas.add(o)); });
   await fillAuto(canvas);
   applyTheme(themeId || state.theme);
 }
@@ -590,7 +728,7 @@ async function switchLayout(id){
   if(!slot || id === state.layout) return;
   slot.cache = slot.cache || {};
   slot.cache[state.layout] = snapshot();
-  if(slot.cache[id]){ await restore(slot.cache[id]); await fillAuto(canvas); }
+  if(slot.cache[id] && savedOk(slot.cache[id])){ await restore(slot.cache[id]); await fillAuto(canvas); }
   else await buildLayout(id, state.theme);
   slot.layout = id; slot.theme = state.theme;
   slot.saved = slot.cache[id] || null;
@@ -606,7 +744,7 @@ function setInteractive(){
 }
 
 // 되돌리기
-function snapshot(){ const j = canvas.toJSON(SAVE_PROPS); delete j.backgroundImage; return JSON.stringify({ theme:state.theme, layout:state.layout, canvas:j }); }
+function snapshot(){ const j = canvas.toJSON(SAVE_PROPS); delete j.backgroundImage; return JSON.stringify({ theme:state.theme, layout:state.layout, canvas:j, tv:THEME_VER() }); }
 function silent(fn){ muted = true; try{ fn(); } finally{ muted = false; } }
 function pushHistory(){ if(muted || isFixedNoCanvas()) return; history.push(snapshot()); if(history.length > 60) history.shift(); future = []; dirty = true; refreshUI(); scheduleSave(); }
 const isFixedNoCanvas = () => isInfo() || isMh() || isImagePage(slot);
@@ -695,7 +833,7 @@ function renderGuide(){
 // 키를 가진 칸이 지금 펼침면에 없으면(예: 예전에 저장한 선생님 소개에 '지도 한마디' 칸이 없을 때) 템플릿 원래 위치에 만들어 넣습니다.
 function ensureField(k){
   let o = byKey(k, canvas); if(o) return o;
-  const tpl = LAYOUTS[state.layout].build(g).find(x => x.key === k);
+  const tpl = buildObjs(state.layout, g).find(x => x.key === k);
   if(tpl){ canvas.add(tpl); setInteractive(); o = tpl; }
   return o;
 }
@@ -718,6 +856,7 @@ function applyGuide(how){
   setMsg(`${tg.name}에 넣었어요. 왼쪽 본문 칸이나 페이지의 글을 눌러 바로 고칠 수 있어요.`);
 }
 function syncCellBg(o){
+  if(o && /^tag\d+$/.test(o.key || '')) reflowTags(canvas.getObjects());
   if(!o || !/^cell_/.test(o.key || '')) return;
   const bg = canvas.getObjects().find(x => x.cellbg === o.key);
   if(bg) bg.set('fill', String(o.text || '').trim() ? C.paleMint : '#F6F8F8');
@@ -786,7 +925,7 @@ function renderInfoForm(){
     $('dxForm').innerHTML = `
     <div class="dx-fld"><label>원장명</label><input type="text" data-info="director" value="${esc(i.director)}" placeholder="예: 김홀릭"></div>
     ${file('profileUrl', '원장님 프로필 사진', '얼굴이 가운데 오는 사진')}
-    <p class="dx-note">아래 맺음말은 4~5p 인사말의 마지막 문장이 들어가요. 오른쪽은 대략적인 모습이고, 정확한 배치는 다음 단계 미리보기에서 확인할 수 있어요.</p>`;
+    <p class="dx-note">아래 맺음말은 인사말의 마지막 문장이 들어가요. 인사말 템플릿을 고르지 않으면 3p 학원 소개 글로 채워요.</p>`;
     return;
   }
   $('dxForm').innerHTML = `
@@ -794,7 +933,7 @@ function renderInfoForm(){
     <div class="dx-fld"><label>표지 문구 <small>앞표지</small></label>
       <p class="dx-hint">비워두면 '학원명 + BRANDBOOK'이 들어가요. 직접 쓰실 땐 두 줄로 써 주세요(첫 줄 얇은 글씨, 둘째 줄 굵은 글씨).</p>
       <textarea data-info="cover" rows="2" placeholder="예: 생각하는 힘을 키우는&#10;홀릭수학학원">${esc(i.cover)}</textarea></div>
-    <p class="dx-note">표지는 STEP 1에서 고른 디자인으로 보여드려요. 오른쪽은 대략적인 모습이고, 정확한 배치는 다음 단계 미리보기에서 확인할 수 있어요.</p>`;
+    <p class="dx-note">표지는 STEP 1에서 고른 디자인이에요. [완료]를 누른 뒤 STEP 1에서 다시 바꿀 수 있고, 쓰신 내용은 그대로 남아요.</p>`;
 }
 // 사진·로고를 올리거나 지운 뒤: 표지면 표지를 다시 그리고, 3p(로고)면 페이지에 넣고 편집함으로 기록
 async function afterInfoFile(){
@@ -971,7 +1110,8 @@ async function goTo(i){
     canvas.setBackgroundImage(null); canvas.setDimensions({ width:g.W * zoom, height:g.H * zoom }); canvas.setZoom(zoom);
     if(s.info){ await drawInfo(canvas, book.info, opts.cover, opts.cv, opts.base || 'brandbook/', s.info); }
     else if(isImagePage(slot)){ canvas.clear(); canvas.backgroundColor = '#fff'; state.layout = slot.layout; canvas.add(await fixedImage(slot, g)); canvas.requestRenderAll(); }
-    else if(slot.saved){ await restore(slot.saved); await fillAuto(canvas); history = [snapshot()]; }
+    else if(slot.saved && savedOk(slot.saved)){ await restore(slot.saved); await fillAuto(canvas); history = [snapshot()]; }
+    else if(slot.saved){ const old = slot.saved; await buildLayout(slot.layout, slot.theme); silent(() => carryText(old, canvas.getObjects())); canvas.requestRenderAll(); history = [snapshot()]; }
     else { await buildLayout(slot.layout, slot.theme); history = [snapshot()]; }
   }
   renderLock();
@@ -1151,6 +1291,7 @@ async function openBook(b, o = {}){
   book = b; opts = o;
   mount();
   $('dxModal').classList.add('show');
+  await loadTheme();
   await loadFonts();
   await Promise.all(['100 10px DxSuit', '200 10px DxSuit', '300 10px DxSuit', '600 10px DxSuit'].map(f => document.fonts.load(f)));
   slot = null; cur = 0;
@@ -1162,7 +1303,9 @@ function flush(){ if(isOpen()) commit(); }
 window.DiyEditor = {
   BLEED, PAGE_W, PAGE_H, PRINT_PPI, LAYOUTS, SPREAD_LAYOUTS, THEMES, GUIDES, geom,
   setBook(b){ book = b; },
-  openBook, renderPages, greetingText, flush,
+  loadTheme,
+  openBook, renderPages, greetingText, closingText, flush,
   requiredDone: () => book ? missingRequired() == null : false,
 };
+loadTheme();
 })();
