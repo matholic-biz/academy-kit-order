@@ -2071,6 +2071,18 @@ async function stripThumb(s){
 }
 // 표1·표2 썸네일: 입력한 학원명·표지 문구·원장명이 들어간 모습
 const infoThumbCache = {};
+// 에디터 밖(STEP 1)에서 쓰는 표지 그림: 고른 표지 세트(cover_variable.json set — 엔진·조립과 같은 짝)로 표1/표2를 그림
+async function coverImage(info, { cover, cv, base = 'brandbook/', which = 'p2', ppi = 40 } = {}){
+  await loadFonts();
+  await Promise.all(['100 10px DxSuit', '200 10px DxSuit', '300 10px DxSuit', '600 10px DxSuit'].map(f => document.fonts.load(f)));
+  const k = PX_PER_MM(ppi), sc = new fabric.StaticCanvas(null, { width:INFO_GEOM.W * k, height:INFO_GEOM.H * k, renderOnAddRemove:false, enableRetinaScaling:false });
+  sc.setZoom(k);
+  await drawInfo(sc, info || {}, cover, cv, base, which);
+  sc.renderAll();
+  const u = sc.toDataURL({ format:'jpeg', quality:0.85 });
+  sc.dispose();
+  return u;
+}
 async function infoThumb(i){
   const f = book.info, key = [opts.cover, f.academy, f.director, f.cover, f.profileUrl ? f.profileUrl.length : 0].join('|');
   if(infoThumbCache[i] && infoThumbCache[i].key === key) return infoThumbCache[i].p;
@@ -2414,7 +2426,7 @@ window.DiyEditor = {
   BLEED, PAGE_W, PAGE_H, PRINT_PPI, LAYOUTS, SPREAD_LAYOUTS, THEMES, FILLS, geom,
   setBook(b){ book = b; },
   loadTheme,
-  openBook, renderPages, greetingText, closingText, flush,
+  openBook, renderPages, greetingText, closingText, coverImage, flush,
   requiredDone: () => book ? missingRequired() == null : false,
 };
 loadTheme();

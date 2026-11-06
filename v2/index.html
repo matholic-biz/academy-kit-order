@@ -151,17 +151,19 @@
   .intro-samples .is-cap{font-size:11.5px;color:var(--muted);text-align:center;margin-top:4px;}
   .intro-actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:14px;}
   /* 맞춤 페이지 소개(2026-11-06) */
-  .diy-pages{display:grid;grid-template-columns:1fr 2fr 2fr;gap:28px;align-items:end;max-width:760px;}
+  .diy-pages{display:grid;grid-template-columns:1fr 2fr 2fr;gap:28px;align-items:end;max-width:760px;margin:0 auto;}
+  /* 버튼은 가운데 한 줄, 작성 상태는 그 아래 작은 글씨(2026-11-06) */
+  .diy-cta-row{display:flex;flex-direction:column;align-items:center;gap:8px;margin-top:28px;}
   .dp-item{all:unset;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:10px;}
   .dp-item svg{width:100%;height:auto;display:block;filter:drop-shadow(0 4px 10px rgba(16,40,43,.12));transition:transform .15s;}
   .dp-item:hover svg, .dp-item:focus-visible svg{transform:translateY(-3px);}
   .dp-item:focus-visible{outline:2px solid var(--seafoam);outline-offset:6px;border-radius:6px;}
   .dp-item span{font-size:14px;font-weight:600;color:var(--ink);}
   /* [다음]과 같은 크기(14px·700·12/22px·모서리 10px) — 색이 달라 이것만으로 구분됨(2026-11-06) */
-  .diy-cta{display:inline-flex;align-items:center;justify-content:center;gap:8px;margin-top:28px;padding:12px 22px;border:0;border-radius:10px;background:#12695A;color:#fff;font:inherit;font-size:14px;font-weight:700;line-height:normal;cursor:pointer;transition:background .15s;}
+  .diy-cta{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 22px;border:0;border-radius:10px;background:#12695A;color:#fff;font:inherit;font-size:14px;font-weight:700;line-height:normal;cursor:pointer;transition:background .15s;}
   .diy-cta:hover{background:#0E5A4D;}
   .diy-cta svg{width:16px;height:16px;flex:none;}
-  .diy-cta-status{display:inline-flex;align-items:center;gap:6px;margin:10px 0 0;padding:4px 12px;border-radius:99px;background:#fff;border:1px solid var(--lightMint);font-size:12.5px;font-weight:600;color:var(--deepTeal);}
+  .diy-cta-status{margin:0;font-size:12px;color:var(--sage);}
   /* 맞춤 페이지는 직접 참여하는 특별 구역이라 옅은 바탕을 깔아 다른 구성과 구분(2026-11-06) */
   /* 제목·안내는 바탕 밖, [주제별 구성](.subhead + .note)과 같은 모양 — 바탕 안은 그림·버튼만(2026-11-06).
      :last-child까지 적어야 아래 .cb-section:last-child{padding-bottom:0}에 덮이지 않음 */
@@ -966,7 +968,7 @@
 <!-- 앞부분(3~12p) 직접 꾸미기 편집기 (2026-11-05). 편집기를 고치면 ?v= 값을 바꿉니다. -->
 <link rel="stylesheet" href="diy/diy-editor.css?v=20261106y">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.0/fabric.min.js"></script>
-<script src="diy/diy-editor.js?v=20261106zb"></script>
+<script src="diy/diy-editor.js?v=20261106zc"></script>
 <!-- 다음(카카오) 우편번호 검색 — 우편번호를 모르는 고객도 주소만 검색하면 우편번호+주소가 자동으로 채워집니다.
      (구 URL이던 ssl.daumcdn.net/dmaps/map_js_init/postcode.v2.js는 더 이상 응답하지 않아, 현재 공식 URL인
      t1.kakaocdn.net 쪽으로 바꿨습니다 — 2024년경 다음 우편번호 서비스가 카카오 도메인으로 이전되었습니다.) -->
@@ -1039,10 +1041,10 @@ const TOUR_STEPS = [
     title:'맞춤형으로 직접 구성', desc:'이번엔 표지 디자인과 주제를 직접 골라 구성하는 맞춤형 화면을 보여드릴게요. 이 카드를 누르면 화면이 바뀌어요.',
     mode:'info', onEnter: ()=> setConfigMode('custom') },
   { panel:1, target:'#commonSectionsInline .cb-section:nth-child(1)',
-    title:'표지 디자인 선택', desc:'마음에 드는 표지 디자인을 눌러 선택할 수 있어요. 앞표지·앞표지 내지(원장님 프로필)·뒤표지 내지·뒷표지 4장이 함께 정해져요.',
+    title:'표지 디자인 선택', desc:'마음에 드는 표지 디자인을 눌러 선택할 수 있어요. 앞표지부터 안쪽 표지·뒤표지까지 4장이 함께 정해져요.',
     mode:'info' },
   { panel:1, target:'#commonSectionsInline .cb-section:nth-child(2)',
-    title:'원장님 프로필 (확인)', desc:'선택한 표지 디자인에 맞춰 자동으로 포함되는 1페이지예요(앞표지 내지). 사진은 다음 단계에서 넣을 수 있어요.',
+    title:'표2 안쪽 표지', desc:'고른 표지와 짝을 이루는 안쪽 표지예요. 원장님 이름과 사진은 [맞춤 페이지 직접 꾸미기]에서 넣어요.',
     mode:'info' },
   { panel:1, target:'#commonSectionsInline .cb-section:nth-child(3)',
     title:'우리학원은 이렇게 다릅니다 (확인)', desc:'모든 브랜드북에 공통으로 포함되는 1페이지예요. 학원 소개 문구는 다음 단계에서 직접 작성하실 수 있어요.',
@@ -1356,8 +1358,8 @@ function renderDiyFront(){
       <button type="button" class="dp-item wide" data-go="${goSlot('greeting')}">${art.greet}<span>원장님 인사말</span></button>
       <button type="button" class="dp-item wide" data-go="${goSlot('class')}">${art.cls}<span>수업 방식</span></button>
     </div>
-    <button type="button" class="diy-cta" id="btnOpenIntro"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16v4z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M14 6l4 4" stroke="currentColor" stroke-width="2"/></svg>${done ? '맞춤 페이지 이어서 꾸미기' : '맞춤 페이지 직접 꾸미기'}</button>
-    ${done ? `<p class="diy-cta-status">✓ ${done}페이지 작성 · 자동 저장됨</p>` : ''}`;
+    <div class="diy-cta-row"><button type="button" class="diy-cta" id="btnOpenIntro"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16v4z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M14 6l4 4" stroke="currentColor" stroke-width="2"/></svg>${done ? '맞춤 페이지 이어서 꾸미기' : '맞춤 페이지 직접 꾸미기'}</button>
+    ${done ? `<p class="diy-cta-status">✓ ${done}페이지 작성 · 자동 저장됨</p>` : ''}</div>`;
   el.querySelectorAll('.dp-item').forEach(b => { b.onclick = ()=> openDiy(+b.dataset.go); });
   document.getElementById('btnOpenIntro').onclick = ()=> openDiy(0);
 }
@@ -1379,13 +1381,38 @@ async function openDiy(start, startMode){
     onChange: ()=> updateSummary(),
     onSave: ()=> saveState(),
     onClose: (r)=>{
-      renderDiyFront(); updateSummary();
+      renderDiyFront(); updateSummary(); drawInnerCoverThumb();
       if(r && r.complete){
         showToast('우리 학원 소개를 마쳤어요. 이제 아래 [주제별 구성]을 골라 주세요.');
         setTimeout(()=> document.getElementById('chapters').scrollIntoView({ behavior:'smooth', block:'start' }), 300);
       }
     },
   });
+}
+
+// STEP 1 [표2 안쪽 표지] 그림: 고른 표지의 짝(안쪽 그린/블랙)으로 에디터와 같은 방식으로 그림. 원장명·사진이 있으면 함께.
+// 예전 대표 이미지(profile-1.jpg)는 쓰지 않음 — 표지를 누를 때마다 구역을 다시 그리면서 잠깐 예전 그림이 보였음(2026-11-06).
+// 그린 그림은 표지·원장명·사진별로 기억해 두고 바로 씀. 처음 그리는 동안만 옅은 회색 칸.
+const innerThumbCache = {};
+let innerThumbTok = 0;
+function innerThumbKey(){
+  const info = DIY_ENABLED && diyBook ? diyBook.info : {};
+  return [(findCover(themeState.selectedCoverId) || COVERS[0]).engine, info.academy || '', info.director || '', info.profileUrl ? info.profileUrl.length : 0].join('|');
+}
+const innerThumbUrl = () => innerThumbCache[innerThumbKey()] || '';
+async function drawInnerCoverThumb(){
+  if(!window.DiyEditor || !DiyEditor.coverImage) return;
+  const key = innerThumbKey(), tok = ++innerThumbTok;
+  const show = url => { const box = document.getElementById('innerCoverThumb'); if(box && tok === innerThumbTok) box.style.backgroundImage = `url('${url}')`; };
+  if(innerThumbCache[key]) return show(innerThumbCache[key]);
+  await new Promise(r => setTimeout(r));   // 처음 그릴 땐 아래쪽 엔진 데이터 준비 코드가 아직 실행 전이라 한 박자 뒤에
+  try{
+    const data = await loadEngineData();
+    const info = DIY_ENABLED && diyBook ? diyBook.info : {};
+    const url = await DiyEditor.coverImage(info, { cover:key.split('|')[0], cv:data.cv, base:ENGINE_BASE, which:'p2', ppi:80 });   // 마우스를 올리면 2.1배로 커져서 80ppi
+    innerThumbCache[key] = url;
+    show(url);
+  }catch(err){ console.error(err); }
 }
 
 // 다음 단계로 넘어갈 때, STEP 1에서 받은 내용(우리 학원 소개하기 / 추천 템플릿 입력)을 엔진·접수 메일이 읽는 칸으로 옮깁니다.
@@ -1522,18 +1549,16 @@ function renderCommonSections(){
       <div class="cb-grid">${coverThumbs}</div>
     </div>`;
 
-  // 원장님 프로필(=표2, 앞표지 안쪽)은 실제 조립 시 미리보기 엔진이 선택한 표지 세트로 만들지만,
-  // 화면에서 어떤 느낌인지 확인할 수 있도록 ../assets/thumbs/profile-1.jpg 대표 이미지로 미리보기 카드만 보여줍니다.
-  // (페이지 수에는 포함하지 않습니다 — 이미 표지 세트의 +4에 포함되어 있는 페이지입니다.)
+  // 표2 안쪽 표지: 고른 표지 짝으로 그린 그림(drawInnerCoverThumb). 페이지 수에는 넣지 않음 — 표지 세트의 4p에 이미 포함.
   const profileSection = `
     <div class="cb-section">
       <div class="cb-head">
-        <div class="cb-title">원장님 프로필</div>
-        <div class="cb-desc">공통 포함 구성<br>(1P, 앞표지 내지)</div>
+        <div class="cb-title">표2 안쪽 표지</div>
+        <div class="cb-desc">표지와 함께 정해져요</div>
       </div>
       <div class="cb-grid">
         <div class="cb-thumb preview zoom-thumb">
-          <div class="thumb-img" style="background-image:url('${thumbFile('profile',1)}');"></div>
+          <div class="thumb-img" id="innerCoverThumb" style="background-color:#EEF2F1;${innerThumbUrl() ? `background-image:url('${innerThumbUrl()}');` : ''}"></div>
         </div>
       </div>
     </div>`;
@@ -1563,6 +1588,7 @@ function renderCommonSections(){
     <div class="cb-section diy-zone"><div id="diyFrontGrid"></div></div>`;
   el.innerHTML = coverSection + profileSection + (DIY_ENABLED ? diySection : fixedSections);
   if(DIY_ENABLED) renderDiyFront();
+  drawInnerCoverThumb();
 
   el.querySelectorAll('.cb-thumb[data-id]').forEach(thumb=>{
     thumb.onclick = ()=>{
