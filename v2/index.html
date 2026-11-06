@@ -126,7 +126,9 @@
   .tpl-more-body{margin-top:14px;display:flex;flex-direction:column;gap:16px;}
   #tplInfo #fgTextContent{margin-bottom:16px;}
   .tpl-done-row{display:flex;justify-content:flex-end;margin-top:16px;}
-  .tpl-done-row .btn{width:auto;padding:12px 28px;}
+  /* [다음]과 같은 크기, 색은 [맞춤 페이지 직접 꾸미기]와 같은 진한 초록 — 입력 상자 안의 마침 버튼이 아래 [다음]보다 크게 보이지 않게(2026-11-06) */
+  .tpl-done-row .btn.primary{width:auto;padding:12px 22px;background:#12695A;}
+  .tpl-done-row .btn.primary:hover{background:#0E5A4D;}
   /* 추천 템플릿 카드: 해시태그 + A/B가 다른 페이지 */
   .template-tags{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 10px;}
   .template-tags span{font-size:12.5px;font-weight:600;color:var(--deepTeal);background:var(--paleMint);border-radius:99px;padding:3px 10px;}
@@ -154,10 +156,9 @@
   .diy-pages{display:grid;grid-template-columns:1fr 2fr 2fr;gap:28px;align-items:end;max-width:760px;margin:0 auto;}
   /* 버튼은 가운데 한 줄, 작성 상태는 그 아래 작은 글씨(2026-11-06) */
   .diy-cta-row{display:flex;flex-direction:column;align-items:center;gap:8px;margin-top:28px;}
-  .dp-item{all:unset;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:10px;}
-  .dp-item svg{width:100%;height:auto;display:block;filter:drop-shadow(0 4px 10px rgba(16,40,43,.12));transition:transform .15s;}
-  .dp-item:hover svg, .dp-item:focus-visible svg{transform:translateY(-3px);}
-  .dp-item:focus-visible{outline:2px solid var(--seafoam);outline-offset:6px;border-radius:6px;}
+  /* 그림 세 장은 설명용 — 누르지 않음(잘못 눌러 [완료]로만 나갈 수 있는 에디터가 열리지 않게, 2026-11-06). 떠오르는 효과도 없이 그림자만 */
+  .dp-item{display:flex;flex-direction:column;align-items:center;gap:10px;}
+  .dp-item svg{width:100%;height:auto;display:block;filter:drop-shadow(0 4px 10px rgba(16,40,43,.12));}
   .dp-item span{font-size:14px;font-weight:600;color:var(--ink);}
   /* [다음]과 같은 크기(14px·700·12/22px·모서리 10px) — 색이 달라 이것만으로 구분됨(2026-11-06) */
   .diy-cta{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 22px;border:0;border-radius:10px;background:#12695A;color:#fff;font:inherit;font-size:14px;font-weight:700;line-height:normal;cursor:pointer;transition:background .15s;}
@@ -968,7 +969,7 @@
 <!-- 앞부분(3~12p) 직접 꾸미기 편집기 (2026-11-05). 편집기를 고치면 ?v= 값을 바꿉니다. -->
 <link rel="stylesheet" href="diy/diy-editor.css?v=20261106y">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.0/fabric.min.js"></script>
-<script src="diy/diy-editor.js?v=20261106zc"></script>
+<script src="diy/diy-editor.js?v=20261106zd"></script>
 <!-- 다음(카카오) 우편번호 검색 — 우편번호를 모르는 고객도 주소만 검색하면 우편번호+주소가 자동으로 채워집니다.
      (구 URL이던 ssl.daumcdn.net/dmaps/map_js_init/postcode.v2.js는 더 이상 응답하지 않아, 현재 공식 URL인
      t1.kakaocdn.net 쪽으로 바꿨습니다 — 2024년경 다음 우편번호 서비스가 카카오 도메인으로 이전되었습니다.) -->
@@ -1351,16 +1352,13 @@ function renderDiyFront(){
     greet:`<svg viewBox="0 0 241 160" aria-hidden="true">${page(0, tt(10, '원장님 인사말') + pic(10, 40, 100, 52, 'person') + L(10, 104, 96) + L(10, 112, 96) + L(10, 120, 70) + L(10, 134, 96) + L(10, 142, 80))}${page(121, L(131, 30, 96) + L(131, 38, 96) + L(131, 46, 60) + L(131, 62, 96) + L(131, 70, 96) + L(131, 78, 76) + pic(131, 100, 100, 46))}</svg>`,
     cls:`<svg viewBox="0 0 241 160" aria-hidden="true">${page(0, tt(10, '수업 방식') + [46, 76, 106].map(y => chk(12, y) + L(28, y + 1, 78) + L(28, y + 8, 50)).join(''))}${page(121, pic(131, 24, 100, 70, 'class') + L(131, 108, 96) + L(131, 116, 96) + L(131, 124, 80) + L(131, 132, 60))}</svg>`,
   };
-  // 편집기 아래 줄 번호: 0 표1, 1 표2, 2부터 3p·4~5p…
-  const goSlot = lay => { const k = slots.findIndex(s => s.layout === lay); return k >= 0 ? 2 + k : 0; };
   el.innerHTML = `<div class="diy-pages">
-      <button type="button" class="dp-item" data-go="2">${art.intro}<span>학원 소개</span></button>
-      <button type="button" class="dp-item wide" data-go="${goSlot('greeting')}">${art.greet}<span>원장님 인사말</span></button>
-      <button type="button" class="dp-item wide" data-go="${goSlot('class')}">${art.cls}<span>수업 방식</span></button>
+      <div class="dp-item">${art.intro}<span>학원 소개</span></div>
+      <div class="dp-item wide">${art.greet}<span>원장님 인사말</span></div>
+      <div class="dp-item wide">${art.cls}<span>수업 방식</span></div>
     </div>
     <div class="diy-cta-row"><button type="button" class="diy-cta" id="btnOpenIntro"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16v4z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M14 6l4 4" stroke="currentColor" stroke-width="2"/></svg>${done ? '맞춤 페이지 이어서 꾸미기' : '맞춤 페이지 직접 꾸미기'}</button>
     ${done ? `<p class="diy-cta-status">✓ ${done}페이지 작성 · 자동 저장됨</p>` : ''}</div>`;
-  el.querySelectorAll('.dp-item').forEach(b => { b.onclick = ()=> openDiy(+b.dataset.go); });
   document.getElementById('btnOpenIntro').onclick = ()=> openDiy(0);
 }
 async function drawDiyThumb(slot, box){

@@ -916,7 +916,7 @@ function sectionAt(i){
   if(i < INFO_N) return ['고정', i === 0 ? '표1 앞표지' : '표2 안쪽 표지'];
   if(s === book.first) return ['고정', `${labelsAt(i)[0].replace('p', '')}쪽 학원 소개`];
   if(s === book.last) return ['고정', `${labelsAt(i)[0].replace('p', '')}쪽 ${(LAYOUTS[s.layout] || {}).name || ''}`];
-  if(s.mh) return ['주제', `${s.imgs.map(x => x.no).join('~')}쪽${s.sample ? ' 예시' : ''}`];
+  if(s.mh) return ['주제별', `${s.imgs.map(x => x.no).join('~')}쪽${s.sample ? ' 예시' : ''}`];
   const l = labelsAt(i); return ['맞춤', `${l[0].replace('p', '')}~${l[l.length - 1].replace('p', '')}쪽 ${nameAt(i)}`];
 }
 const secHtml = i => { const [k, t] = sectionAt(i); return `<span class="dx-sec ${k === '맞춤' ? 'cus' : k === '고정' ? 'fix' : k === '학원 소개' ? 'intro' : 'mh'}">${k}</span> ${esc(t)}`; };
@@ -2108,7 +2108,7 @@ function renderStrip(){
       <div class="dx-st-cap">${secHtml(i)}</div></div>`;
   });
   updateDoneBtn();
-  $('dxStrip').innerHTML = `<div class="dx-strip-head"><b>전체 구성 미리보기</b><span><span class="dx-sec fix">고정</span> 위치·레이아웃 고정 <span class="dx-sec cus">맞춤</span> 4~11쪽 템플릿·상세 편집 <span class="dx-sec mh">주제</span> STEP 1에서 고른 주제</span></div>
+  $('dxStrip').innerHTML = `<div class="dx-strip-head"><b>전체 구성 미리보기</b><span><span class="dx-sec fix">고정</span> 위치·레이아웃 고정 <span class="dx-sec cus">맞춤</span> 4~11쪽 템플릿·상세 편집 <span class="dx-sec mh">주제별</span> STEP 1에서 고른 주제</span></div>
     <div class="dx-strip-row">${items.join('')}</div>`;
   $('dxStrip').querySelectorAll('[data-thumb]').forEach(async el => {
     const i = +el.dataset.thumb;
