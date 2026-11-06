@@ -157,18 +157,19 @@
   .dp-item:hover svg, .dp-item:focus-visible svg{transform:translateY(-3px);}
   .dp-item:focus-visible{outline:2px solid var(--seafoam);outline-offset:6px;border-radius:6px;}
   .dp-item span{font-size:14px;font-weight:600;color:var(--ink);}
-  .diy-cta{display:flex;align-items:center;justify-content:center;gap:12px;width:100%;max-width:560px;margin-top:26px;padding:14px 24px;border:0;border-radius:12px;background:#12695A;color:#fff;font:inherit;font-size:16px;font-weight:800;cursor:pointer;box-shadow:0 8px 20px -10px rgba(18,105,90,.7);transition:background .15s,transform .15s;}
-  .diy-cta:hover{background:#0E5A4D;transform:translateY(-1px);}
-  .diy-cta svg{width:20px;height:20px;flex:none;}
+  /* [다음]과 같은 크기(14px·700·12/22px·모서리 10px) — 색이 달라 이것만으로 구분됨(2026-11-06) */
+  .diy-cta{display:inline-flex;align-items:center;justify-content:center;gap:8px;margin-top:28px;padding:12px 22px;border:0;border-radius:10px;background:#12695A;color:#fff;font:inherit;font-size:14px;font-weight:700;line-height:normal;cursor:pointer;transition:background .15s;}
+  .diy-cta:hover{background:#0E5A4D;}
+  .diy-cta svg{width:16px;height:16px;flex:none;}
   .diy-cta-status{display:inline-flex;align-items:center;gap:6px;margin:10px 0 0;padding:4px 12px;border-radius:99px;background:#fff;border:1px solid var(--lightMint);font-size:12.5px;font-weight:600;color:var(--deepTeal);}
   /* 맞춤 페이지는 직접 참여하는 특별 구역이라 옅은 바탕을 깔아 다른 구성과 구분(2026-11-06) */
   /* 제목·안내는 바탕 밖, [주제별 구성](.subhead + .note)과 같은 모양 — 바탕 안은 그림·버튼만(2026-11-06).
      :last-child까지 적어야 아래 .cb-section:last-child{padding-bottom:0}에 덮이지 않음 */
   .diy-head{font-size:16px;font-weight:800;margin:24px 0 12px;color:var(--ink);}
   .diy-lead{margin-top:0;}
-  .cb-section.diy-zone, .cb-section.diy-zone:last-child{display:block;background:#F3F9F7;border:1px solid #DCEFE8;border-radius:16px;padding:36px 32px 40px;margin:16px 0;}
+  .cb-section.diy-zone, .cb-section.diy-zone:last-child{display:block;background:#F3F9F7;border:1px solid #DCEFE8;border-radius:16px;padding:36px 32px 40px;margin:16px 0 56px;}
   @media (max-width:640px){ .cb-section.diy-zone, .cb-section.diy-zone:last-child{padding:24px 16px 28px;border-radius:12px;} }
-  @media (max-width:640px){ .diy-pages{gap:12px;} .dp-item span{font-size:12.5px;} .diy-cta{font-size:15px;padding:13px 16px;} }
+  @media (max-width:640px){ .diy-pages{gap:12px;} .dp-item span{font-size:12.5px;} .diy-cta{width:100%;} }
   .intro-status{font-size:12.5px;color:var(--muted);}
   .intro-status b{color:var(--seafoam);}
   /* STEP 2 미리보기 슬라이드 (위: 펼침면, 아래: 썸네일 줄) */
