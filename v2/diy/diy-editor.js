@@ -81,9 +81,16 @@ function loadTheme(){
     THEME = t;
     Object.keys(THEMES).forEach(k => delete THEMES[k]);
     t.variants.forEach(v => { const c = v.colors && v.colors['강조']; THEMES[v.id] = { name:v.name, dot:c && c.rgb ? `rgb(${c.rgb.join(',')})` : '#ccc' }; });
-    return t;
+    // 점 색 = 배경 그림 왼쪽 끝 띠에서 실제 색을 읽음(띠 색조를 InDesign에서 바꿔도 그대로 따라감)
+    return Promise.all(t.variants.map(v => sampleBand(THEME_DIR + 'bg/' + v.id + '/greeting.jpg').then(rgb => { if(rgb) THEMES[v.id].dot = `rgb(${rgb.join(',')})`; }))).then(() => t);
   }).catch(() => null);
   return themeReady;
+}
+function sampleBand(url){
+  return new Promise(res => { const im = new Image(); im.onload = () => { try{
+    const c = document.createElement('canvas'); c.width = c.height = 1; const x = c.getContext('2d');
+    x.drawImage(im, im.width * 0.01, im.height / 2, 1, 1, 0, 0, 1, 1); res([...x.getImageData(0, 0, 1, 1).data].slice(0, 3));
+  }catch(e){ res(null); } }; im.onerror = () => res(null); im.src = url; });
 }
 const THEME_VER = () => THEME ? `${THEME.theme}:${THEME.version}` : '';
 const themeSpread = id => THEME && THEME.spreads.find(x => x.id === id && !x.fixed);
@@ -1020,7 +1027,7 @@ function renderLayoutChips(){
   box.hidden = false;
   $('dxLayouts').innerHTML = SPREAD_LAYOUTS.map(id => { const l = LAYOUTS[id];
     return `<button type="button" class="dx-tpl ${id === state.layout ? 'on' : ''} ${l.free ? 'free' : ''}" data-l="${id}" title="${esc(l.sub)}"><b>${l.name}</b><span>${esc(l.sub)}</span>${slot.cache && slot.cache[id] && id !== state.layout ? '<i>작성함</i>' : ''}</button>`; }).join('');
-  $('dxColors').innerHTML = '배경 색 ' + Object.entries(THEMES).map(([id, t]) => `<button class="dx-dot ${id === state.theme ? 'on' : ''}" title="${t.name}" data-all="${id}" style="background:${t.dot}"></button>`).join('');
+  $('dxColors').innerHTML = '배경 ' + Object.entries(THEMES).map(([id, t]) => `<button class="dx-dot ${id === state.theme ? 'on' : ''}" title="${t.name}" data-all="${id}" style="background:${t.dot}"></button>`).join('');
 }
 
 // ---------- 작성 도우미 ----------
@@ -2124,6 +2131,16 @@ function commit(){
   slot.layout = state.layout; slot.theme = state.theme;
   if(slot.saved){ slot.cache = slot.cache || {}; slot.cache[state.layout] = slot.saved; }
 }
+// 배경은 책 전체 한 가지(2026-11-06 사용자): 3p~11p 모든 칸·저장본·템플릿별 사본에 같은 색
+function setBookTheme(id){
+  applyTheme(id);
+  const t = state.theme, re = j => { try{ const o = JSON.parse(j); o.theme = t; return JSON.stringify(o); }catch(e){ return j; } };
+  [book.first, ...book.spreads].forEach(s => {
+    if(!s) return; s.theme = t;
+    if(s.saved && s !== slot) s.saved = re(s.saved);
+    if(s.cache) Object.keys(s.cache).forEach(k => { s.cache[k] = re(s.cache[k]); });
+  });
+}
 async function goTo(i){
   commit();
   { const pane = mounted && $('dxCue') && $('dxCue').closest('.dx-pane'); if(pane) pane.scrollTop = 0; }   // 다른 페이지로 가면 왼쪽 창은 맨 위부터
@@ -2269,7 +2286,7 @@ function bind(){
   canvas.on('object:moving', renderProps); canvas.on('object:scaling', renderProps);
 
   $('dxLayouts').onclick = e => { const b = e.target.closest('[data-l]'); if(b) switchLayout(b.dataset.l); };
-  $('dxColors').onclick = e => { const b = e.target.closest('[data-all]'); if(b){ applyTheme(b.dataset.all); pushHistory(); } };
+  $('dxColors').onclick = e => { const b = e.target.closest('[data-all]'); if(b){ setBookTheme(b.dataset.all); pushHistory(); saveNow(); } };
   // 원고 고르기: 답 하나 → 펼침면 전체 원고
   const guideClick = e => {
     const ac = e.target.closest('[data-act]'); if(ac && slot) return toggleAct(ac.dataset.act);
