@@ -436,7 +436,7 @@ const LAYOUTS = {
   ]; } },
 
   // 12p 쉬어 가는 페이지: 디자이너가 만든 그림(재단 크기 182×257) 한 장. 원장님은 바꾸지 않고, 템플릿 목록에도 나오지 않습니다(2026-11-05).
-  prologue: { kind:'single', fixed:true, image:'diy/fixed/p012_prologue.jpg?v=20261105h', name:'쉬어 가는 페이지', sub:'12쪽 · 매쓰홀릭 고정', build: () => [] },
+  prologue: { kind:'single', fixed:true, image:'diy/fixed/p012_prologue.jpg?v=20261105h', name:'쉬어 가는 페이지', sub:'12쪽 · 고정', build: () => [] },
 
   // ---------- 펼침면 (4~11p 네 자리에서 고름) ----------
   greeting: { kind:'spread', name:'인사말', sub:'원장님 사진 + 인사말 (마지막 문장은 안쪽 표지에도)', greeting:true, build: g => { const { L, R } = at(g); return [
@@ -844,7 +844,7 @@ let mode = 'A', zoom = 2, userZoom = 1, showGuides = true;
 let history = [], future = [], muted = false, dirty = false, addSide = 0;
 const esc = s => String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
 const FIX_MSG = '미리보기입니다. 이 페이지의 레이아웃은 고정되어 있어요.';
-const MH_MSG = '미리보기입니다. 이 구간에는 이후 선택하신 매쓰홀릭 프로그램 페이지가 들어갑니다.';
+const MH_MSG = '이 자리는 [주제별 구성]에서 고른 주제에 따라 바뀌어요.';
 const pagesOf = () => [{ info:'p1' }, { info:'p2' }, book.first, ...book.spreads, book.last, ...((opts.backPages && opts.backPages()) || [])];
 const isInfo = () => cur < INFO_N;
 const isMh = (i = cur) => !!(pagesOf()[i] || {}).mh;
@@ -909,14 +909,14 @@ function mount(){
 const isOpen = () => mounted && $('dxModal').classList.contains('show');
 function setMsg(m, warn){ const el = $('dxMsg'); el.textContent = m; el.className = warn ? 'warn' : ''; }
 const labelsAt = i => { const s = pagesOf()[i]; if(i < INFO_N) return [i === 0 ? '표1' : '표2']; if(s && s.mh) return s.imgs.map(x => `${x.no}p`); return opts.labelsFor ? opts.labelsFor(s) : []; };
-const nameAt = i => { const s = pagesOf()[i]; if(i < INFO_N) return i === 0 ? '앞표지' : '안쪽 표지'; if(s.mh) return s.title || '매쓰홀릭 프로그램'; return (LAYOUTS[s.layout] || {}).name; };
+const nameAt = i => { const s = pagesOf()[i]; if(i < INFO_N) return i === 0 ? '앞표지' : '안쪽 표지'; if(s.mh) return s.title || '주제별 구성'; return (LAYOUTS[s.layout] || {}).name; };
 // 구간 표시: [성격, 이름] — 모달·편집기·아래 줄 어디서나 같은 글
 function sectionAt(i){
   const s = pagesOf()[i];
   if(i < INFO_N) return ['고정', i === 0 ? '표1 앞표지' : '표2 안쪽 표지'];
   if(s === book.first) return ['고정', `${labelsAt(i)[0].replace('p', '')}쪽 학원 소개`];
   if(s === book.last) return ['고정', `${labelsAt(i)[0].replace('p', '')}쪽 ${(LAYOUTS[s.layout] || {}).name || ''}`];
-  if(s.mh) return ['매쓰홀릭', `${s.imgs.map(x => x.no).join('~')}쪽${s.sample ? ' 예시' : ''}`];
+  if(s.mh) return ['주제', `${s.imgs.map(x => x.no).join('~')}쪽${s.sample ? ' 예시' : ''}`];
   const l = labelsAt(i); return ['맞춤', `${l[0].replace('p', '')}~${l[l.length - 1].replace('p', '')}쪽 ${nameAt(i)}`];
 }
 const secHtml = i => { const [k, t] = sectionAt(i); return `<span class="dx-sec ${k === '맞춤' ? 'cus' : k === '고정' ? 'fix' : k === '학원 소개' ? 'intro' : 'mh'}">${k}</span> ${esc(t)}`; };
@@ -924,12 +924,6 @@ const secHtml = i => { const [k, t] = sectionAt(i); return `<span class="dx-sec 
 function fitCanvas(){
   const stage = $('dxStage');
   if(isMh()){ $('dxStatic').style.height = Math.max(240, stage.clientHeight - 110) + 'px'; return; }
-  if(isInfo()){
-    // 두 구간을 위아래로 놓을 때와 나란히 놓을 때 중 쪽 그림이 더 크게 보이는 쪽을 고릅니다.
-    const iv = $('dxInfoView'), W = stage.clientWidth - 56, Hh = stage.clientHeight - 150, r = PAGE_W / PAGE_H;
-    const col = Math.min(W / 2, (Hh - 150) / 2 * r), row = Math.min((W - 40) / 4, (Hh - 95) * r);
-    iv.classList.toggle('side', row > col);
-    iv.style.setProperty('--pgw', Math.max(110, Math.floor(Math.max(col, row))) + 'px'); return; }
   const fit = Math.min((stage.clientWidth - 48) / g.W, (stage.clientHeight - 120) / g.H);
   zoom = Math.max(0.4, fit) * userZoom;
   canvas.setDimensions({ width:g.W * zoom, height:g.H * zoom });
@@ -1198,12 +1192,12 @@ function renderForm(){
   if(isInfo()) return renderInfoForm();
   if(isImagePage(slot)){
     $('dxFormTitle').textContent = LAYOUTS[slot.layout].name;
-    box.innerHTML = '<div class="dx-lockcard"><b>매쓰홀릭이 준비한 고정 페이지예요</b><p>다음 쪽부터 주제별 구성이 시작돼요. 따로 꾸미지 않아도 돼요.</p></div>';
+    box.innerHTML = '<div class="dx-lockcard"><b>미리 준비된 고정 페이지예요</b><p>다음 쪽부터 주제별 구성이 시작돼요. 따로 꾸미지 않아도 돼요.</p></div>';
     return;
   }
   if(isMh()){
-    $('dxFormTitle').textContent = '매쓰홀릭 프로그램 영역';
-    box.innerHTML = `<div class="dx-lockcard"><b>이 구간은 편집하지 않아요</b><p>13쪽부터는 [주제별 구성]에서 고른 매쓰홀릭 프로그램 페이지가 들어가요. 지금은 ${pagesOf()[cur].sample ? '주제를 고르기 전이라 예시 페이지를' : '고르신 주제의 실제 페이지를'} 보여드리고 있어요.</p></div>`;
+    $('dxFormTitle').textContent = '주제별 구성';
+    box.innerHTML = `<div class="dx-lockcard"><b>고르신 주제가 들어가는 자리예요</b><p>13쪽부터는 [주제별 구성]에서 고른 수업·관리 항목이 이어져요. ${pagesOf()[cur].sample ? '아직 주제를 고르기 전이라 예시 페이지를 보여드리고 있어요.' : '지금 보이는 페이지가 실제로 들어가요.'} 이 자리는 따로 꾸미지 않아도 돼요.</p></div>`;
     return;
   }
   $('dxFormTitle').textContent = '';
@@ -2019,7 +2013,7 @@ function setMode(m){
   canvas.discardActiveObject();
   setMsg(isInfo() ? (cur === 0 ? '학원명을 넣으면 앞표지에 바로 반영돼요.' : '원장명을 넣으면 안쪽 표지에 바로 반영돼요.')
     : isMh() ? MH_MSG
-    : isImagePage(slot) ? '매쓰홀릭이 준비한 고정 페이지예요. 다음 쪽부터 주제별 구성이 시작돼요.'
+    : isImagePage(slot) ? '미리 준비된 고정 페이지예요. 다음 쪽부터 주제별 구성이 시작돼요.'
     : m === 'A' && state.layout === 'flow' ? '실제로 진행하는 절차를 순서대로 고르면 오른쪽 페이지에 STEP이 하나씩 생겨요.'
     : m === 'A' && state.layout === 'books' ? '교재 선택 기준을 고르고, 교재마다 이름·사진·활용을 넣어 주세요. 칸에서 바로 고치면 책에도 함께 바뀌어요.'
     : m === 'A' && state.layout === 'care' ? '관리 방향을 고르고, 실제로 하는 관리 활동을 골라 주세요. 칸에서 바로 고치면 책에도 함께 바뀌어요.'
@@ -2096,13 +2090,13 @@ function renderStrip(){
   const pages = pagesOf();
   const items = pages.map((s, i) => {
     const [k] = sectionAt(i), fix = isFixed(i);
-    return `${s.mh && i > 0 && !pages[i - 1].mh ? '<span class="dx-st-sep" title="여기부터 매쓰홀릭 프로그램 영역"></span>' : ''}<div class="dx-st ${i === cur ? 'on' : ''} ${s.info ? 'single' : s.mh ? 'mh spread' : s.kind}" data-go="${i}">
+    return `${s.mh && i > 0 && !pages[i - 1].mh ? '<span class="dx-st-sep" title="여기부터 주제별 구성"></span>' : ''}<div class="dx-st ${i === cur ? 'on' : ''} ${s.info ? 'single' : s.mh ? 'mh spread' : s.kind}" data-go="${i}">
       <div class="dx-st-img" data-thumb="${i}">${fix ? '<em class="dx-st-lock"></em>' : ''}</div>
       ${isRequired(i) && isDone(i) ? '<span class="dx-st-done" title="채움">✓</span>' : ''}
       <div class="dx-st-cap">${secHtml(i)}</div></div>`;
   });
   updateDoneBtn();
-  $('dxStrip').innerHTML = `<div class="dx-strip-head"><b>전체 구성 미리보기</b><span><span class="dx-sec fix">고정</span> 위치·레이아웃 고정 <span class="dx-sec cus">맞춤</span> 4~11쪽 템플릿·상세 편집 <span class="dx-sec mh">매쓰홀릭</span> 주제 선택 후 반영</span></div>
+  $('dxStrip').innerHTML = `<div class="dx-strip-head"><b>전체 구성 미리보기</b><span><span class="dx-sec fix">고정</span> 위치·레이아웃 고정 <span class="dx-sec cus">맞춤</span> 4~11쪽 템플릿·상세 편집 <span class="dx-sec mh">주제</span> STEP 1에서 고른 주제</span></div>
     <div class="dx-strip-row">${items.join('')}</div>`;
   $('dxStrip').querySelectorAll('[data-thumb]').forEach(async el => {
     const i = +el.dataset.thumb;
@@ -2133,9 +2127,7 @@ async function goTo(i){
   $('dxTabs').style.visibility = isFixed(i) ? 'hidden' : '';
   $('dxStageNote').textContent = s.info ? '표지 글자는 대략적인 모습이에요.' : '';
   $('dxStatic').hidden = !mh;
-  $('dxInfoView').hidden = !s.info;
-  if(!s.info) $('dxInfoView').innerHTML = '';
-  canvas.wrapperEl.style.display = mh || s.info ? 'none' : '';
+  canvas.wrapperEl.style.display = mh ? 'none' : '';   // 표1·표2도 캔버스에 그림(시안의 DOM 표지 화면은 쓰지 않음)
   pending = null; editOpen = false;
   userZoom = 1;
   history = []; future = []; dirty = false;
