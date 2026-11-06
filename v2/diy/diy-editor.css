@@ -235,3 +235,144 @@
 .dx-own-acts{ display:flex; gap:6px; margin-top:6px; flex-wrap:wrap; }
 .dx-gnote{ margin:0 0 6px; font-size:13.5px; line-height:1.6; color:var(--ink); font-weight:600; }
 .dx-st-done{ position:absolute; top:5px; left:5px; box-shadow:0 0 0 2px #fff; width:18px; height:18px; border-radius:50%; background:var(--seafoam); color:#fff; font-size:11px; font-weight:700; line-height:18px; text-align:center; pointer-events:none; }
+
+/* ===== 2026-11-06 질문 하나 → 펼침면 전체 원고 / 3쪽 학원 소개 / 표지 두 구간 ===== */
+.dx-sec.intro{ background:#E6F6F1; color:var(--deepTeal); border:1px solid var(--seafoam); }
+.dx-opts{ display:flex; flex-direction:column; gap:6px; }
+.dx-opt{ text-align:left; border:1px solid var(--line); background:#fff; border-radius:10px; padding:10px 12px 10px 36px; font:inherit; font-size:13.5px; font-weight:600; color:var(--ink, #10282B); cursor:pointer; position:relative; }
+.dx-opt::before{ content:''; position:absolute; left:12px; top:50%; width:14px; height:14px; margin-top:-8px; border:1.5px solid #B8C4C3; border-radius:50%; background:#fff; }
+.dx-opt:hover{ border-color:var(--seafoam); }
+.dx-opt.on{ border-color:var(--deepTeal); background:#EEF8F5; }
+.dx-opt.on::before{ border-color:var(--deepTeal); box-shadow:inset 0 0 0 3px #fff; background:var(--deepTeal); }
+.dx-opt.pending{ border-style:dashed; border-color:#E0A23B; }
+.dx-grades{ display:flex; flex-wrap:wrap; gap:5px; margin-bottom:6px; }
+.dx-check{ display:flex; align-items:center; gap:6px; font-size:13px; margin-top:6px; cursor:pointer; }
+.dx-note.warn{ color:#C2410C; }
+.dx-confirm{ margin-top:10px; border:1px solid #F0C27A; background:#FFF8EC; border-radius:10px; padding:10px 12px; }
+.dx-confirm p{ margin:4px 0 8px; font-size:12.5px; color:var(--body); }
+.dx-count{ display:flex; align-items:center; gap:6px; flex-wrap:wrap; margin-top:10px; font-size:13px; }
+.dx-count small{ color:var(--muted); width:100%; }
+.dx-done{ margin-top:10px; font-size:12.5px; color:var(--deepTeal); font-weight:600; }
+.dx-done .dx-link{ color:var(--deepTeal); font-weight:700; margin-left:4px; }
+.dx-need-box{ border:1px solid var(--seafoam); background:#F3FBF8; border-radius:12px; padding:12px; margin-bottom:12px; }
+.dx-need-box .dx-glabel{ font-weight:700; font-size:13.5px; margin-bottom:8px; }
+.dx-need-box .dx-glabel small{ display:block; font-weight:500; font-size:12px; color:var(--muted); margin-top:2px; }
+.dx-edit{ border:1px solid var(--line); border-radius:12px; padding:0 12px; margin-bottom:12px; background:#fff; }
+.dx-edit > summary{ cursor:pointer; padding:11px 0; font-weight:700; font-size:13.5px; color:var(--deepTeal); list-style:none; }
+.dx-edit > summary::-webkit-details-marker{ display:none; }
+.dx-edit > summary::before{ content:'▸ '; }
+.dx-edit[open] > summary::before{ content:'▾ '; }
+.dx-edit > summary small{ font-weight:500; color:var(--muted); margin-left:4px; font-size:11.5px; }
+.dx-edit[open]{ padding-bottom:6px; }
+.dx-infoview{ --pgw:200px; display:flex; flex-direction:column; gap:28px; align-items:center; justify-content:center; }
+.dx-infoview.side{ flex-direction:row; gap:40px; align-items:flex-start; }
+.dx-infoview[hidden]{ display:none !important; }
+.dx-infoview section{ display:flex; flex-direction:column; align-items:flex-start; }
+.dx-infoview h4{ margin:0 0 10px; font-size:15px; font-weight:700; color:var(--ink, #10282B); }
+.dx-infoview h4 em{ font-style:normal; color:var(--deepTeal); margin-right:2px; }
+.dx-iv-row{ display:flex; align-items:stretch; }
+.dx-iv-pg{ margin:0; width:var(--pgw); display:flex; flex-direction:column; }
+.dx-iv-pg figcaption{ padding:0 6px 8px; line-height:1.35; }
+.dx-iv-pg figcaption b{ display:block; font-size:13.5px; color:var(--ink, #10282B); }
+.dx-iv-pg figcaption span{ display:block; font-size:12px; color:var(--muted); }
+.dx-iv-pg .dx-iv-img{ margin-top:auto; box-shadow:0 10px 26px -14px rgba(0,0,0,.45); }
+.dx-iv-img{ position:relative; }
+.dx-iv-img img{ width:100%; display:block; }
+.dx-iv-pg.go3{ cursor:pointer; }
+.dx-iv-pg.go3 .dx-iv-img::after{ content:''; position:absolute; inset:0; outline:2px solid var(--deepTeal); outline-offset:-2px; pointer-events:none; }
+.dx-iv-pg.go3:hover .dx-iv-img::after{ background:rgba(2,195,154,.08); }
+.dx-iv-pg.go3 figcaption b{ color:var(--deepTeal); }
+.dx-go3{ position:absolute; left:50%; bottom:14px; transform:translateX(-50%); white-space:nowrap; box-shadow:0 6px 18px -6px rgba(0,0,0,.35); }
+.dx-go3card{ border:1px solid var(--seafoam); background:#F3FBF8; border-radius:12px; padding:12px; margin:6px 0 12px; }
+.dx-go3card p{ margin:4px 0 8px; font-size:12.5px; color:var(--body); }
+/* 인사말 입력: 제목·본문 항상 표시, 본문 높이 자동 */
+.dx-greet{ margin-bottom:12px; }
+.dx-greet textarea[data-autosize]{ resize:none; overflow:hidden; line-height:1.6; }
+.dx-greet .dx-greet-photo{ margin-top:14px; padding-top:12px; border-top:1px dashed var(--line); }
+.dx-greet textarea{ transition:border-color .5s, box-shadow .5s; }
+.dx-greet textarea.dx-changed{ border-color:#02C39A; box-shadow:0 0 0 3px rgba(2,195,154,.28); transition:none; }
+.dx-greet-note b{ color:var(--deepTeal); }
+.dx-greet-note{ margin:-4px 0 10px !important; }
+/* 수업 방식 입력 흐름 */
+.dx-cls-h{ font-size:16px; font-weight:800; color:var(--ink, #10282B); margin:2px 0 12px; }
+.dx-step{ margin-bottom:12px; }
+.dx-step-h{ display:inline-block; font-size:11.5px; font-weight:700; color:#fff; background:var(--deepTeal); border-radius:6px; padding:2px 8px; margin-bottom:8px; }
+.dx-opts.grid2{ display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-bottom:10px; }
+.dx-opts.grid2 .dx-opt{ padding:9px 10px 9px 32px; font-size:13px; }
+.dx-opts.grid2 .dx-opt::before{ left:10px; }
+.dx-act::before{ border-radius:4px !important; }
+.dx-act.on::before{ box-shadow:none !important; }
+.dx-act-n{ font-style:normal; color:var(--deepTeal); font-weight:800; margin-right:3px; }
+.dx-step .dx-fld{ margin-top:8px; }
+.dx-step textarea[data-autosize]{ resize:none; overflow:hidden; line-height:1.6; }
+.dx-step input, .dx-step textarea{ transition:border-color .5s, box-shadow .5s; }
+.dx-step .dx-changed{ border-color:#02C39A !important; box-shadow:0 0 0 3px rgba(2,195,154,.28); transition:none; }
+.dx-actf{ margin-top:12px; padding-top:10px; border-top:1px dashed var(--line); }
+.dx-actf-h{ font-weight:700; font-size:13px; color:var(--deepTeal); }
+.dx-greet .dx-step .dx-opts{ margin-bottom:10px; }
+.dx-greet .dx-step .dx-fld{ margin-top:8px; }
+.dx-greet .dx-step .dx-changed{ border-color:#02C39A !important; box-shadow:0 0 0 3px rgba(2,195,154,.28); transition:none; }
+.dx-greet > .dx-fld[data-k="sign"]{ margin-top:4px; }
+/* 학원 공간 사진 항목 */
+.dx-consent{ margin:12px 0 0; padding:8px 10px; background:#FFF8EC; border:1px solid #F0C27A; border-radius:8px; color:#8A5A12; }
+.dx-shot{ margin-top:12px; padding:10px; border:1px solid var(--line); border-radius:10px; background:#fff; }
+.dx-shot-h{ display:flex; justify-content:space-between; align-items:baseline; gap:8px; margin-bottom:6px; }
+.dx-shot-h span{ font-weight:700; font-size:13.5px; color:var(--deepTeal); }
+.dx-shot-h small{ font-size:11.5px; color:var(--muted); }
+.dx-shot .dx-fld{ margin-top:6px; }
+.dx-space-intro{ margin:-4px 0 12px; line-height:1.6; }
+.dx-more{ display:flex; align-items:center; justify-content:space-between; gap:8px; flex-wrap:wrap; margin:4px 0 12px; padding:10px 12px; border:1px dashed var(--seafoam); border-radius:10px; font-size:13px; color:var(--body); }
+/* 학원 공간 상단 가이드 */
+.dx-howto{ border:1px solid var(--seafoam); background:#EEF8F5; border-radius:12px; padding:14px 14px 12px; margin:2px 0 12px; }
+.dx-howto-h{ display:flex; align-items:center; gap:8px; font-size:15px; font-weight:800; color:var(--deepTeal); margin-bottom:8px; }
+.dx-howto-ic{ display:inline-flex; align-items:center; justify-content:center; width:26px; height:26px; border-radius:50%; background:#fff; font-size:14px; }
+.dx-howto ul{ margin:0; padding-left:18px; font-size:13px; line-height:1.6; color:var(--ink, #10282B); }
+.dx-howto li + li{ margin-top:4px; }
+.dx-howto li b{ color:var(--deepTeal); }
+.dx-howto-warn{ margin:10px 0 0; padding:8px 10px; background:#FFF8EC; border:1px solid #F0C27A; border-radius:8px; font-size:12.5px; line-height:1.5; color:#8A5A12; }
+.dx-howto-warn b{ display:inline-block; margin-right:4px; padding:0 6px; border-radius:4px; background:#E0A23B; color:#fff; font-size:11.5px; }
+/* 상담 절차 단계 */
+.dx-fstep{ margin-top:10px; padding:10px; border:1px solid var(--line); border-radius:10px; background:#fff; }
+.dx-fstep:first-of-type{ margin-top:2px; }
+.dx-fstep-h{ font-size:12.5px; font-weight:700; color:var(--muted); margin-bottom:4px; }
+.dx-fstep-h em{ font-style:normal; color:var(--deepTeal); margin-right:2px; }
+.dx-opts.grid3{ display:grid; grid-template-columns:repeat(3, 1fr); gap:5px; margin-bottom:8px; }
+.dx-opts.grid3 .dx-opt{ padding:8px 6px 8px 26px; font-size:12.5px; }
+.dx-opts.grid3 .dx-opt::before{ left:8px; width:12px; height:12px; margin-top:-7px; }
+.dx-fstep .dx-fld{ margin-top:6px; }
+.dx-fstep .dx-changed, .dx-step .dx-changed{ border-color:#02C39A !important; box-shadow:0 0 0 3px rgba(2,195,154,.28); transition:none; }
+.dx-fstep-h{ display:flex; justify-content:space-between; align-items:center; }
+.dx-fstep-act{ display:flex; gap:3px; }
+.dx-fstep-act .dx-tb{ padding:2px 8px; min-width:0; }
+.dx-fcustom{ padding-left:10px !important; color:var(--deepTeal); border-style:dashed; }
+.dx-fcustom::before{ display:none; }
+.dx-fempty{ margin:8px 0 0; padding:10px 12px; border:1px dashed var(--seafoam); border-radius:10px; background:#F3FBF8; color:var(--deepTeal); }
+/* 학원 시간표 입력 */
+.dx-ttc{ margin-top:10px; padding:10px; border:1px solid var(--line); border-radius:10px; background:#fff; transition:box-shadow .5s, border-color .5s; }
+.dx-ttc.dx-changed, .dx-ttc textarea.dx-changed{ border-color:#02C39A; box-shadow:0 0 0 3px rgba(2,195,154,.28); transition:none; }
+.dx-ttc .dx-fld{ margin-top:6px; }
+.dx-ttslot{ margin-top:8px; padding-top:8px; border-top:1px dashed var(--line); }
+.dx-ttslot-h{ display:flex; justify-content:space-between; align-items:center; }
+.dx-ttslot-h label, .dx-ttlab{ font-size:12.5px; font-weight:600; color:var(--ink, #10282B); }
+.dx-days{ display:grid; grid-template-columns:repeat(7, 1fr); gap:4px; margin:5px 0 8px; }
+.dx-day{ border:1px solid var(--line); background:#fff; border-radius:8px; padding:6px 0; font:inherit; font-size:13px; font-weight:600; cursor:pointer; color:var(--body); }
+.dx-day.on{ background:var(--deepTeal); border-color:var(--deepTeal); color:#fff; }
+.dx-times{ display:flex; align-items:center; gap:6px; margin-top:4px; }
+.dx-times input{ flex:1; min-width:0; font:inherit; font-size:13px; border:1px solid var(--line); border-radius:8px; padding:6px 8px; }
+.dx-addline{ margin-top:8px; }
+.dx-addblock{ width:100%; margin-top:10px; border-style:dashed; color:var(--deepTeal); background:#fff; }
+.dx-ttpick{ display:flex; flex-wrap:wrap; gap:4px; align-items:center; margin-top:4px; }
+.dx-ttpick small{ color:var(--muted); margin-right:2px; }
+.dx-tccount{ display:flex; align-items:center; gap:8px; margin-top:10px; } .dx-tccount span{ font-weight:600; font-size:13px; flex:1; } .dx-tccount b{ min-width:34px; text-align:center; } .dx-tccount .dx-tb{ padding:3px 12px; font-size:15px; }
+.dx-cu-acts{ display:flex; flex-wrap:wrap; gap:12px; margin-top:8px; } .dx-cu-acts .dx-link{ color:var(--deepTeal); }
+/* 왼쪽 창 ‘아래로’ 안내 */
+.dx-cue{ position:sticky; bottom:-16px; margin:12px -16px -16px; padding:10px 16px 12px; background:linear-gradient(rgba(255,255,255,0), #fff 40%); pointer-events:none; z-index:2; }
+.dx-cue[hidden]{ display:none !important; }
+/* 스크롤 안내는 보조 동작이라 채운 버튼([완료]·[적용])과 겹치지 않게 흰 알약 + 청록 글씨, 폭은 글 길이만큼(2026-11-06) */
+.dx-cue{ text-align:center; }
+.dx-cue button{ pointer-events:auto; display:inline-flex; align-items:center; gap:2px; border:1px solid rgba(2,128,144,.35); border-radius:99px; padding:7px 16px; background:rgba(255,255,255,.96); color:var(--deepTeal); font:inherit; font-size:13px; font-weight:600; cursor:pointer; box-shadow:0 4px 14px -6px rgba(16,40,43,.28); }
+.dx-cue button:hover{ background:#EAF7F4; }
+.dx-cue button b{ display:inline-block; margin-left:4px; animation:dxCueBob 1.4s ease-in-out infinite; }
+@keyframes dxCueBob{ 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(3px); } }
+@media (prefers-reduced-motion: reduce){ .dx-cue button b{ animation:none; } }
+.dx-later[hidden]{ display:none !important; }
